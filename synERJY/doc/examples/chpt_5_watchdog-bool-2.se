@@ -1,0 +1,31 @@
+// test-flags O = None true, E = data true, confclass Rct
+class Rct { 
+    static final time timing = 100msec;
+				
+public Rct () { active { }; };
+
+Watchdog x = new Watchdog();
+}
+
+class Watchdog {
+
+  Sensor<bool>     set  = new Sensor<bool>(new SimInput());
+  Sensor<bool>    reset = new Sensor<bool>(new SimInput());
+  Sensor<bool> deadline = new Sensor<bool>(new SimInput());
+
+  Signal<bool>    alarm = new Signal<bool>(new SimOutput());
+
+  Signal<bool>  watchdog_is_on = new Signal<bool>();
+
+  public Watchdog () {
+    active { 
+      sustain
+// tex_start watchdog-bool-2
+{| alarm := deadline && watchdog_is_on;
+   watchdog_is_on := false -> 
+                     !reset && (set || pre(watchdog_is_on)); |};
+// tex_end
+    };
+  };
+}
+

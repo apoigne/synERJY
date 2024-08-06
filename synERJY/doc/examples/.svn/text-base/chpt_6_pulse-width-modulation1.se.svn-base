@@ -1,0 +1,79 @@
+// tex_start pulse-width-modulation1
+class PulseWidthModulation {
+  // constants for counting 
+  static final int high = 5;
+  static final int  low = 15;
+
+  Sensor start = new Sensor(new SimInput());
+  Sensor clock = new Sensor(new SimInput());
+  
+  Signal<boolean>  wave = new Signal<boolean>(new SimOutput());
+
+  Signal toHighPhase = new Signal(); // local signals
+  Signal  toLowPhase = new Signal();
+
+  // two counters as subojects
+  Counter highTimer = new Counter(high,toHighPhase,clock,toLowPhase );
+  Counter lowTimer  = new Counter(low ,toLowPhase ,clock,toHighPhase);
+
+  public PulseWidthModulation () {
+    // run the pulse width modulation
+    active {
+        await ?start;
+        emit toHighPhase;
+        loop {
+            await ?toHighPhase;
+            emit wave(true);
+            next;
+            await ?toLowPhase;
+            emit wave(false);
+            next;
+       };      
+    };
+  };
+}
+// tex_end pulse-width-modulation1
+
+class Counter {
+  
+  // signals
+  Sensor   start;
+  Sensor   clock;
+  Signal elapsed;
+
+  // constructor
+  public Counter (    int _latch,
+                   Sensor _start, 
+                   Sensor _clock, 
+                   Signal _elapsed )  {
+      latch = _latch;
+      start = _start;
+      clock = _clock;
+    elapsed = _elapsed;
+    active {
+          loop {
+            await ?start; // wait for signal start being present
+            reset();      // reset the timer count
+            next;         // reaction finished for this instant
+            cancel {      // decrement the counter when ldots
+              loop {      // .. signal clock is present
+                await (?clock);
+                decr();
+                next;
+              };          // decrementing is cancelled, when ldots
+            } when (isElapsed()) {}; 
+                      // .. isElapsed() is true ldots
+            emit elapsed; 
+                      // .. tell that the timer elapsed
+          };
+      };
+  };
+
+// data fields and data methods
+  int latch;
+  int counter;
+
+  void       reset()  { counter = latch; };  
+  void         decr() { if (counter > 0) { counter--; }; };  
+  boolean isElapsed() { return (counter == 0); };
+}

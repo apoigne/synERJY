@@ -1,0 +1,32 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+Sensor<bool> FIB1 = new Sensor<bool>(new SimInput());
+Sensor<int>  FII1 = new Sensor<int>(new SimInput());
+
+Signal<int> FOI1  = new Signal<int>(new SimOutput());
+Signal<bool> FOB1 = new Signal<bool>(new SimOutput());
+
+#ifdef T1
+// trace
+//
+// FIB1(false) FII1(9)  -> FOB1(true) FOI1(1)
+// FIB1(false) FII1(0)  -> FOB1(false) FOI1(9)
+// FIB1(true) FII1(1)   -> FOB1(false) FOI1(0)
+// FIB1(false) FII1(2)  -> FOB1(true) FOI1(1)
+// FIB1(true) FII1(3)   -> FOB1(false) FOI1(2)
+// FIB1(false) FII1(4)  -> FOB1(true) FOI1(3)
+//
+private void c1 () {
+    sustain {|
+      FOB1 := true -> pre(FIB1);
+      FOI1 := 1    -> pre(FII1);
+    |};
+  };
+#endif
+
+} //end class Rc

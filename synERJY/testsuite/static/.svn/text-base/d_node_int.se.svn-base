@@ -1,0 +1,45 @@
+class Rc {
+
+public Rc ()
+{
+  active { 
+     sustain {|
+        x3 := x1 when ?x;
+        x4 := x2 when ?y;
+        c1(x3,y1);
+        c1(x4,y2);
+     |};
+  };
+};
+
+Sensor  x = new Sensor(new SimInput());
+Sensor  y = new Sensor(new SimInput());
+
+Sensor<int> x1 = new Sensor<int>(new SimInput());
+Sensor<int> x2 = new Sensor<int>(new SimInput());
+
+Signal{?x}<int> x3 = new Signal<int>();
+Signal{?x}<int> y1 = new Signal<int>(new SimOutput());
+
+Signal{?y}<int> x4 = new Signal<int>();
+Signal{?y}<int> y2 = new Signal<int>(new SimOutput());
+
+
+#ifdef T1
+// trace
+//
+//  x    -> y1(0) 
+//  y    -> y2(0)
+//
+//  x y  -> y1(0) y2(0)
+//  x1(1)-> 
+//  x y  -> y1(1) y2(0)
+//
+node c1 (Sensor<int> _x,Signal<int> _y) {|
+    _y := _x;
+  |};
+#endif
+
+
+} //end class Rc
+

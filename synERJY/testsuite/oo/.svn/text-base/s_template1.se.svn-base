@@ -1,0 +1,82 @@
+class NoTypPar {
+  public NoTypPar() {};
+}
+
+class NoTypParSub extends NoTypPar {
+  public NoTypParSub() { super(); };
+}
+
+//----------------------------------------------------------------------------
+// testcases with one type parameter
+class TypVar1 <T> {
+  public TypVar1() {};
+  protected T fT;
+  public void m (T p1) { return; };
+}
+
+class TypVar1Sub1 <T> extends TypVar1 <T> {
+  public TypVar1Sub1() { super(); };
+#ifdef O1
+  public void m (T q1) { return; };
+#endif
+
+#ifdef E101
+// [[InheritErr]]
+  public void m (NoTypPar p1) { return; };
+#endif
+}
+
+#ifdef E111 superclass is not a type class
+// [[TypeparInherit]]
+class TypVar1Sub2 <T> extends NoTypPar <T> {
+  public TypVar1Sub2() { super(); };
+}
+#endif
+
+#ifdef E112 subclass is not a type class
+// [[TypeparInherit]]
+class TypVar1Sub2 extends NoTypPar <T> {
+  public TypVar1Sub2() { super(); };
+}
+#endif
+
+#ifdef E113 subclass is not a type class
+// [[TypeparInherit]]
+class TypVar1Sub2 <U> extends NoTypPar <T> {
+  public TypVar1Sub2() { super(); };
+}
+#endif
+
+//----------------------------------------------------------------------------
+// testcases with two type parameters
+
+class TypVar2 <T,U> {
+  public TypVar2() {};
+}
+
+#ifdef O1
+class TypVar2Sub <T,U> extends TypVar2<T,U> {
+  public TypVar2Sub() { super(); };
+}
+#endif
+
+#ifdef E201 two type parameters with the same name
+// [[ParseError]] type parameter name U not unique
+class TypVar2Sub <U,U> {
+  public TypVar2Sub() { super(); };
+}
+#endif
+
+#ifdef E202 two type parameters with the same name
+// [[ParseError]] type parameter name T not unique
+class TypVar2Sub <T,T> extend TypVar1<T> {};
+  public TypVar2Sub() { super(); };
+}
+#endif
+
+class Rc {
+   public Rc() {
+      active {};
+   };
+}
+

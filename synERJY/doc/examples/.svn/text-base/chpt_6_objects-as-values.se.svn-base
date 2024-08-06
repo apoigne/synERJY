@@ -1,0 +1,44 @@
+// tex_start Sender
+class Sender {
+    Data data = new Data();
+				
+    public Sender (Signal<Data> sent) { 
+        active {
+            data.set(0);
+            emit sent(data);
+            $sent.set(3);
+        };
+    };
+}
+// tex_end Sender
+
+// tex_start Receiver
+class Receiver {
+    int val;
+
+    public Receiver (Sensor<Data> received, int x) {
+        val = x;
+        active { $received.set(val); };
+    };
+}
+// tex_end Receiver
+
+// tex_start Signalbus
+class SignalBus {
+   public SignalBus () { active { }; };
+
+   Signal<Data>   sig = new Signal<Data>(new SimOutput());
+   Sender      sender = new Sender(sig);
+   Receiver receiver1 = new Receiver(sig,1);
+   Receiver receiver2 = new Receiver(sig,2);
+}
+// tex_end Signalbus
+
+// tex_start Data
+final class Data {
+    public Data () { };
+
+    int value;
+    public void set (int val) { value = val; };
+}
+// tex_end Data

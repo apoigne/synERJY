@@ -1,0 +1,501 @@
+class Rc {
+
+public Rc () {
+   active { a1();
+   };
+};
+
+Sensor ON = new Sensor(new SimInput());
+Sensor OFF = new Sensor(new SimInput());
+
+Sensor I1 = new Sensor(new SimInput());
+Signal O1 = new Signal(new SimOutput());
+Signal O2 = new Signal(new SimOutput());
+Signal O3 = new Signal(new SimOutput());
+
+Signal<int> OI1 = new Signal<int>(new SimOutput());
+Signal<int> OI2 = new Signal<int>(new SimOutput());
+
+Signal<int>    fi1 = new Signal<int>(new SimOutput());
+Signal{?I1}<int> fi2 = new Signal<int>(new SimOutput());
+
+Signal s2Entry = new Signal(new SimOutput());
+Signal s2During = new Signal(new SimOutput());
+Signal s2Exit = new Signal(new SimOutput());
+
+#ifdef T1 
+// trace
+//
+//      ->
+//      -> 
+// ON   -> s2Entry fi1(1)
+//      -> s2During fi1(2)
+//      -> s2During fi1(3)
+//      -> s2During fi1(4)
+// I1   -> s2During O1 fi1(5)
+//      -> s2During fi1(6)
+// I1   -> s2During O2 fi1(7)
+// I1   -> s2During O1 fi1(8)
+// I1   -> s2During O2 fi1(9)
+//      -> s2During fi1(10)
+// OFF  -> s2During fi1(11) s2Exit
+//      -> 
+//      ->
+//
+private void a1 () {
+//      do [[ automaton || sustain ]]; 
+  automaton {
+
+    init {
+      next state s1; 
+    };
+
+    state s1
+      when (?ON) { next state s2; 
+      };
+
+    state s2
+       entry { emit s2Entry; }
+       during { emit s2During; }
+       exit { emit s2Exit; }
+       do {
+          [[
+             automaton {
+               init { next state s21; };
+
+               state s21
+               when (?I1) { emit O1; next state s22; };
+
+               state s22
+               when (?I1) { emit O2; next state s21; };
+              };
+          || sustain {| fi1 := 1 -> pre(fi1) + 1; |};
+          ]];
+        }
+       when (?OFF) { next state s1; 
+       };
+   };
+};
+#endif
+
+#ifdef T2 
+// trace
+//
+//      -> 
+//      -> 
+// ON   -> s2Entry 
+//      -> s2During O1 
+//      -> s2During O1 
+//      -> s2During O1 
+// I1   -> s2During O1  OI1(4) fi2(1)
+//      -> s2During O2 
+// I1   -> s2During O2  OI2(2) fi2(2)
+// I1   -> s2During O1  OI1(1) fi2(3)
+// I1   -> s2During O2  OI2(1) fi2(4)
+//      -> s2During O1 
+// OFF  -> s2During O1  s2Exit
+//      -> 
+//
+// trace
+//
+//      -> 
+//      -> 
+// ON   -> s2Entry 
+//      -> s2During O1 
+//      -> s2During O1 
+//      -> s2During O1 
+// I1   -> s2During O1  OI1(4) fi2(1)
+//      -> s2During O2 
+//      -> s2During O2 
+// I1   -> s2During O2  OI2(3) fi2(2)
+//      -> s2During O1 
+// I1   -> s2During O1  OI1(2) fi2(3)
+// I1   -> s2During O2  OI2(1) fi2(4)
+//      -> s2During O1 
+// OFF  -> s2During O1  s2Exit
+//      -> 
+//
+private void a1 () {
+  automaton {
+
+    init {
+      next state s1; };
+
+    state s1
+      when (?ON) { next state s2;
+    };
+
+    state s2
+       entry { emit s2Entry; }
+       during { emit s2During; }
+       exit { emit s2Exit; }
+       do {
+          [[
+             automaton {
+               init {  next state s21; };
+
+               state s21
+               entry { setv1(); }
+               during { emit O1; incrv1(); }
+               when (?I1) { emit OI1(v1); next state s22; };
+
+               state s22
+               entry { setv2(); }
+               during { emit O2; incrv2(); }
+               when (?I1) {  emit OI2(v2); next state s21;  };
+              };
+          ||
+             sustain {| fi2 :=  pre(fi2) + (1 when ?I1); |};
+          ]];
+          }
+       when (?OFF) { next state s1; };
+
+    };
+ };
+
+private int v1, v2;
+
+void setv1 () {
+  v1 = 0;
+};
+
+void setv2 () {
+  v2 = 0;
+};
+
+void incrv1 () {
+  v1 = v1 + 1;
+};
+
+void incrv2 () {
+  v2 = v2 + 1;
+};
+
+precedence {
+  setv1() < incrv1() < v1;
+  setv2() < incrv2() < v2;
+};
+
+#endif
+
+#ifdef T3
+// trace
+//      -> 
+//      -> 
+// ON   -> s2Entry  O1 
+//      -> s2During 
+//      -> s2During 
+//      -> s2During 
+//      -> s2During 
+// OFF  -> s2During s2Exit 
+//      -> 
+//
+
+private void a1 () {
+  automaton {
+
+    init { next state s1; };
+
+    state s1
+      when (?ON) { next state s2; };
+
+    state s2
+       entry { emit s2Entry; }
+       during { emit s2During; }
+       exit { emit s2Exit; }
+       do { emit O1; }
+       when (?OFF) { next state s1; };
+
+   };
+};
+
+#endif
+
+#ifdef T4
+// trace
+//      -> 
+//      -> 
+// ON   -> s2Entry fi1(1)
+//      -> s2During fi1(2)
+//      -> s2During fi1(3)
+//      -> s2During fi1(4)
+// I1   -> s2During fi1(5) 
+//      -> s2During fi1(6)
+// I1   -> s2During fi1(7) 
+// I1   -> s2During fi1(8) 
+// I1   -> s2During fi1(9) 
+//      -> s2During fi1(10)
+// OFF  -> s2During fi1(11) s2Exit
+//      -> 
+//
+private void a1 () {
+  automaton {
+
+    init { next state s1; };
+
+    state s1
+      when (?ON) { next state s2; };
+
+    state s2
+       entry { emit s2Entry; }
+       during { emit s2During; }
+       exit { emit s2Exit; }
+       do  { sustain {| fi1 := 1 -> pre(fi1) + 1; |}; }
+       when (?OFF) { next state s1; };
+
+   };
+};
+
+#endif
+
+#ifdef T5
+// trace
+//      -> 
+//      -> 
+// ON   -> s2Entry O1 O2 
+//      -> s2During 
+//      -> s2During 
+//      -> s2During 
+// I1   -> s2During  
+//      -> s2During 
+// I1   -> s2During  
+//      -> s2During 
+// OFF  -> s2During  s2Exit
+//      -> 
+//
+private void a1 () {
+  automaton {
+
+    init { next state s1; };
+
+    state s1
+      when (?ON) { next state s2;  };
+
+    state s2
+       entry { emit s2Entry; }
+       during { emit s2During; }
+       exit { emit s2Exit; }
+       do {
+          [[ emit O1;
+          || emit O2;
+          ]];
+       }
+       when (?OFF) { next state s1; };
+
+   };
+};
+
+#endif
+
+#ifdef T6
+// trace
+//      ->
+//      -> 
+// ON   -> s2Entry fi1(1)
+//      -> s2During fi1(2)
+//      -> s2During fi1(3)
+//      -> s2During fi1(4)
+// I1   -> s2During fi1(5) fi2(1)
+//      -> s2During fi1(6)
+// I1   -> s2During fi1(7) fi2(2)
+// I1   -> s2During fi1(8) fi2(3)
+// I1   -> s2During fi1(9) fi2(4)
+//      -> s2During fi1(10)
+// OFF  -> s2During fi1(11) s2Exit
+//      -> 
+//      -> 
+// ON   -> s2Entry fi1(1)
+//      -> s2During fi1(2)
+//      -> s2During fi1(3)
+//      -> s2During fi1(4)
+// I1   -> s2During fi1(5) fi2(1)
+//      -> s2During fi1(6)
+// I1   -> s2During fi1(7) fi2(2)
+// I1   -> s2During fi1(8) fi2(3)
+// I1   -> s2During fi1(9) fi2(4)
+//      -> s2During fi1(10)
+// OFF  -> s2During fi1(11) s2Exit
+//      -> 
+private void a1 () {
+  automaton {
+
+    init { next state s1; };
+
+    state s1
+      when (?ON) { next state s2; };
+
+    state s2
+       entry { emit s2Entry; }
+       during { emit s2During; }
+       exit { emit s2Exit; }
+       do {
+          [[
+             sustain {| fi1 := 1 -> pre(fi1) + 1; |};
+          ||
+             sustain {| fi2 := (1 when ?I1) ->
+                              pre(fi2) + (1 when ?I1); |};
+          ]];
+       }
+       when (?OFF) { next state s1; };
+
+  };
+};
+#endif
+
+#ifdef T7
+// trace
+//
+//      -> 
+//      -> 
+// ON   -> s2Entry 
+//      -> s2During O1 
+//      -> s2During O1 
+//      -> s2During O1 
+// I1   -> s2During O1 OI1(4) 
+//      -> s2During O2 
+// I1   -> s2During O2 OI2(2) 
+// I1   -> s2During O1 OI1(1) 
+// I1   -> s2During O2 OI2(1) 
+//      -> s2During O1 
+// OFF  -> s2During O1 s2Exit 
+//      -> 
+//
+private void a1 () {
+  automaton {
+
+    init { next state s1; };
+
+    state s1
+      when (?ON) { next state s2; };
+
+    state s2
+       entry { emit s2Entry; }
+       during { emit s2During; }
+       exit { emit s2Exit; }
+       do {
+             automaton {
+               init {  next state s21; };
+
+               state s21
+               entry { setv1(); }
+               during { emit O1; incrv1(); }
+               when (?I1) { emit OI1(v1); next state s22;  };
+
+               state s22
+               entry { setv2(); }
+               during { emit O2; incrv2(); }
+               when (?I1) {  emit OI2(v2); next state s21; };
+             };
+        }
+        when (?OFF) { next state s1; };
+
+  };
+};
+
+private int v1, v2;
+
+void setv1 () {
+  v1 = 0;
+};
+
+void setv2 () {
+  v2 = 0;
+};
+
+void incrv1 () {
+  v1 = v1 + 1;
+};
+
+void incrv2 () {
+  v2 = v2 + 1;
+};
+
+precedence {
+  setv1() < incrv1() < v1;
+  setv2() < incrv2() < v2;
+};
+
+#endif
+
+#ifdef T8
+// trace
+//
+//      -> 
+//      -> 
+// ON   -> s2Entry 
+//      -> s2During O1 
+//      -> s2During O1 
+//      -> s2During O1 
+// I1   -> s2During O1  OI1(4) fi2(1)
+//      -> s2During O2 
+// I1   -> s2During O2  OI2(2) fi2(2)
+// I1   -> s2During O1  OI1(1) fi2(3)
+// I1   -> s2During O2  OI2(1) fi2(4)
+//      -> s2During O1 
+// OFF  -> s2During O1  s2Exit
+//      -> 
+//
+private void a1 () {
+  automaton {
+
+    init { next state s1; };
+
+    state s1
+      when (?ON) { next state s2; };
+
+    state s2
+       entry { emit s2Entry; }
+       during { emit s2During; }
+       exit { emit s2Exit; }
+       do {
+          [[
+             automaton {
+               init {  next state s21; };
+
+               state s21
+               entry { setv1(); }
+               during { emit O1; incrv1(); }
+               when (?I1) { emit OI1(v1); next state s22; };
+
+               state s22
+               entry { setv2(); }
+               during { emit O2; incrv2(); }
+               when (?I1) {  emit OI2(v2); next state s21; };
+
+              };
+          ||
+             sustain {| fi2 := (1 when ?I1) -> 
+                               pre(fi2) + (1 when ?I1); |};
+          ]];
+       }
+       when (?OFF) { next state s1; };
+
+   };
+};
+
+private int v1, v2;
+
+void setv1 () {
+  v1 = 0;
+};
+
+void setv2 () {
+  v2 = 0;
+};
+
+void incrv1 () {
+  v1 = v1 + 1;
+};
+
+void incrv2 () {
+  v2 = v2 + 1;
+};
+
+precedence {
+  setv1() < incrv1() < v1;
+  setv2() < incrv2() < v2;
+};
+
+#endif
+
+} //end class Rc

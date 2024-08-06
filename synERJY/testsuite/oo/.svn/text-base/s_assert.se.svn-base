@@ -1,0 +1,34 @@
+class Rc {
+
+public Rc() {
+    active {};
+};
+
+void f1() { nothing; };
+void f2() { nothing; return; };
+void f3() { nothing; if (true) { return; } else { return; }; };
+
+int g1() { nothing; return 1; };
+int g2() { nothing; if (true) { return 4; } else { return 5; }; };
+int g3() { nothing; if (true) { return 5; } else { nothing; }; return 0; };
+int g4() { nothing; int x = 4; nothing; return 4; };
+int g5() { nothing; int x = 4; nothing;
+           if (true) { return 4; } else { return 5; };
+         };
+
+#ifdef E10
+// [[Typing]] g10
+int g10() { nothing; };
+#endif
+
+#ifdef E11
+// [[Typing]] g11
+int g11() { nothing; if (true) { return 5; } else { nothing; }; };
+#endif
+
+#ifdef E12
+// [[Typing]] g12
+int g12() { nothing; if (true) { return 5; } else { nothing; }; return; };
+#endif
+
+}

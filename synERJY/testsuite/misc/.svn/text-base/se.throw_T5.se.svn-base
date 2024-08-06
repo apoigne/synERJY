@@ -1,0 +1,85 @@
+
+
+class Rc {
+
+public Rc () {
+   active { react(); };
+};
+
+static int instrc;
+
+
+
+
+
+public static final void main (String[] args) {
+   instrc = instant();
+   if (instrc == 105 && o.result == 5) {
+      print_string("T5 ok");
+   } else {
+      print_string("T5 error");
+   };
+};
+
+private reactive void react () {
+   o.set_result(5);
+   o.violate_a();
+};
+
+
+
+
+
+static native("printString") void print_string (String s);
+
+static DataObject o = new DataObject();
+
+}
+
+class DataObject {
+
+public DataObject () {
+};
+
+public static int result;
+public static int inv = 0;
+public static int[] ia = {(int)1,2,3,4};
+
+invariant {
+  (inv == 0) else throw(104);
+};
+
+public void set_result (int r) { result = r; };
+
+public void pre_m  (int r)
+     pre assert { (r>0) else throw(102); }
+     { nothing; };
+
+public void post_m (int r)
+     { nothing; }
+     post assert { (r>0) else throw(103); };
+
+public void violate_i ()
+     { inv = 1; };
+
+public void violate_a ()
+     { nothing; assert { (true) then throw(105); }; nothing; };
+
+public void throw_m ()
+     { nothing; throw(106); nothing; };
+
+public void null_m ()
+     { MyNull m = null; m.f(); };
+
+public void bds_w (int i)
+     { ia[i] = 10; };
+
+public void bds_r (int i)
+     { int a = ia[i]; };
+
+}
+
+class MyNull {
+  public MyNull() {};
+  public void f() {};
+}

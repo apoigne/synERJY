@@ -1,0 +1,34 @@
+// test-flags O = None true, E = data true
+
+class Rc {
+
+public Rc () {
+  active { emit outs(1); emit outs(2); };
+};
+
+Signal<int> outs = new Signal<int>(new SimOutput());
+Signal<int> prc  = new Signal<int>(new SimOutput());
+
+Emit1 o1 = new Emit1(101,outs);
+
+}
+
+class Emit1 {
+
+int fld_x;
+
+public Emit1(int x, Signal<int> s) {
+
+#ifdef O1
+  fld_x = x;
+  active { next; emit s(fld_x); emit s(fld_x+1); };
+#endif
+
+// THIS IS A COMPILER DEFICIENCY: NO FORMALS IN ACTIVE BESIDES SIGNALS/FLOWS
+#ifdef E1
+// [[Typing]]
+  active { next; emit s(x); emit s(x+1); };
+#endif
+};
+
+}

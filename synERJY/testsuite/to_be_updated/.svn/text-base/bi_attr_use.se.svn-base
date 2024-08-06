@@ -1,0 +1,49 @@
+class Xc
+  ai : int is protected;
+end class Xc
+
+class Tc
+inherit
+  Xc;
+
+bi : int;
+ci : int is do nothing end;
+
+tc1 is
+do
+    local ki : int := 9;
+    bi := 4;
+#ifdef E1
+-- [[Lhs2Err]] ai
+    ai := 4;
+#endif
+    bi := bi;
+    bi := ai;
+  end;
+
+tc2( pi : int ) is
+do
+    local mutable li : int := 0;
+    local         mi : int := 0;
+    bi := li+mi+pi;
+    li := 4;
+    bi := pi;
+#ifdef E2
+-- [[Lhs1Err]] pi
+      pi := 4;
+#endif
+#ifdef E3
+-- [[UnknownId]] ki
+      ki := 4;
+#endif
+#ifdef E4
+-- [[Lhs1Err]] ci
+      ci := 4;
+#endif
+#ifdef E5
+-- [[Lhs1Err]] mi
+      mi := 4;
+#endif
+end;
+
+end class Tc

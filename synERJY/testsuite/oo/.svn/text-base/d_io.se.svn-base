@@ -1,0 +1,82 @@
+// confclass Rc
+
+#ifdef T1
+// trace
+// rc1.i1    -> rc1.o1
+// rc1.i2(1) -> rc1.o2(2)
+// rc1.i3(2) -> 
+// rc1.i3(1) -> rc1.o3(4)
+// rc1.i3(3) ->
+// rc1.i3(1) -> rc1.o3(4)
+
+class Rc {
+
+  public Rc () {
+      active { };
+  };
+
+  Rc1 rc1 = new Rc1();
+
+}
+
+class Rc1 {
+
+  public Rc1 () {
+      active { test(); };
+  };
+
+  Sensor             i1 = new Sensor(new SimInput());
+  Signal             o1 = new Signal(new SimOutput());    
+  Sensor<int>        i2 = new Sensor<int>(new SimInput());
+  Signal<int>        o2 = new Signal<int>(new SimOutput());    
+  Sensor<int>        i3 = new Sensor<int>(new SimInput());
+  Signal{i3==1}<int> o3 = new Signal<int>(new SimOutput());
+
+void test () {
+   if (?i1) { emit o1; };
+   next;
+   emit o2($i2*2);
+   next;
+   sustain {|
+      o3 := (o2*2) when (i3==1);
+   |};   
+ };
+
+}
+#endif
+
+#ifdef T2
+// trace
+// i1    -> o1
+// i2(1) -> o2(2)
+// i3(2) -> 
+// i3(1) -> o3(4)
+// i3(3) ->
+// i3(1) -> o3(4)
+
+class Rc {
+
+  public Rc () {
+      active { test(); };
+  };
+
+
+  Sensor             i1 = new Sensor(new SimInput());
+  Signal             o1 = new Signal(new SimOutput());    
+  Sensor<int>        i2 = new Sensor<int>(new SimInput());
+  Signal<int>        o2 = new Signal<int>(new SimOutput());    
+  Sensor<int>      i3 = new Sensor<int>(new SimInput());
+  Signal{i3==1}<int> o3 = new Signal<int>(new SimOutput());
+
+void test () {
+   if (?i1) { emit o1; };
+   next;
+   emit o2($i2*2);
+   next;
+   sustain {|
+      o3 := (o2*2) when (i3==1);
+   |};   
+ };
+
+}
+#endif

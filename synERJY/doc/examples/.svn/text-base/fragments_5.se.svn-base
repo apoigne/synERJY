@@ -1,0 +1,31 @@
+class TimeRaceFragments {
+
+    public TimeRaceFragments () { 
+        active { r(); };
+    };
+
+#ifdef O1
+void r() {}; 
+#endif
+
+#ifdef E1
+// [[MultEmitInClass]]
+void r() {
+// tex_start time-race-valued-emits
+[[ emit x(1); || emit x(2); ]];
+// tex_end time-race-valued-emits
+};
+#endif
+
+#ifdef O2
+void r() {
+// tex_start causal-valued-emits
+emit x(1);
+emit x(2);
+// tex_end  causal-valued-emits
+};
+#endif
+
+Signal<int> x = new Signal<int>();    
+
+}

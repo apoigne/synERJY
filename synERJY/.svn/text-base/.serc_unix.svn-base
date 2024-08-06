@@ -1,0 +1,23 @@
+// font used for menu entries and buttons
+set system font weight     = bold;
+set system font size       = 12;
+
+// font used for the console window
+set font weight            = normal;
+set font size              = 12;
+
+// font used for the simulator windows
+set simulator font weight  = normal;
+set simulator font size    = 12;
+
+// font used for the graphic editor windows
+set graphic font weight    = normal;
+set graphic font size      = 12;
+
+// settings for the graphic editor
+set graphic width          = 913;
+set graphic height         = 675;
+set print size             = a4;
+
+show object browser;
+show trace browser;

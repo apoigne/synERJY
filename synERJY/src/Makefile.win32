@@ -1,0 +1,250 @@
+# Makefile.win32
+# 
+# You need the Win32 installation of ocaml.
+# You need a Tcl/Tk Version 8.0 installation.
+# You need a set of unix tools, especially rm  and  sed.
+# rm  is called within this makefile.
+# sed is called in the script cl.bat for preprocessing c-files.
+# The Production is tested with
+#     Visual C Version 6.0.
+#     TclTk 8.0,      get it from http://www.scriptics.com/download/8.0.html
+#
+# To produce the sE-tools for Win32:
+#
+# 1. update names of installation dependant directories (see below)
+# 2. run: make depend
+#    the file .depend will be included in this makefile
+# 3. run: make all
+#
+# You will get the programs
+#     se.exe ge.exe sim.exe
+# Set the envionment variable SE_HOME to adapt the default of SE_HOME.
+#
+# THIS MAKEFILE REQUIRES VISUAL STUDIO
+#                        ========
+#
+# 1. this makefile supports windows versions 
+#     (solaris, linux and darwin installations use another makefile)
+# 2. run: make clean
+# 3. run: make all              make se, ge, sim
+# 4. run: make help             to see rule names
+
+# ====== Windows Specifics ===================================================
+
+VC_BASE    = $(PROGRAMFILES)\Microsoft Visual Studio\VC98
+VC_link	   = "$(VC_BASE)\bin\link.exe"
+VC_LIB     = "$(VC_BASE)\lib";"$(VC_BASE)\PlatformSDK\lib"
+VC_INCLUDE = "$(VC_BASE)\include"
+
+MAKE      = nmake -f Makefile.win32
+RM        = del /f
+
+# << installation dependant directories === Windows_NT =======================
+
+TCLBASE  = $(SE_HOME)
+TCLVERSION = 85
+TCLA     = "$(TCLBASE)\lib\win32\tcl$(TCLVERSION).lib"
+TKA      = "$(TCLBASE)\lib\win32\tk$(TCLVERSION).lib"
+
+TCLTKH   = "$(TCLBASE)\include"
+
+MLD      = $(OCAMLLIB)
+MLA      = "$(MLD)\libcamlrun.lib"
+MLH      = "$(MLD)\caml"
+MLB      = $(OCAMLLIB)\..\bin
+
+ILibs     = -I "$(SE_HOME)\src" -I "$(SE_HOME)\builtin"
+
+LL       = "$(MLD)\libstr.lib" "$(MLD)\libunix.lib" "$(MLD)\str.lib" "$(MLD)\unix.lib"
+
+CMA = unix.cma
+
+# =============================================================================
+CAMLC     = "$(MLB)\ocamlc"
+CAMLO     = "$(MLB)\ocamlopt"
+CAMLT     = "$(MLB)\ocamlmktop"
+CAMLD     = "$(MLB)\ocamldep"
+CAMLLEX   = "$(MLB)\ocamllex"
+CAMLYACC  = "$(MLB)\ocamlyacc"
+
+CC_CAMLC = $(CAMLC) -I $(TCLTKH) -I $(MLH) -I $(VC_INCLUDE)
+
+#------------------------------------------------------------------------------
+DEBUG     =
+
+CMO_BASE  = ly.cmo sc.cmo ast.cmo sim_error.cmo sim_type.cmo \
+            p.cmo tk.cmo err.cmo util.cmo util_tk.cmo \
+            graphic_util.cmo util_print.cmo \
+            util_parse.cmo yacc.cmo lex.cmo lex_wrapper.cmo
+
+CMO_PU    = graphic_parse.cmo inherit_check.cmo builtin_data.cmo typecheck.cmo \
+	    data_depend.cmo react2sya.cmo react2sc.cmo \
+	    gen_application.cmo util_gen.cmo util_gen_c.cmo \
+            gen_rct_code.cmo gen_c_code.cmo \
+	    gen_verilog.cmo  gen_formula.cmo gen_NuSMV.cmo \
+            puctrl.cmo putk.cmo \
+	    debug.cmo
+
+CMO_GE    = gredit_util.cmo gredit_tk.cmo gredit_tool.cmo
+
+CMO_SIM   = sim_util.cmo sim_parse.cmo sim_base.cmo \
+            sim_target.cmo sim_play.cmo sim_react.cmo sim_tool.cmo \
+            sim_main.cmo gredit_util.cmo gredit_tk.cmo sim_tk.cmo
+
+OBJS = ocamltk.obj
+
+#------------------------------------------------------------------------------
+all: se ge sim
+
+dbg: "$(SE_HOME)\bin\se_dbg" "$(SE_HOME)\bin\sim_dbg"
+
+se:  "$(SE_HOME)\bin\se_dbg"    "$(SE_HOME)\bin\se"
+ge:  "$(SE_HOME)\bin\ge_dbg"    "$(SE_HOME)\bin\ge"
+sim: "$(SE_HOME)\bin\sim_dbg"   "$(SE_HOME)\bin\sim"
+opt: se "$(SE_HOME)\bin\se_opt"
+
+ocamltk.obj: ocamltk.c
+	$(CC_CAMLC) -c ocamltk.c
+
+fix_ftol2.obj: fix_ftol2.c
+	$(CC_CAMLC) -c fix_ftol2.c
+
+#------------------------------------------------------------------------------
+.SUFFIXES: .mli .cmi .ml .cmo
+
+# remarks on calling $(CAMLC):
+#   Without the -o option the program "camlprog.c" is generated and given to
+#   the C-Compiler cl (Visual-C Compiler) for compilation.
+#   ocamlc refuses to overwrite an existing file.
+#   After C-compilation ocamlc deletes the generated C-file.
+#   If the option "-o objname" is given, objname is expected to have a
+#   postfix like ".obj": The name of the generated C-file is produced by
+#   replacing the last 4 characters of objname by ".c".
+#       -o se_pu.obj        gives   se_pu.c  but
+#       -o se_pu.abc   also gives   se_pu.c     .
+#   Thus in both cases the C-Compiler produces "se_pu.obj".
+#   BTW: an objname shorter than 4 characters results in an uncaught exception
+#   within ocamlc.
+#
+
+.mli.cmi:
+	$(RM) $*.cmo
+	$(CAMLC) $(ILibs) $(DEBUG) -c $<
+
+.ml.cmo:
+	$(CAMLC) $(ILibs) $(DEBUG) -c $<
+
+.ml.cmi:
+	$(CAMLC) $(ILibs) $(DEBUG) -c $<
+
+.c.o:
+	echo  '.c.o: should never be called -- error -- exit 1'
+	exit 1
+
+#------------------------------------------------------------------------------
+cl_env:
+	set LIB=$(VC_LIB)
+	set INCLUDE=$(VC_INCLUDE)
+
+#------------------------------------------------------------------------------
+"$(SE_HOME)\bin\se_dbg": $(OBJS) $(CMO_BASE) $(CMO_PU)
+	$(CAMLT) -custom -o "$(SE_HOME)\bin\se_dbg.exe" $(ILibs) $(DEBUG) \
+                 $(CMA) tk.cmo $(OBJS) $(CMO_BASE) $(CMO_PU) \
+                 -cclib $(TKA) $(TCLA) $(MLA) $(LL)
+
+"$(SE_HOME)\bin\se": $(CMO_BASE) $(CMO_PU)  $(OBJS) main_se.cmo
+	$(CAMLC) -custom -o "$(SE_HOME)\bin\synERJY.exe" $(ILibs) $(DEBUG) \
+                 $(CMA) tk.cmo $(OBJS) $(CMO_BASE) $(CMO_PU) main_se.cmo \
+                 -cclib $(TKA) $(TCLA) $(MLA) $(LL)
+
+#------------------------------------------------------------------------------
+"$(SE_HOME)\bin\ge_dbg": $(OBJS) $(CMO_BASE) $(CMO_GE)
+	$(CAMLT) -custom -o ..\bin\ge_dbg.exe $(ILibs) $(DEBUG) \
+                 $(CMA) tk.cmo $(OBJS) \
+                 $(CMO_BASE) $(CMO_GE) \
+                 -cclib $(TKA) $(TCLA) $(MLA) $(LL)
+
+"$(SE_HOME)\bin\ge": $(OBJS) $(CMO_BASE) $(CMO_GE) main_ge.cmo
+	$(CAMLC) -custom -o ..\bin\synERJYcharts.exe $(ILibs) $(DEBUG) \
+                 $(CMA)  tk.cmo $(OBJS) \
+                 $(CMO_BASE) $(CMO_GE) main_ge.cmo \
+                 -cclib $(TKA) $(TCLA) $(MLA) $(LL)
+
+#------------------------------------------------------------------------------
+"$(SE_HOME)\bin\sim_dbg": mlunit.cmo $(OBJS) $(CMO_BASE) $(CMO_SIM)
+	$(CAMLT) -custom -o ..\bin\sim_dbg.exe $(ILibs) $(DEBUG) \
+                 $(CMA)  tk.cmo $(OBJS) \
+                 $(CMO_BASE) $(CMO_SIM) \
+                 -cclib $(TKA) $(TCLA) $(MLA) $(LL)
+
+"$(SE_HOME)\bin\sim": mlunit.cmo $(OBJS) $(CMO_BASE) $(CMO_SIM) main_sim.cmo
+	$(CAMLC) -custom -o ..\bin\synERJYsim.exe $(ILibs) $(DEBUG) \
+                 $(CMA)  tk.cmo $(OBJS) \
+                 $(CMO_BASE) $(CMO_SIM) main_sim.cmo \
+                 -cclib $(TKA) $(TCLA) $(MLA) $(LL)
+
+#------------------------------------------------------------------------------
+ly.cmo: ly.cmi
+sc.cmo: sc.cmi
+
+sim_type.cmo : p.cmo
+
+puctrl.cmo: lex.cmo yacc.cmo builtin_data.cmo
+
+gredit_tk.cmo: lex.cmo yacc.cmo
+
+parser.cmo: lex.cmo yacc.cmo
+
+yacc.ml: yacc.mly util_parse.cmo ly.cmo ast.cmo sim_type.cmo
+	$(RM) yacc.ml yacc.mli
+	$(CAMLYACC) yacc.mly
+	$(CAMLC) -c yacc.mli
+
+lex.ml: lex.mll ly.cmo yacc.cmo
+	$(RM) lex.ml
+	$(CAMLLEX) lex.mll
+	$(CAMLC) $(ILibs) -c lex.ml
+
+..\builtin\builtin.exe: ly.cmo ast.cmo p.cmo err.cmo util_parse.cmo inherit_check.cmo \
+                        util_print.cmo inherit_check.cmo util.cmo ..\builtin\builtin.cmo
+	$(RM) ..\builtin\builtin.cmi ..\builtin\builtin.cmo
+	$(CAMLC) $(ILibs) -c ..\builtin\builtin.ml
+        $(CAMLC) -custom $(ILibs) ly.cmo ..\builtin\builtin.cmo -o ..\builtin\builtin.exe
+
+builtin_data.ml: ..\builtin\builtin.exe
+	..\builtin\builtin.exe > builtin_data.ml
+
+builtin_data.cmo: builtin_data.ml
+	$(CAMLC) $(ILibs) -c builtin_data.ml
+
+#------------------------------------------------------------------------------
+
+depend:
+	$(MAKE) clean
+	$(CAMLD) $(ILibs) *.mli *.ml *.mly *.mll \
+	> .depend
+
+clean_bins:
+	$(RM) \
+	        *.obj *.exe \
+		..\bin\se*.exe ..\bin\ge*.exe  ..\bin\sim*.exe \
+	        ..\builtin\*.exe
+
+clean: clean_bins
+	$(RM) \
+		*.cmi *.cmo \
+		builtin_data.ml \
+		yacc.ml yacc.mli lex.ml \
+	        ..\builtin\*.cmi \
+	        ..\builtin\*.cmo
+
+puctrl.cmo: lex.cmo yacc.cmo
+
+gredit_tk.cmo: lex.cmo yacc.cmo
+
+graphic_parse.cmo: lex.cmo yacc.cmo
+
+# ---------------- ######### .depend   ########### ----------------------------
+!include .depend
+
+

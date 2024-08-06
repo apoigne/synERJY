@@ -1,0 +1,24 @@
+// tex_start counter-parameter-fragment
+class Counter {
+
+  int    latch;
+  Sensor start;
+  Sensor clock;
+  Signal elapsed;
+  
+// constructor
+  public Counter ( int      _latch,
+                   Sensor   _start, 
+                   Sensor   _clock, 
+                   Signal _elapsed )  {
+     latch   = _latch;
+     start   = _start;
+     clock   = _clock;
+     elapsed = _elapsed;
+     active {
+         // ... reactive behaviour ...
+     };
+  };
+  // ... data fields and data methods ...
+}
+// tex_end counter-parameter-fragment

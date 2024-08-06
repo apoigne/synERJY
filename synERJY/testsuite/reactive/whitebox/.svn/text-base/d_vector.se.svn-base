@@ -1,0 +1,723 @@
+class Rc {
+
+static final time timing = 1sec;
+
+
+double c = 0.5;
+
+
+#ifdef T1
+// trace
+//  -> y(55.000000)
+
+double [5] a = {1.0,2.0,3.0,4.0,5.0};
+
+Signal<double> y  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := a * a^t;
+     |};
+  };
+};
+#endif
+
+#ifdef T0
+// trace
+//  -> y(55.000000)
+
+double [5] a = {1.0,2.0,3.0,4.0,5.0};
+
+Signal<double> y  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := a * a;
+     |};
+  };
+};
+#endif
+
+#ifdef T2
+// trace
+//  -> y(15.000000)
+
+double [5] a = {1.0,2.0,3.0,4.0,5.0};
+double [5] b = {1.0,1.0,1.0,1.0,1.0};
+
+Signal<double> y  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := a * b^t;
+     |};
+  };
+};
+#endif
+
+#ifdef T3
+// trace
+// x(1.0) -> y(1.000000) z(1.000000)
+// x(1.0) -> y(2.000000) z(1.000000)
+// x(1.0) -> y(3.000000) z(1.000000)
+// x(1.0) -> y(4.000000) z(1.000000)
+// x(1.0) -> y(5.000000) z(1.000000)
+// x(2.0) -> y(6.000000) z(2.000000)
+// x(2.0) -> y(7.000000) z(2.000000)
+// x(2.0) -> y(8.000000) z(2.000000)
+// x(2.0) -> y(9.000000) z(2.000000)
+// x(2.0) -> y(10.000000) z(2.000000)
+// x(1.0) -> y(9.000000) z(1.000000)
+// x(1.0) -> y(8.000000) z(1.000000)
+// x(1.0) -> y(7.000000) z(1.000000)
+// x(1.0) -> y(6.000000) z(1.000000)
+// x(1.0) -> y(5.000000) z(1.000000)
+// x(2.0) -> y(6.000000) z(2.000000)
+// x(2.0) -> y(7.000000) z(2.000000)
+
+double [5] a = {1.0,1.0,1.0,1.0,1.0};
+
+Sensor<double> x  = new Sensor<double>(new SimInput()); 
+Signal<double> y  = new Signal<double>(new SimOutput()); 
+Signal<double[5]> w  = new Signal<double[5]>(); 
+Signal<double> z  = new Signal<double>(new SimOutput()); 
+Signal<double> z1  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y := a * x..^t;
+         w := x..;
+         z := (w)   [0];
+     |};
+  };
+};
+#endif
+
+#ifdef T31
+// trace
+// x(1.0) -> y(1.000000) z(1.000000)
+// x(1.0) -> y(2.000000) z(1.000000)
+// x(1.0) -> y(3.000000) z(1.000000)
+// x(1.0) -> y(4.000000) z(1.000000)
+// x(1.0) -> y(5.000000) z(1.000000)
+// x(2.0) -> y(6.000000) z(2.000000)
+// x(2.0) -> y(7.000000) z(2.000000)
+// x(2.0) -> y(8.000000) z(2.000000)
+// x(2.0) -> y(9.000000) z(2.000000)
+// x(2.0) -> y(10.000000) z(2.000000)
+// x(1.0) -> y(9.000000) z(1.000000)
+// x(1.0) -> y(8.000000) z(1.000000)
+// x(1.0) -> y(7.000000) z(1.000000)
+// x(1.0) -> y(6.000000) z(1.000000)
+// x(1.0) -> y(5.000000) z(1.000000)
+// x(2.0) -> y(6.000000) z(2.000000)
+// x(2.0) -> y(7.000000) z(2.000000)
+
+double [5] a = {1.0,1.0,1.0,1.0,1.0};
+
+Sensor<double> x  = new Sensor<double>(new SimInput()); 
+Signal<double> y  = new Signal<double>(new SimOutput()); 
+Signal<double[5]> w  = new Signal<double[5]>(); 
+Signal<double> z  = new Signal<double>(new SimOutput()); 
+Signal<double> z1  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y := a * x..^t;
+         z := x..[0];
+     |};
+  };
+};
+#endif
+
+#ifdef T4
+// trace
+// x(1.0) -> y0(1.000000) y1(0.000000) y2(0.000000) y3(0.000000)
+// x(2.0) -> y0(2.000000) y1(1.000000) y2(0.000000) y3(0.000000)
+// x(3.0) -> y0(3.000000) y1(2.000000) y2(1.000000) y3(0.000000)
+// x(4.0) -> y0(4.000000) y1(3.000000) y2(2.000000) y3(1.000000)
+// x(5.0) -> y0(5.000000) y1(4.000000) y2(3.000000) y3(2.000000)
+// x(6.0) -> y0(6.000000) y1(5.000000) y2(4.000000) y3(3.000000)
+
+Sensor<double> x    = new Sensor<double>(new SimInput()); 
+Signal<double> y0   = new Signal<double>(new SimOutput()); 
+Signal<double> y1   = new Signal<double>(new SimOutput()); 
+Signal<double> y2   = new Signal<double>(new SimOutput()); 
+Signal<double> y3   = new Signal<double>(new SimOutput()); 
+Signal<double[4]> z = new Signal<double[4]>(); 
+
+
+public Rc() {
+  active{
+     sustain {|
+         z := x..;
+         y0 := z[0];
+         y1 := z[1];
+         y2 := z[2];
+         y3 := z[3];
+     |};
+  };
+};
+#endif
+
+#ifdef T5
+// trace
+// x(1.0) e(1.0)  -> y(0.500000) z0(0.500000) z1(0.000000) z2(0.000000) z3(0.000000) z4(0.000000)
+// x(1.0) e(-2.0) -> y(-1.500000) z0(-0.500000) z1(-1.000000) z2(0.000000) z3(0.000000) z4(0.000000)
+
+// x(1.0) e(1.0)  -> y(1.000000)
+// x(1.0) e(1.0)  -> y(4.000000)
+// x(1.0) e(1.0)  -> y(5.000000)
+// x(2.0) e(1.0)  -> y(6.000000)
+// x(2.0) e(1.0)  -> y(7.000000)
+// x(2.0) e(1.0)  -> y(8.000000)
+// x(2.0) e(1.0)  -> y(9.000000)
+// x(2.0) e(1.0)  -> y(10.000000)
+// x(1.0) e(1.0)  -> y(9.000000)
+// x(1.0) e(1.0)  -> y(8.000000)
+// x(1.0) e(1.0)  -> y(7.000000)
+// x(1.0) e(1.0)  -> y(6.000000)
+// x(1.0) e(1.0)  -> y(5.000000)
+// x(2.0) e(1.0)  -> y(6.000000)
+// x(2.0) e(1.0)  -> y(7.000000)
+
+double [5] a = {1.0,1.0,1.0,1.0,1.0};
+
+Sensor<double> x  = new Sensor<double>(new SimInput()); 
+Sensor<double> e  = new Sensor<double>(new SimInput()); 
+Signal<double> y  = new Signal<double>(new SimOutput()); 
+Signal<double> z0  = new Signal<double>(new SimOutput()); 
+Signal<double> z1  = new Signal<double>(new SimOutput()); 
+Signal<double> z2  = new Signal<double>(new SimOutput()); 
+Signal<double> z3  = new Signal<double>(new SimOutput()); 
+Signal<double> z4  = new Signal<double>(new SimOutput()); 
+
+Signal<double[10]> w  = new Signal<double[10]>(); 
+
+double mu = 0.5;
+
+public Rc() {
+  active{
+     sustain {|
+         y  := w * x..^t;
+         w  := pre(w) + mu * e * x..;
+         z0 := w[0];
+         z1 := w[1];
+         z2 := w[2];
+         z3 := w[3];
+         z4 := w[4];
+     |};
+  };
+};
+#endif
+
+#ifdef T51
+// trace
+// x(1.0) e(1.0)  -> y(0.500000) z0(0.500000) z1(0.000000) z2(0.000000) z3(0.000000) z4(0.000000)
+// x(1.0) e(-2.0) -> y(-1.500000) z0(-0.500000) z1(-1.000000) z2(0.000000) z3(0.000000) z4(0.000000)
+
+// x(1.0) e(1.0)  -> y(1.000000)
+// x(1.0) e(1.0)  -> y(4.000000)
+// x(1.0) e(1.0)  -> y(5.000000)
+// x(2.0) e(1.0)  -> y(6.000000)
+// x(2.0) e(1.0)  -> y(7.000000)
+// x(2.0) e(1.0)  -> y(8.000000)
+// x(2.0) e(1.0)  -> y(9.000000)
+// x(2.0) e(1.0)  -> y(10.000000)
+// x(1.0) e(1.0)  -> y(9.000000)
+// x(1.0) e(1.0)  -> y(8.000000)
+// x(1.0) e(1.0)  -> y(7.000000)
+// x(1.0) e(1.0)  -> y(6.000000)
+// x(1.0) e(1.0)  -> y(5.000000)
+// x(2.0) e(1.0)  -> y(6.000000)
+// x(2.0) e(1.0)  -> y(7.000000)
+
+double [5] a = {1.0,1.0,1.0,1.0,1.0};
+
+Sensor<double> x  = new Sensor<double>(new SimInput()); 
+Sensor<double> e  = new Sensor<double>(new SimInput()); 
+Signal<double> y  = new Signal<double>(new SimOutput()); 
+Signal<double> z0  = new Signal<double>(new SimOutput()); 
+Signal<double> z1  = new Signal<double>(new SimOutput()); 
+Signal<double> z2  = new Signal<double>(new SimOutput()); 
+Signal<double> z3  = new Signal<double>(new SimOutput()); 
+Signal<double> z4  = new Signal<double>(new SimOutput()); 
+
+Signal<double[10]> w  = new Signal<double[10]>(); 
+
+double mu = 0.5;
+
+public Rc() {
+  active{
+     sustain {|
+         y  := w * x..^t;
+         w  := pre(w) + mu * e .* x..;
+         z0 := w[0];
+         z1 := w[1];
+         z2 := w[2];
+         z3 := w[3];
+         z4 := w[4];
+     |};
+  };
+};
+#endif
+
+#ifdef T6
+// trace
+// x(1.0) -> y(1.000000)
+// x(1.0) -> y(1.000000)
+// x(1.0) -> y(1.000000)
+// x(1.0) -> y(1.000000)
+
+double [5] a = {1.0,1.0,1.0,1.0,1.0};
+
+Sensor<double> x  = new Sensor<double>(new SimInput()); 
+Signal<double> y  = new Signal<double>(new SimOutput()); 
+
+double v;
+public Rc() {
+  
+  active{
+     sustain {|
+         Signal<double[5]> b;
+         Signal<double[5]> z;
+         b := {1.0,1.0,1.0,1.0,1.0};
+         f(b,z); 
+         y := z[0];
+     |};
+  };
+};
+
+node f (Sensor<double[n]> _x,Signal<double[n]> _y) {|
+   _y := _x;
+|};
+
+#endif
+
+#ifdef T7
+// trace
+// x(1.0) -> y(1.000000)
+// x(1.0) -> y(1.000000)
+// x(1.0) -> y(1.000000)
+// x(1.0) -> y(1.000000)
+
+double [5] a = {1.0,1.0,1.0,1.0,1.0};
+
+Sensor<double> x  = new Sensor<double>(new SimInput()); 
+Signal<double> y  = new Signal<double>(new SimOutput()); 
+
+double v;
+public Rc() {
+  
+  active{
+     sustain {|
+         Signal<double[5]> b;
+         Signal<double[5]> z;
+         b := a;
+         f(b,z); 
+         y := z[0];
+     |};
+  };
+};
+
+node f (Sensor<double[n]> _x,Signal<double[n]> _y) {|
+   _y := _x;
+|};
+
+#endif
+
+#ifdef T8
+// trace
+// x(1.0) -> y(1.000000)
+// x(1.0) -> y(2.000000)
+// x(1.0) -> y(3.000000)
+// x(1.0) -> y(4.000000)
+// x(1.0) -> y(5.000000)
+// x(2.0) -> y(6.000000)
+// x(2.0) -> y(7.000000)
+// x(2.0) -> y(8.000000)
+// x(2.0) -> y(9.000000)
+// x(2.0) -> y(10.000000)
+// x(1.0) -> y(9.000000)
+// x(1.0) -> y(8.000000)
+// x(1.0) -> y(7.000000)
+// x(1.0) -> y(6.000000)
+// x(1.0) -> y(5.000000)
+// x(2.0) -> y(6.000000)
+// x(2.0) -> y(7.000000)
+
+double [5] da = {1.0,1.0,1.0,1.0,1.0};
+double [] b = new double[5];
+Sensor<double> x  = new Sensor<double>(new SimInput()); 
+Signal<double> y  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active{
+     sustain {|
+         Signal<double[5]> z;
+         Signal<double[5]> r;
+         r := da;
+         f(r,z); 
+         y  := z * x..^t;
+     |};
+  };
+};
+
+node f (Sensor<double[n]> _x,Signal<double[n]> _y) {|
+   _y := _x;
+|};
+
+#endif
+
+#ifdef T9
+// trace
+// x(1.0) -> y0(1.000000) y1(0.000000) y2(0.000000) y3(0.000000) 
+// x(2.0) -> y0(2.000000) y1(1.000000) y2(0.000000) y3(0.000000) 
+// x(3.0) -> y0(3.000000) y1(2.000000) y2(1.000000) y3(0.000000) 
+// x(4.0) -> y0(4.000000) y1(3.000000) y2(2.000000) y3(1.000000) 
+// x(5.0) -> y0(5.000000) y1(4.000000) y2(3.000000) y3(2.000000) 
+// x(6.0) -> y0(6.000000) y1(5.000000) y2(4.000000) y3(3.000000) 
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double[4]> y = new Signal<double[4]>();
+Signal<double> y0   = new Signal<double>(new SimOutput()); 
+Signal<double> y1   = new Signal<double>(new SimOutput()); 
+Signal<double> y2   = new Signal<double>(new SimOutput()); 
+Signal<double> y3   = new Signal<double>(new SimOutput()); 
+
+
+ public Rc() {
+     active {
+        sustain {|
+           y := x..;
+           y0 := y[0];
+           y1 := y[1];
+           y2 := y[2];
+           y3 := y[3];
+        |};
+   };
+  };
+#endif
+
+#ifdef T10
+// trace
+// x(1.0) -> y0(0.000000) y1(0.000000) y2(0.000000) y3(0.000000) 
+// x(2.0) -> y0(1.000000) y1(0.000000) y2(0.000000) y3(0.000000) 
+// x(3.0) -> y0(2.000000) y1(1.000000) y2(0.000000) y3(0.000000) 
+// x(4.0) -> y0(3.000000) y1(2.000000) y2(1.000000) y3(0.000000) 
+// x(5.0) -> y0(4.000000) y1(3.000000) y2(2.000000) y3(1.000000) 
+// x(6.0) -> y0(5.000000) y1(4.000000) y2(3.000000) y3(2.000000) 
+// x(7.0) -> y0(6.000000) y1(5.000000) y2(4.000000) y3(3.000000) 
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double[4]> y = new Signal<double[4]>();
+Signal<double> y0   = new Signal<double>(new SimOutput()); 
+Signal<double> y1   = new Signal<double>(new SimOutput()); 
+Signal<double> y2   = new Signal<double>(new SimOutput()); 
+Signal<double> y3   = new Signal<double>(new SimOutput()); 
+
+
+ public Rc() {
+     active {
+        sustain {|
+           y := pre(x..);
+           y0 := y[0];
+           y1 := y[1];
+           y2 := y[2];
+           y3 := y[3];
+        |};
+   };
+  };
+#endif
+
+
+#ifdef T11
+// trace
+// x(1.0) -> y(1.000000)
+// x(2.0) -> y(4.000000)
+// x(3.0) -> y(11.000000)
+// x(4.0) -> y(26.000000)
+// x(5.0) -> y(57.000000)
+// x(6.0) -> y(119.000000)
+// x(7.0) -> y(242.000000)
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double> y    = new Signal<double>(new SimOutput());
+
+double [5] a = {1.0,1.0,1.0,1.0,1.0};
+double [5] b = {1.0,1.0,1.0,1.0,1.0};
+
+ public Rc() {
+     active {
+        sustain {|
+           y := a * (x..)^t + b * (pre(y..))^t;           
+        |};
+   };
+  };
+#endif
+
+#ifdef T111
+// trace
+// x(1.0) -> y(1.000000)
+// x(2.0) -> y(4.000000)
+// x(3.0) -> y(11.000000)
+// x(4.0) -> y(26.000000)
+// x(5.0) -> y(57.000000)
+// x(6.0) -> y(119.000000)
+// x(7.0) -> y(242.000000)
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double> y    = new Signal<double>(new SimOutput());
+
+double [5] a = {1.0,1.0,1.0,1.0,1.0};
+double [5] b = {1.0,1.0,1.0,1.0,1.0};
+
+ public Rc() {
+     active {
+        sustain {|
+           y := a * (x..)^t + b * (pre(y..)^t);           
+        |};
+   };
+  };
+#endif
+
+#ifdef T112
+// trace
+// x(1.0) -> y(1.000000)
+// x(2.0) -> y(4.000000)
+// x(3.0) -> y(11.000000)
+// x(4.0) -> y(26.000000)
+// x(5.0) -> y(57.000000)
+// x(6.0) -> y(119.000000)
+// x(7.0) -> y(242.000000)
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double> y    = new Signal<double>(new SimOutput());
+
+double [5] a = {1.0,1.0,1.0,1.0,1.0};
+double [5] b = {1.0,1.0,1.0,1.0,1.0};
+
+ public Rc() {
+     active {
+        sustain {|
+           y := a * (x..)^t + b * (pre((y..)^t));           
+        |};
+   };
+  };
+#endif
+
+#ifdef T12
+// trace
+// x(1.0) -> y0(1.000000) y1(2.000000) y2(3.000000) y3(4.000000) 
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double[5]> y    = new Signal<double[5]>();
+Signal<double> y0   = new Signal<double>(new SimOutput()); 
+Signal<double> y1   = new Signal<double>(new SimOutput()); 
+Signal<double> y2   = new Signal<double>(new SimOutput()); 
+Signal<double> y3   = new Signal<double>(new SimOutput()); 
+
+
+double [5] a = {1.0,2.0,3.0,4.0,5.0};
+double [5] b = {1.0,1.0,1.0,1.0,1.0};
+
+ public Rc() {
+     active {
+        sustain {|
+           y := a .* b;           
+           y0 := y[0];
+           y1 := y[1];
+           y2 := y[2];
+           y3 := y[3];
+        |};
+   };
+  };
+#endif
+
+#ifdef T13
+// trace
+// x(1.0) -> y0(1.000000) y1(0.000000) y2(0.000000) y3(0.000000) 
+// x(2.0) -> y0(2.000000) y1(1.000000) y2(0.000000) y3(0.000000) 
+// x(3.0) -> y0(3.000000) y1(2.000000) y2(1.000000) y3(0.000000) 
+// x(4.0) -> y0(4.000000) y1(3.000000) y2(2.000000) y3(1.000000) 
+// x(5.0) -> y0(5.000000) y1(4.000000) y2(3.000000) y3(2.000000) 
+// x(6.0) -> y0(6.000000) y1(5.000000) y2(4.000000) y3(3.000000) 
+// x(7.0) -> y0(7.000000) y1(6.000000) y2(5.000000) y3(4.000000) 
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double[5]> y    = new Signal<double[5]>();
+Signal<double> y0   = new Signal<double>(new SimOutput()); 
+Signal<double> y1   = new Signal<double>(new SimOutput()); 
+Signal<double> y2   = new Signal<double>(new SimOutput()); 
+Signal<double> y3   = new Signal<double>(new SimOutput()); 
+
+double [5] a = {1.0,1.0,1.0,1.0,1.0};
+double [5] b = {1.0,1.0,1.0,1.0,1.0};
+
+ public Rc() {
+     active {
+        sustain {|
+           y := a .* x..;           
+           y0 := y[0];
+           y1 := y[1];
+           y2 := y[2];
+           y3 := y[3];
+        |};
+   };
+  };
+#endif
+
+#ifdef T14
+// trace
+// x(1.0) -> y0(1.000000) y1(2.000000) y2(3.000000) y3(4.000000) 
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double[5]> y    = new Signal<double[5]>();
+Signal<double> y0   = new Signal<double>(new SimOutput()); 
+Signal<double> y1   = new Signal<double>(new SimOutput()); 
+Signal<double> y2   = new Signal<double>(new SimOutput()); 
+Signal<double> y3   = new Signal<double>(new SimOutput()); 
+
+
+double [5] a = {1.0,2.0,3.0,4.0,5.0};
+double [5] b = {1.0,1.0,1.0,1.0,1.0};
+
+ public Rc() {
+     active {
+        sustain {|
+           y := b .* a;           
+           y0 := y[0];
+           y1 := y[1];
+           y2 := y[2];
+           y3 := y[3];
+        |};
+   };
+  };
+#endif
+
+#ifdef T15
+// trace
+// x(1.0) -> y0(1.000000) y1(2.000000) y2(3.000000) y3(4.000000) 
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double[5]> y    = new Signal<double[5]>();
+Signal<double> y0   = new Signal<double>(new SimOutput()); 
+Signal<double> y1   = new Signal<double>(new SimOutput()); 
+Signal<double> y2   = new Signal<double>(new SimOutput()); 
+Signal<double> y3   = new Signal<double>(new SimOutput()); 
+
+
+double [5] a = {1.0,2.0,3.0,4.0,5.0};
+
+ public Rc() {
+     active {
+        sustain {|
+           y := a .* 1.0;           
+           y0 := y[0];
+           y1 := y[1];
+           y2 := y[2];
+           y3 := y[3];
+        |};
+   };
+  };
+#endif
+
+#ifdef T16
+// trace
+// x(1.0) -> y0(1.000000) y1(2.000000) y2(3.000000) y3(4.000000) 
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double[5]> y    = new Signal<double[5]>();
+Signal<double> y0   = new Signal<double>(new SimOutput()); 
+Signal<double> y1   = new Signal<double>(new SimOutput()); 
+Signal<double> y2   = new Signal<double>(new SimOutput()); 
+Signal<double> y3   = new Signal<double>(new SimOutput()); 
+
+
+double [5] a = {1.0,2.0,3.0,4.0,5.0};
+
+ public Rc() {
+     active {
+        sustain {|
+           y := 1.0 .* a;           
+           y0 := y[0];
+           y1 := y[1];
+           y2 := y[2];
+           y3 := y[3];
+        |};
+   };
+  };
+#endif
+
+#ifdef T17
+// trace
+// x(1.0) -> y0(1.000000) y1(2.000000) y2(3.000000) y3(4.000000) 
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double[5]> y    = new Signal<double[5]>();
+Signal<double> y0   = new Signal<double>(new SimOutput()); 
+Signal<double> y1   = new Signal<double>(new SimOutput()); 
+Signal<double> y2   = new Signal<double>(new SimOutput()); 
+Signal<double> y3   = new Signal<double>(new SimOutput()); 
+
+
+double [5] a = {1.0,2.0,3.0,4.0,5.0};
+
+ public Rc() {
+     active {
+        sustain {|
+           y := a * 1.0;           
+           y0 := y[0];
+           y1 := y[1];
+           y2 := y[2];
+           y3 := y[3];
+        |};
+   };
+  };
+#endif
+
+#ifdef T18
+// trace
+// x(1.0) -> y0(1.000000) y1(2.000000) y2(3.000000) y3(4.000000) 
+
+Sensor<double> x = new Sensor<double>(new SimInput());
+
+Signal<double[5]> y    = new Signal<double[5]>();
+Signal<double> y0   = new Signal<double>(new SimOutput()); 
+Signal<double> y1   = new Signal<double>(new SimOutput()); 
+Signal<double> y2   = new Signal<double>(new SimOutput()); 
+Signal<double> y3   = new Signal<double>(new SimOutput()); 
+
+
+double [5] a = {1.0,2.0,3.0,4.0,5.0};
+
+ public Rc() {
+     active {
+        sustain {|
+           y := 1.0 * a;           
+           y0 := y[0];
+           y1 := y[1];
+           y2 := y[2];
+           y3 := y[3];
+        |};
+   };
+  };
+#endif
+
+}

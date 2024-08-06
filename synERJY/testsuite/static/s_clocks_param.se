@@ -1,0 +1,227 @@
+// test-flags O = None true, E = None true
+
+class Rc {
+
+  public Rc () {
+      active {};
+  };
+
+
+#ifdef O1
+  Sensor<int>         i1 = new Sensor<int>(new SimInput());
+  Signal{i1==0}<bool> o1 = new Signal<bool>(new SimOutput());
+
+  private Rc1 rc1 = new Rc1(i1,o1);
+#endif
+
+#ifdef E1
+// [[InconsistentClocks]]
+  Sensor<int>         i1 = new Sensor<int>(new SimInput());
+  Signal{i1==0}<bool> o1 = new Signal<bool>(new SimOutput());
+
+  private Rc1 rc1 = new Rc1(i1,o1);
+#endif
+
+#ifdef O2
+  Sensor<int>          i1 = new Sensor<int>(new SimInput());
+  Signal{i1==0}<int>   o1 = new Signal<int>(new SimOutput());
+  Signal{o1==o1}<bool> o2 = new Signal<bool>(new SimOutput());
+
+  private Rc1 rc1 = new Rc1(i1,o1,o2);
+#endif
+
+#ifdef E2
+// [[ClocksInconsistent]]
+  Sensor<int>          i1 = new Sensor<int>(new SimInput());
+  Signal{i1==0}<int>  o1 = new Signal<int>(new SimOutput());
+  Signal{o1==o1}<bool> o2 = new Signal<bool>(new SimOutput());
+
+  private Rc1 rc1 = new Rc1(i1,o1,o2);
+#endif
+
+#ifdef O3  
+  Sensor<int>      i1 = new Sensor<int>(new SimInput());
+  Signal{i1==0}<int> o1 = new Signal<int>(new SimOutput());
+  Signal{o1==o1}<bool> o2 = new Signal<bool>(new SimOutput());
+
+  private Rc1 rc1 = new Rc1(i1,o1,o2);
+#endif
+
+#ifdef O4
+  Sensor<int>      i1 = new Sensor<int>(new SimInput());
+  Signal{i1==0}<int> o1 = new Signal<int>(new SimOutput());
+  Signal{o1==o1}<bool> o2 = new Signal<bool>(new SimOutput());
+
+  private Rc1 rc1 = new Rc1(i1,o1,o2);
+#endif
+
+#ifdef O5
+  Sensor<int>      i1 = new Sensor<int>(new SimInput());
+  Signal{i1==0}<int> o1 = new Signal<int>(new SimOutput());
+  Signal{o1==o1}<bool> o2 = new Signal<bool>(new SimOutput());
+
+  private Rc1 rc1 = new Rc1(i1,o1,o2);
+#endif
+
+#ifdef E3
+// [[InconsistentClocks]]
+  Sensor<int>      i1 = new Sensor<int>(new SimInput());
+  Signal{i1==0}<int> o1 = new Signal<int>(new SimOutput());
+  Signal{o1==o1}<bool> o2 = new Signal<bool>(new SimOutput());
+
+  private Rc1 rc1 = new Rc1(i1,o1,o2);
+#endif
+
+} // end class Rc
+
+#ifdef O1
+class Rc1 {
+
+  public Rc1 (Sensor<int> i1, Signal{i1==0}<bool> o1) {
+      rc1_i1 = i1;
+      rc1_o1 = o1;
+      active {};
+   };
+
+  Sensor<int>           rc1_i1;
+  Signal{rc1_i1==0}<bool> rc1_o1;
+#endif
+
+#ifdef E1
+// test case continuation
+class Rc1 {
+
+  public Rc1 (Sensor<int> i1, Signal{i1==0}<bool> o1) {
+      rc1_i1 = i1;
+      rc1_o1 = o1;
+      active {};
+   };
+
+  Sensor<int>  rc1_i1;
+  Signal<bool> rc1_o1;
+#endif
+
+#ifdef O2
+// test case continuation
+class Rc1 {
+
+  public Rc1 (Sensor<int> i1, 
+              Signal{i1==0}<int> o1,
+              Signal{o1==o1}<bool> o2) {
+      rc1_i1 = i1;
+      rc1_o1 = o1;
+      rc1_o2 = o2;
+      active {};
+   };
+
+  Sensor<int>              rc1_i1;
+  Signal{rc1_i1==0}<int>     rc1_o1;
+  Signal{rc1_o1==rc1_o1}<bool> rc1_o2;
+#endif
+
+#ifdef E2
+// test case continuation
+class Rc1 {
+
+  public Rc1 (Sensor<int>  i1, 
+              Signal<int>  o1,
+              Signal<bool> o2) {
+      rc1_i1 = i1;
+      rc1_o1 = o1;
+      rc1_o2 = o2;
+      active {};
+   };
+
+  Sensor<int>              rc1_i1;
+  Signal{rc1_i1==0}<int>     rc1_o1;
+  Signal{rc1_o1==rc1_i1}<bool> rc1_o2;
+#endif
+
+#ifdef O3
+// test case continuation
+class Rc1 {
+
+  public Rc1 (Sensor<int> i1, 
+              Signal{i1==0}<int> o1,
+              Signal{o1==o1}<bool> o2) {
+      rc1_i1 = i1;
+      rc1_o1 = o1;
+      rc1_o2 = o2;
+      active {};
+   };
+
+  Sensor<int>                rc1_i1;
+  Signal{rc1_i1==0}<int>       rc1_o1;
+  Signal{rc1_o1==rc1_o1}<bool> rc1_o2;
+
+  private Rc2 rc2 = new Rc2(rc1_i1,rc1_o1,rc1_o2);
+#endif
+
+#ifdef O4
+// test case continuation
+class Rc1 {
+
+  public Rc1 (Sensor<int> i1, 
+              Signal{i1==0}<int> o1,
+              Signal{o1==o1}<bool> o2) {
+      rc1_i1 = i1;
+      rc1_o1 = o1;
+      active {};
+  };
+
+  Sensor<int>              rc1_i1;
+  Signal{rc1_i1==0}<int>     rc1_o1;
+  Signal{rc1_o1==rc1_o1}<bool> rc1_o2 = new Signal<bool>();
+#endif
+
+#ifdef O5
+// test case continuation
+class Rc1 {
+
+  public Rc1 (Sensor<int> i1, 
+              Signal{i1==0}<int> o1,
+              Signal{o1==o1}<bool> o2) {
+      rc1_i1 = i1;
+      active {};
+   };
+
+  Sensor<int>              rc1_i1;
+  Signal{rc1_i1==0}<int>     rc1_o1 = new Signal<int>();
+  Signal{rc1_o1==rc1_o1}<bool> rc1_o2 = new Signal<bool>();
+#endif
+
+#ifdef E3
+// test case continuation
+class Rc1 {
+
+  public Rc1 (Sensor<int>  i1, 
+              Signal<int>  o1,
+              Signal<bool> o2) {
+      rc1_i1 = i1;
+      rc1_o2 = o2;
+      active {};
+   };
+
+  Sensor<int>              rc1_i1;
+  Signal{rc1_i1==0}<int>     rc1_o1 = new Signal<int>();
+  Signal{rc1_o1==rc1_o1}<bool> rc1_o2;
+#endif
+
+} //end class Rc1
+
+class Rc2 {
+
+  public Rc2 (Sensor<int>          i1,
+              Signal{i1==0}<int>     o1,
+              Signal{o1==rc2_o1}<bool> o2) {
+      rc2_i1 = i1;
+      rc2_o1 = o1;
+      rc2_o2 = o2;
+      active {};
+  };
+
+  Sensor<int>              rc2_i1;
+  Signal{rc2_i1==0}<int>     rc2_o1;
+  Signal{rc2_o1==rc2_o1}<bool> rc2_o2;
+
+} //end class Rc2

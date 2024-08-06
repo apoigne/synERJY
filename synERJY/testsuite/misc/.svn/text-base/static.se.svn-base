@@ -1,0 +1,17 @@
+class Rc {
+  public Rc () {
+    active {};
+  };
+  
+  static native("static_c_int") int defined_in_C;
+
+  static native("setIt") void setIt();
+  static native("tstIt") void tstIt(int i);
+
+  public static void main (String[] args) {
+    setIt();
+    defined_in_C = 42;
+    tstIt((int)21+21);
+  };
+
+}

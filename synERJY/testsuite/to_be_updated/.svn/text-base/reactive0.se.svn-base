@@ -1,0 +1,57 @@
+class Rc
+
+run (e : exception_enum) is creation do reactive loop; };
+
+signal O1            is public;
+signal O2            is public;
+signal O3            is public;
+signal O4            is public;
+
+signal I1            is public const;
+signal I2            is public const;
+signal I3            is public const;
+signal I4            is public const;
+
+#ifdef T1
+// trace
+// I1          -> O1 O2
+// I1          ->
+//
+// trace
+//             ->
+// I1          -> O1 O2
+// I1          ->
+//
+// trace
+//             ->
+//             ->
+//             ->
+// I1          -> O1 O2
+// I1          ->
+//
+e1 is reactive
+   do
+     await ?I1; emit O1; emit O2
+   };
+#endif
+
+#ifdef T2
+// trace
+// I1          ->
+// I1          -> O1
+// I1          ->
+//
+// trace
+//             ->
+//             ->
+//             ->
+// I1          -> O1
+// I1          ->
+//
+e1 is reactive
+   do
+     await next ?I1; emit O1;
+   };
+#endif
+
+}

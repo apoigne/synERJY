@@ -1,0 +1,28 @@
+reactive class Sig1
+input SIG1 (i1:int;i2,i3:bool;i4,i5,i6:int);
+}
+
+reactive class Sig2
+
+#ifdef OK
+input SIG2 = b.SIG1(k1:int;i2,k3:bool;i4,k5,i6:int);
+input SIG1 = b.SIG1(k1:int;i2,k3:bool;i4,k5,i6:int);
+#endif
+#ifdef E1
+input SIG2 = b.SIG1(k1:int;i2,i2:bool;i4,k5,i6:int);
+#endif
+#ifdef E2
+input SIG2 = c.SIG1(k1:int;i2,k3:bool;i4,k5,i6:int);
+#endif
+#ifdef E3
+input SIG2 = b.SIG1(k1:int;i2:bool;i4,k5,i6:int);
+#endif
+#ifdef E4
+input SIG2 = SIG1(k1:int;i2,k3:bool;i4,k5,i6:int);
+#endif
+#ifdef E5
+input SIG2 = b.SIG2(k1:int;i2,k3:bool;i4,k5,i6:int);
+#endif
+
+Sig1 b is reactive;
+}

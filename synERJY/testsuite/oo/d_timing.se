@@ -1,0 +1,294 @@
+class TrafficLight {
+
+#ifdef T1
+// trace
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+// button -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_red
+//  -> car_red ped_red
+// button -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+public static final time timing = 1sec;
+#endif
+
+#ifdef T2
+// trace
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+// button -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_green
+//  -> car_red ped_green
+// button -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+public static final time timing = 700msec;
+#endif
+
+  public static final time ped_cross     = 9sec;
+  public static final time ped_clear     = 7sec;
+  public static final time car_clear     = 5sec;
+  public static final time car_yel2green = 2sec;
+  public static final time car_yel2red   = 3sec;
+  public static final time car_mingr     = 11sec;
+
+  public TrafficLight () {
+    ped = new PedController(ped2green,ped_red,ped_green);
+    car = new CarController(car2green,car2red,car_red,car_yellow,car_green);
+
+    active {
+      //---------- the controller for the safety-related part
+      loop {
+        [[ await ?button;
+        || await TrafficLight.ped_clear;
+           emit car2green;
+           await TrafficLight.car_mingr;
+        ]];
+        next;
+        emit car2red;   
+        await ?car_red;
+        await TrafficLight.car_clear;
+        emit ped2green;
+        await ?ped_green;
+        await ?ped_red;
+      };
+    };
+  };
+
+  PedController          ped;
+  CarController          car;
+
+  Sensor button  = new Sensor(new SimInput());
+
+  Signal car_red    = new Signal(new SimOutput());
+  Signal car_yellow = new Signal(new SimOutput());
+  Signal car_green  = new Signal(new SimOutput());
+
+  Signal ped_red    = new Signal(new SimOutput());
+  Signal ped_green  = new Signal(new SimOutput());
+
+  Signal car2green  = new Signal();
+  Signal car2red    = new Signal();
+  Signal ped2green  = new Signal();
+}
+
+//---------- the controller for the car-related part of the traffic lights  ---
+class CarController {
+  public CarController( Sensor _to_green, Sensor _to_red,
+                        Signal _red, Signal _yellow, Signal _green ) {
+
+    to_green = _to_green;
+    to_red   = _to_red;
+    red      = _red;
+    yellow   = _yellow;
+    green    = _green;
+    active {
+      automaton{
+        init
+          { emit red; next state is_red; };
+
+        state is_red
+          during{ emit red; }
+          when (?to_green) { next state is_redyel; };
+
+        state is_redyel
+          during{ emit red; emit yellow; }
+          when (TrafficLight.car_yel2green) { next state is_green; };
+
+        state is_green
+          during{ emit green; }
+          when (?to_red) { next state is_yel; };
+
+        state is_yel
+          during{ emit yellow; }
+          when (TrafficLight.car_yel2red) { next state is_red; };
+      };
+    };
+  };
+
+  Sensor to_green;
+  Sensor to_red;
+
+  Signal red;
+  Signal yellow;
+  Signal green;
+
+}
+
+//---------- the controller for the ped-related part of the traffic lights ----
+class PedController {
+  public PedController( Sensor _to_green, Signal _red, Signal _green ) {
+
+    to_green    = _to_green;
+    red         = _red;
+    green       = _green;
+    
+    active {
+      automaton{
+        init
+          { emit red; next state is_red; };
+
+        state is_red
+          during{ emit red; }
+          when (?to_green) { next state is_green; };
+
+        state is_green
+          during{ emit green; }
+          when (TrafficLight.ped_cross) { next state is_red; };
+      };
+    };
+  };
+
+  Sensor to_green;
+
+  Signal red;
+  Signal green;
+
+}

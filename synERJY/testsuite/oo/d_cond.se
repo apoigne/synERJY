@@ -1,0 +1,50 @@
+#ifdef T1
+// trace
+// -> out(1)
+// -> out(1)
+// -> out(2)
+// -> out(2)
+// -> out(3)
+// -> out(4)
+// -> out(5)
+// -> out(3)
+// -> out(6)
+// -> out(0)
+// ->
+#endif
+
+class Rc {
+
+public Rc () {
+  active {
+    emit out(f());next;emit out(f());next;emit out(f());next;
+    emit out(f());next;emit out(f());next;emit out(f());next;
+    emit out(f());next;emit out(f());next;emit out(f());next;
+    emit out(f());next;
+  };
+};
+
+Signal<int> out = new Signal<int>(new SimOutput());
+
+int f () {
+  pos++;
+  if (pos==1) { r = j == 3 ? k - 4 : i; } else
+  if (pos==2) { r = j == 3 ? (int)1 : i; } else
+  if (pos==3) { r = j != 3 ? i - 1 : i; } else
+  if (pos==4) { r = (j != 3) ? i - 1 : i; } else
+  if (pos==5) { r = j==3 ? j : k==5 ? k - 1 : k; } else
+  if (pos==6) { r = j==2 ? 3 : k==5 ? j+1 : k; } else
+  if (pos==7) { r = j==2 ? j : k==2+i ? k : i+j; } else
+  if (pos==8) { r = j==3 ? i+1 : k==2+i ? i+2 : i+1+2; } else
+  if (pos==9) { r = (j==3 ? i+1 : k==2+i ? 2+i : 1+i)+j; } else
+              { return 0; };
+  return r;
+};
+
+int r;
+int i = 2;
+int j = 3;
+int k = 5;
+int pos = 0;
+
+}

@@ -1,0 +1,81 @@
+class Xc
+int a is protected do return 1 };
+int b is protected do return 2 };
+int c is protected do return 4 };
+int d is protected do return 8 };
+}
+
+class Yc
+inherit Xc redefine b;
+int b is protected do return 32 };
+int e is protected do return 64 };
+int f is protected do return 128 };
+int g is protected do return 256 };
+
+int b1 is protected
+  do
+// return super[Xc].b +  b
+    return 2 +  b
+//            2 + 32
+  };
+}
+
+class Zc
+inherit Xc redefine c;
+int c is protected do return 512 };
+int e is protected do return 1024 };
+int h is protected do return 2048 };
+int i is protected do return 4096 };
+}
+
+class Cc
+inherit Yc redefine b,c,d,e,f;
+inherit Zc redefine b,c,d,e,h;
+make is public creation
+  () {};
+
+int b is protected do return 8192 };
+int c is protected do return 16384 };
+int d is protected do return 32768 };
+int e is protected do return 65536 };
+int f is protected do return 131072 };
+int h is protected do return 262144 };
+
+int b2 is protected
+  do
+// return super[Yc].b + super[Zc].b +    b
+    return 32 +           2 +    b
+//           32 +           2 + 8192
+  };
+
+bool ok1,ok2;
+
+bool redef is public  unsafe const
+  do
+    ok1 = (a +    b +     c +     d +     e +      f +   g +      h) =
+           (1 + 8192 + 16384 + 32768 + 65536 + 131072 + 256 + 262144);
+    ok2 = (b1 + b2) = ( 2 + 32 + 32 + 2 + 8192);
+    return ok1 & ok2
+  };
+}
+
+class Rc
+
+run( exception_enum e ) is protected creation
+  do
+    c = New[Cc].make;
+    o = c.redef;
+  };
+
+signal OK is public;
+Cc c;
+bool o;
+
+redef is reactive
+  do
+    if o then
+       emit OK
+    }
+  };
+
+}

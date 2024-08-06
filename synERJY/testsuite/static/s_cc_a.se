@@ -1,0 +1,384 @@
+// test-flags O = None true, E = None true
+
+class Rc {
+
+  public Rc () {
+      active { aut1();
+      };
+  };
+
+  Sensor on = new Sensor(new SimInput());
+  Sensor off = new Sensor(new SimInput());
+  Sensor a1 = new Sensor(new SimInput());
+  Sensor a2 = new Sensor(new SimInput());
+  Signal x = new Signal(new SimOutput());
+
+  int v;
+  private void set (int y) {  v = y;  };
+  private int  get ()      { return v; };
+  private void incr ()     { v = v + 1; };
+  private void decr ()     { v = v - 1; };
+  private bool is_zero ()  { return  (v == 0); };
+
+#ifdef E1
+// [[CausalityCycle]]
+
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                when (?on) { decr(); next state s2; };
+
+            state s2
+                do { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef E2
+// [[CausalityCycle]]
+
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                when (?on) { decr(); next state s2; };
+
+            state s2
+                entry { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef O1
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                when (?on) { decr(); next state s2; };
+
+            state s2
+                when (?off) {incr(); next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef E3
+// [[CausalityCycle]]
+
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                exit { decr(); }
+                when (?on) { next state s2; };
+
+            state s2
+                do { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef E4
+// [[CausalityCycle]]
+
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                exit { decr(); }
+                when (?on) { next state s2; };
+
+            state s2
+                entry { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef O2
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                exit { decr(); }
+                when (?on) { next state s2; };
+
+            state s2
+                when (?off) {incr(); next state s1; };
+
+        };
+    };
+#endif
+
+
+#ifdef E5
+// [[CausalityCycle]]
+
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                do { next; decr(); }
+                when (?on) { next state s2; };
+
+            state s2
+                do { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef E6
+// [[CausalityCycle]]
+
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                do { next; decr(); }
+                when (?on) { next state s2; };
+
+            state s2
+                entry { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef O3
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                do { next; decr(); }
+                when (?on) { next state s2; };
+
+            state s2
+                when (?off) {incr(); next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef O4
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                do { decr(); }
+                when (?on) { next state s2; };
+
+            state s2
+                do { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef E7
+// [[CausalityCycle]]
+
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                during { decr(); }
+                when (?on) { next state s2; };
+
+            state s2
+                do { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef O5
+
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                during { decr(); }
+                when (?on) { next state s2; };
+
+            state s2
+                when (?off) { incr();next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef E8
+// [[CausalityCycle]]
+
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                do {
+                    automaton {
+                        init { next state s11; };
+                        state s11
+                            during { decr(); }
+                            when (?a1) { next state s12; };
+
+                        state s12
+                            when (?a2) { next state s11; };
+                    };
+                }
+                when (?on) { next state s2; };
+
+            state s2
+                do { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef O6
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                do {
+                    automaton {
+                        init { next state s11; };
+                        state s11
+                            entry { decr(); }
+                            when (?a1) { next state s12; };
+
+                        state s12
+                            when (?a2) { next state s11; };
+                    };
+                }
+                when (?on) { next state s2; };
+
+            state s2
+                do { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef E9
+// [[CausalityCycle]]
+
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                do {
+                    automaton {
+                        init { next state s11; };
+                        state s11
+                            do { next;decr(); }
+                            when (?a1) { next state s12; };
+
+                        state s12
+                            when (?a2) { next state s11; };
+                    };
+                }
+                when (?on) { next state s2; };
+
+            state s2
+                do { incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+#ifdef O7
+    private void aut1 () {
+
+        automaton {
+
+            init { next state s1; };
+
+            state s1
+                do {
+                    automaton {
+                        init { next state s11; };
+                        state s11
+                            do { next;decr(); }
+                            when (?a1) { next state s12; };
+
+                        state s12
+                            when (?a2) { next state s11; };
+                    };
+                }
+                when (?on) { next state s2; };
+
+            state s2
+                do { next;incr(); }
+                when (?off) { next state s1; };
+
+        };
+    };
+#endif
+
+  precedence {
+    incr() < decr();
+  };
+
+}

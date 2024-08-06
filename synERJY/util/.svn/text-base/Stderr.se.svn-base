@@ -1,0 +1,45 @@
+// to use this class, #include $SE_HOME/target/unix/include/se_dbg.h
+// you can do this with the resource-file command "set hfile += ..." for example
+
+class Stderr { // this class supplies clients with output to ''stderr''.
+               // prefix ''w''  means: a space, then printed value
+               // suffix ''nl'' means: printed value, then newline
+
+private Stderr () {};
+
+public native("dbg_nl") static void nl ();
+public native("dbg_w")  static void w  ();
+
+public native("dbg_i")   static void i    (int p);
+public native("dbg_inl") static void inl  (int p);
+public native("dbg_wi")  static void wi   (int p);
+
+public native("dbg_c")   static void c    (char p);
+public native("dbg_cnl") static void cnl  (char p);
+public native("dbg_wc")  static void wc   (char p);
+
+public native("dbg_r")   static void r    (float p);
+public native("dbg_rnl") static void rnl  (float p);
+public native("dbg_wr")  static void wr   (float p);
+
+public native("dbg_d")   static void d    (double p);
+public native("dbg_dnl") static void dnl  (double p);
+public native("dbg_wd")  static void wd   (double p);
+
+public native("dbg_by")   static void by   (byte p);
+public native("dbg_bynl") static void bynl (byte p);
+public native("dbg_wby")  static void wby  (byte p);
+
+public native("dbg_b")   static void b    (boolean p);
+public native("dbg_bnl") static void bnl  (boolean p);
+public native("dbg_wb")  static void wb   (boolean p);
+
+public native("dbg_s")   static void s    (String p);
+public native("dbg_snl") static void snl  (String p);
+public native("dbg_ws")  static void ws   (String p);
+
+public native("dbg_t")   static void t    (time p);
+public native("dbg_tnl") static void tnl  (time p);
+public native("dbg_wt")  static void wt   (time p);
+
+}

@@ -1,0 +1,27 @@
+class Store<T> {
+public Store() {};
+public  T x;
+public void putx(T p) { x = p; };
+public T getx() { return x; };
+}
+
+class Rc {
+  double[] cd = {1.0,2.0,3.0};
+  double[] cc;
+  Store<int> i;
+  Store<double[]> d;
+
+  Signal<int> oi = new Signal<int>(new SimOutput());
+  Signal<double> od = new Signal<double>(new SimOutput());
+
+  public Rc() {
+    i = new Store<int>();
+    d = new Store<double[]>();
+    active {
+      i.putx(8); emit oi(i.getx());
+      next;
+      cc = d.getx(); emit od(cc[1]);
+      next;
+    };
+  };
+}

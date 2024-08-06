@@ -1,0 +1,409 @@
+\chapter{Validation}\label{validation}
+
+\paragraph{A Priori}
+
+It is a matter of a long lasting discussion what benefits may be
+expected by validation techniques.  We adhere to the pragmatic point
+of view that any kind of validation, let it be verification or testing, increases our confidence that a program might be reasonably well behaved.  
+
+Validation means that we demonstrate that the behaviour of a program
+complies with some sort of specification, let it be a formal 
+specification in terms of some logic or a test set. Any inconsistency 
+between specification and behaviour reaveals some missing 
+understanding of what either the specification expresses, or how the 
+program behaves. By experience, both may be wrong. Even if the program 
+satisfies the specification absence of errors is not guaranteed.
+Both may follow the same lines of thought generating the same mistakes.
+However, independently designed specifications provide a different 
+view of a problem, even if the program and the specification is 
+designed by the same person. In that validation is added value.
+
+\se\ supports formal verication of essentially the control structure
+of programs using model checking (Section~\ref{verification}),  
+and it supports testing on a yet rudimentary
+basis.
+(Section~\ref{testing}).
+
+\section{Formal Verification by Model Checking}\label{verification}
+
+\paragraph{The principle.} The goal of formal verification to prove an assertion $\phi$ for a given program. As an example we consider a part of a trivial controller
+for traffic light. 
+\BEP
+  loop \{
+    [[ await ?button;    // \textit{demand to cross by a pedestrian} 
+    || emit car\_to\_green;
+       await 30sec;     // \textit{car has a green light for > 30sec}
+    ]];
+    emit car\_to\_yellow;
+    await 3sec;        // \textit{time for cars to clear the road}   
+    emit car\_to\_red;
+    await 3sec;        // \textit{safety delay}
+    emit ped\_to\_green;
+    await 20sec;        // \textit{Time for pedestrians to cross}
+    emit ped\_to\_red;
+    await 5sec;        // \textit{safety delay}   
+    emit car\_to\_yellow;
+    await 2sec;        // \textit{safety delay};
+\EEP
+Now we would like to check, for example,
+\begin{enumerate}
+    \item[(i)]  that the traffic light for both cars and pedestrians are
+    never green at the same time (\emph{Safety condition}), or
+
+	\item[(ii)] whether the pedestrian light eventually turns green after
+	the button has been pressed. (\emph{Liveness condition}).
+
+	\item[(iii)] the light always eventually turns green. (\emph{Liveness condition}).
+\end{enumerate}
+
+There are a number of methods to provide answers to such questions.
+Pragmatically one has to consider that (i) such methods should be 
+sufficiently efficient and that (ii) they should be
+applicable for a non-specialist. It seems that from today's viewpoint
+\emph{Model Checking }~\cite{Clarke} best complies with both these
+requirements.
+
+Model checking checks whether an assertion holds with regard to a particular
+model. In case of a program as above this means that an assertion must
+hold in any state that can be reached when executing the program. The 
+reachable states of the piece of code above are given by the following
+diagram (omitting the emitted signals)
+\begin{center}
+    {\tt 
+     \tiny  
+     \setlength{\unitlength}{0.8pt}
+     \thinlines    
+        \begin{picture}(210,100)
+            \put(0,10){\circle{14}}
+            \put(-4,9){gr}
+            \put(5,12){\vector(1,0){36}}
+            \put(12,0){>30sec}
+            \put(0,55){\vector(0,-1){36}}
+            \put(-30,35){?button}
+            \put(50,10){\circle{14}}
+            \put(62,0){>30sec}
+            \put(55,10){\vector(1,0){40}}
+            \put(50,55){\vector(0,-1){40}}
+            \put(20,35){?button}
+            \put(100,10){\circle{10}}
+            \put(105,10){\vector(1,0){40}}
+            \put(0,60){\circle{10}}
+            \put(5,60){\vector(1,0){40}}
+            \put(12,50){>5sec}
+            \put(50,60){\circle{10}}
+            \put(110,0){>3sec}
+            \put(150,10){\circle{10}}
+            \put(155,10){\vector(1,0){40}}
+            \put(162,0){>20sec}
+            \put(200,10){\circle{10}}
+            \put(210,30){>5sec}
+            \put(200,10){\circle{10}}
+            \put(200,15){\vector(0,1){70}}
+            \put(200,90){\circle{10}}
+            \put(100,95){>2sec}
+            \put(195,90){\line(-1,0){195}} 
+            \put(0,90){\vector(0,-1){25}}            
+      \end{picture}
+    }
+\end{center}
+We indicate the status of the light by the combination of ``r'' and ``g'' in
+the circles where car light is on the left and the pedestrian light on the right: e.g. ``gr'' states that the car light is green and the pedestrian light
+is red. If we believe that that diagram above gives a fair account of what
+the piece of program does, then a simple inspection seems to show that never both the lights are green. Similarly, it seems to be obvious that pedestrians never get ``starved''. However, in a big system such inspection is hardly manageable and asks for automation.
+
+Actually, if we would apply model checking we would find that assertion (i) is
+violated. Though the visual inspection seems to prove the assertion, the picture does not tell about initialisation: both traffic lights may be green when starting execution of the code fragment. Prefixing with 
+\BEP
+  emit car\_to\_red;
+  emit ped\_to\_red;
+\EEP 
+fixes this problem. However then cars may get starved when the pedestrian button is never pressed. Changing the program structure slightly hopefully helps:
+\BEP
+  emit car\_to\_red;
+  emit ped\_to\_red;
+  loop \{
+    await 5sec;        // \textit{safety delay}   
+    emit car\_to\_yellow;
+    await 2sec;        // \textit{safety delay};
+    [[ await ?button;    // \textit{demand to cross by a pedestrian} 
+    || emit car\_to\_green;
+       await 30sec;     // \textit{car has a green light for > 30sec}
+    ]];
+    emit car\_to\_yellow;
+    await 3sec;        // \textit{time for cars to clear the road}   
+    emit car\_to\_red;
+    await 3sec;        // \textit{safety delay}
+    emit ped\_to\_green;
+    await 20sec;        // \textit{Time for pedestrians to cross}
+    emit ped\_to\_red;
+\EEP
+  
+Model checking automatically constructs the space of reachable states and
+checks whether a formula or a set of formulas holds in every state. If
+this is not the case, a counter example is provided in terms of a trace.
+Model checking really got off the ground since efficient symbolic techniques
+have been developed which allow to analyse systems of industrial size.
+
+There are restrictions, however: 
+\begin{itemize}
+\item Firstly, assertions are restricted to use Boolean
+variables only, though recently systems are on the market that deal with
+enumerations or even integers. 
+\item Secondly, the complexity may grow exponentially with the size of the 
+model and the assertions. Hence model does not guarantee that assertions
+can be shown to hold within acceptable costs, though model checking can
+be applied successfully in surprisingly many cases.
+\end{itemize}
+
+
+\paragraph{Model checking for \se.}
+
+Since the control structure of \se\ is translated into a kind of sequential circuits (``Synchronous Automata'', cf. Appendix~\ref{semantics}) model checking can easily be accommodated in the development cycle. We provide a binding to
+NuSMV~\cite{NuSMV} which can be called from the programming environment.  
+
+NuSMV supports \emph{temporal logics} like CTL and LTL. These logics have temporal operators which explicitly refer to state information, e.g.
+\begin{quote}
+    \begin{itemize}
+	 \item \textbf{AG} $\phi$ - In all states the assertion $\phi$ holds, or
+    
+     \item  \textbf{AF} $\phi$ - Eventually a state will be reached in which
+         $\phi$ holds.
+    \end{itemize}
+\end{quote}
+Using this we can rephrase the assertions (i) - (iii) above::
+\begin{quote}
+    \begin{enumerate}
+        \item[(i)]  \pp{{\bf AG} !?car\_green \& ?ped\_green}
+    
+		\item[(ii)] \pp{{\bf AG} ?button $\rightarrow$ {\bf AF} ?ped\_green}
+		\item[(iii)] \pp{{\bf AG} {\bf AF} ?car\_green} 
+    \end{enumerate}
+\end{quote}
+
+We refer to the NuSMV~\cite{NuSMV} for more details. The syntax of the 
+temporal logics supported can be found in the reference manual~\cite{reference}.
+
+
+\section{Synchronous Observers}
+
+The concept of a synchronous observer offers an alternative.
+A \emph{synchronous observer}~\cite{observer}) consists of a program \pp{O}
+that runs in parallel with the program \pp{P} to be observed
+\begin{center}
+\pp{[[ P || B ]];}
+\end{center}
+The idea is now that the program and the observer share signals, but the
+observer only checks for presence and value of these signals, but never
+emits them. The observer can only emit a particular signal \pp{error}
+which is emitted if and only if some error occurs (according to the observer).
+Absence of errors may be verified by model checking the assertion\pp{{\bf AG}($\lnot$ ?error)}.
+
+Using observers one can check safety properties such as (i) 
+\begin{quote}
+\BEP
+    await (?car\_green and ?ped\_green);
+    emit error;
+\EEP
+\end{quote}
+The advantage is at hand. No second language is needed for assertions,
+and it may be easier for a programmer to use the familiar programming
+language rather than an unfamiliar logic.
+
+As a second advantage, the observer may be executed together with 
+the program at run time for redundant control, thus increasing reliability.\footnote{provided that the additional computational effort does not
+violate timing conditions.} 
+
+Synchronous observers are constrained to cover safety conditions only, i.e.
+temporal formulas which do not use the operator \pp{{\bf AF}}. However,
+synchronous observers represent a good compromise if one is only interested in safety conditions, in particular since one can avoid using a temporal logic at all.
+
+\section{Handling Data}
+
+The restriction to propositional (temporal) logic (sometimes enhanced by some integer arithmetic on a finite subsets of integers)
+ may raise the impression that model checking is not
+suitable for applications involving data. For instance, there is little hope
+to prove a property such as ``the traffic light for pedestrians eventually turns green after the pedestrian button has been pressed'' since this depends on
+the command \pp{await 5sec} which depends on data.
+
+Assume, howver, that we weaken the original proposition:
+\begin{enumerate}
+     \item[(1)] The traffic light for pedestrians eventually turns green after 
+                the pedestrian button has been pressed if we \emph{assume} that
+                all commands of the form \pp{await $x$sec} eventually terminate 
+			   after being started.
+\end{enumerate}
+This proposition abstracts from data and appears as acceptable since the original proposition was only qualitative (``eventually'').
+
+The question is how to embed such abstractions into the language. A simple
+example may provide some insight. Consider the statement
+\BEP
+    await 30sec
+\EEP
+If we would replace it by the sequence 
+\BEP
+    emit await\_30sec\_start;
+    await next ?await\_30sec\_end;
+\EEP
+then and would extend the model such that the constraint
+\begin{center}
+{\bf AG} \pp{?await\_30sec\_start $\rightarrow$ {\bf AF} ?await\_30sec\_end ) }
+\end{center}
+is holds then we should be able to prove 
+\begin{center}
+{\bf AG} \pp{?button $\rightarrow$ {\bf AF} ?ped\_green. }
+\end{center}
+
+The example provides the guideline of what subsequently will be worked out:
+\begin{itemize}
+\item Introduce additional signals - we refer to as \emph{virtual signals} - to abstract the data flow, and
+
+\item extend the behavioural model in a way that some specified constraints are satisfied.
+\end{itemize}
+
+
+\subsection{Virtual Signals}
+Of course, one does not want to rewrite the given program for doing proofs: (i) it is inconvenient, and (ii) one proves programs to be correct which do not run on the target machine. However, the idea is worthwile: try to use pure signals for data abstraction but without changing the behaviour of the program. In that these signals should be \emph{virtual}. Here labels come handy.
+
+Consider the following schematic example
+\BEP
+[[ emit x(3);
+|| await \$x < 4; emit y; 
+|| emit x(5);
+]];
+\EEP
+Now let us attach labels
+\BEP
+[[ emit x(l1::3);
+|| await (l2::\$x < 4); emit y; 
+|| emit x(5);
+]];
+\EEP
+and consider the labels as virtual signals. If we assume as constraint that \pp{l2} is present whenever \pp{l1} is present then we should, for instance, be able to prove \pp{{\bf AF} ?y} for the given piece of code provided that
+\begin{enumerate}
+\item[(i)] the condition 
+\pp{l2::\$x < 4} evaluates to true whenever the virtual signal \pp{l2} is present, and that 
+\item[(ii)] the virtual
+signal \pp{l1} is ``emitted'' whenever\\ \pp{emit x(l1::3);} is executed.
+\end{enumerate}
+
+This kind of data abstraction naturally is independent of the data abstracted meaning that we could replace the integer and Boolean expressions by arbitrary
+term $e$ and $c$ without affecting the proof (but, of course, with affecting
+the semantics.
+\BEP
+[[ emit x(l1::$e$);
+|| await (l2::$c$); emit y; 
+|| emit x(5);
+]];
+\EEP
+Thus, the simple message is: be careful using such abstractions. If we, for instance, use
+\BEP
+[[ emit x(3);
+|| await (l2::\$x < 4); emit y; 
+|| emit x(l1::5);
+]];
+\EEP
+with the proposition above we have the same result but the proven abstraction is
+semantically inconsistent with the real behaviour.
+
+Data abstraction using virtual signals extends to statements which modify data as in 
+\BEP
+[[ l1::x = 3;
+|| await (l2::x < 4); emit y; 
+]];
+\EEP
+Here the label \pp{l1} of the assignment can be used as virtual signal.
+
+\subsection{Constraints}
+Next we have to deal with constraints such as the above ``the (virtual) signal \pp{l2} is present whenever the (virtual) signal \pp{l1} is present''. 
+
+Let us at first justify the term ``constraint''. The virtual signal \pp{l2} behaves like a sensor, thus is unconstrained. It behaves like an oracle with
+regard to the proof system. Hence the statement above should constrain the behaviour in that of \pp{l2} must be present if \pp{l1} is present, but otherwise it still behaves like an oracle: it may be present or absent.
+
+This is sometimes called ``Assume-Guarantee Model Checking'' (cf. \cite{Huth}, for example). The constraints
+represent assumptions about the behaviour of the environment under which the guarantees hold. The problem is that the behaviour of the environment must be
+generated from the constraints and combined with the behaviour of the software to be verified. The generated behaviour should be the ``most general'' behaviour satisfying the constraints. It is well known that such a kind of generation only works for the universally quantified ACTL version of CTL. \se\ supports such generation of behaviour from constraints for NuSMV.
+
+\section{Dealing with Time}
+
+Though being our motivating example, this kind of data abstraction does not work for a statement such as
+\BEP
+await 30sec;
+\EEP
+since we would have to split the command in order to use the data abstraction mechanism above. 
+
+Fortunately, modern model checkers usually support variables which range over finite intervals of integers. In case of the statement \pp{await 30sec;} we can
+use a counter which, at every instant, is increased by the period time until 30 seconds have passed.
+
+Now time resolution is microseconds which defines a finite interval, though: the size of intervals is reciprocal to the speed of the model checker. The bigger the intervals are the longer a proof may take, and the less likely it is that the model checker will terminate properly. Hence it is important to keep the intervals of integers to be used small. Now if a period is specified by the static field \pp{timing}, than we may divide any time constant by the period without affecting the overall behaviour. For example, if the period is \pp{1sec} then the statement \pp{await 30sec;} needs a counter over the interval $0$ to $30$, which still is quite big with regard to a model checker but manageable.
+
+Statements such as
+\BEP
+await @button < 5sec;
+\EEP
+are more difficult to handle. Again a counter is needed to accumulate
+the time since the signal \pp{button} was present for the last time. In the example given, the context constrains the size of the counter naturally but
+in
+\BEP
+await @button1 < @button2 + 5sec;
+\EEP
+no such constraint can be deduced, one may wait forever for the condition to
+be satisfied. If this would be a safety condition which guards some emergency
+behaviour one would pleased never to start the emergency procedure, however one
+would like to check the behaviour for the case that the safety condition is violated. Hence it may be reasonable for proving to specify as an assumption 
+for how long \pp{button1} or \pp{button2} may be absent at maximum. Our notation is
+\BEP
+assumption \{
+    ax0 :: @button1 :> 20sec;
+    ax1 :: @button2 :> 30sec;
+\}
+\EEP
+meaning that \pp{button1} can be absent for at most \pp{20sec}, \pp{button2}
+for at most \pp{20sec}. If these times are exceeded model checking will result
+in an error message. As such this may be not too helpful though it may provide
+insights:  it shows that in our - admittedly very artificial - example the
+``safety condition'' is never really checked within thirty seconds, which
+one probably would not like to see for a safety condition. 
+
+The same game may be played if some fields of type \pp{time} are used. Here
+restrictions are specified using the field name
+\BEP
+assumption \{
+    ax0 :: field1 :> 20sec;
+    ax1 :: field2 :> 30sec;
+\}
+\EEP
+
+\section{Syntactical Issues: by Example}
+
+to be written
+
+\section{Testing as alternative?}\label{testing}
+
+Formal verification often implicitly assumes that a program is verified against
+a \emph{complete} specification. This appears not to be realistic in context of reactive systems since a complete specification - by experience - leaves little space for abstractions. 
+
+Most of the times only some crucial properties are checked where often it is more interesting if proofs fail rather than succeed, since design weaknesses or imprecisions are discovered.
+
+If, however, once a property is satisfied, it should (in general) remain true when a program is developed further. Hence verification needs to be redone for
+every (even little) development step. We may speak of a \emph{regression verification} in analogy to a regression test. Clearly, regression verification should be push-button and highly efficient to be acceptable. Unfortunately, model checking, though push-button, is not always sufficiently efficient so that one may rather rely on regression testing as alternative. 
+
+We consider testing and formal verification as complimentary. Even if we have proved a property of a system test cases may provide additional confirmation. Since formal verification proves properties that are abstractions of system behaviour these abstractions may be as error-prone as programs are. Additional test cases substantiate support the belief in such abstractions if the tests pass, or indicate what may be wrong with a program \emph{and} the abstractions used for proving properties. The bottom line is that the more we do to confirm our belief in a program the better. Of course testing is a means in its own right.
+
+By experience, regression tests ( or regression verification) is a must when developing embedded software since the various uncertainties one encounters at hardware level should be counterbalanced  by a solid belief in the functional correctness of the software. Synchronous programming supports systematic testing at least in three aspects:
+\begin{itemize}
+  \item  \emph{Behaviours can be reproduced} since determinism of behaviour is guaranteed. This is almost a conditio-sine-qua-non for systematic testing. 
+ 
+ \item  The generated code can easily be \emph{instrumented}. This is due to the underlying semantic paradigm (cf. \ref{semantics}) that translates the reactive code into the combination of a sequential circuit and elementary data actions triggered by signals. We indicate the idea using a familiar example  
+ % 
+ \begin{quote}
+ \BEP
+     emit car\_to\_red;
+     await ?car\_red;
+ \EEP
+ \end{quote}
+ % 
+When instrumented the generated code will not only emit the signal to be present, but the position of the emitting command will be highlighted. Similarly, when waiting the position of the respective statement is highlighted.
+The highlight commands are additional ``data operations'' with no repercussions on the behaviour, hence ``runtime'' code and instrumented code behave equivalently. This holds even for the timing conditions provided that a periodicity is specified.
+
+\item This equivalence of behaviour should extend to the code running on the respective target hardware since the code used for internal representation corresponds to a simple subset of ANSI-C (of which we hope it is correctly translated by cross compilers).
+\end{itemize}

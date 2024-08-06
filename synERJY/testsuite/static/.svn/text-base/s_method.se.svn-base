@@ -1,0 +1,26 @@
+class Rc {
+
+public Rc () {
+  active { 
+#ifdef E1
+// [[ClocksInconsistentInMethodCall]]
+    [[ c1(x1,y1); || c1(x2,y2); ]]; 
+#endif
+  };
+};
+
+Sensor  x = new Sensor(new SimInput());
+Sensor  y = new Sensor(new SimInput());
+
+
+Sensor{?x}<bool> x1 = new Sensor<bool>(new SimInput());
+Signal{?x}<bool> y1 = new Signal<bool>(new SimOutput());
+
+Sensor{?y}<bool> x2 = new Sensor<bool>(new SimInput());
+Signal{?y}<bool> y2 = new Signal<bool>(new SimOutput());
+
+void c1 (Sensor<bool> _x,Signal<bool> _y) {
+    sustain {| _y := _x; |};
+  };
+} //end class Rc
+

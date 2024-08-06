@@ -1,0 +1,52 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+Sensor OFF = new Sensor(new SimInput());
+
+Signal<bool>   OB1 = new Signal<bool>(new SimOutput());
+Signal<bool> FB1 = new Signal<bool>(new SimOutput());
+
+#ifdef T2
+// trace
+//
+//      -> FB1(true)  OB1(true)
+//      -> FB1(false) OB1(false)
+//      -> FB1(true)  OB1(true)
+//      -> FB1(false) OB1(false)
+//      -> FB1(true)  OB1(true)
+//      -> FB1(false) OB1(false)
+//
+private void c1 () {
+    [[ sustain {| FB1 := true -> ! (pre(FB1)); |};
+    || loop { emit OB1($FB1); next; };
+    ]];
+  };
+#endif
+
+#ifdef T3
+// trace
+//
+//      -> FB1(true)  OB1(true)
+//      -> FB1(false) OB1(false)
+//      -> FB1(true)  OB1(true)
+//      -> FB1(false) OB1(false)
+//      -> FB1(true)  OB1(true)
+//      -> FB1(false) OB1(false)
+// OFF  -> 
+//      -> 
+//      -> 
+//
+private void c1 () {
+    cancel strongly {
+      [[ sustain {| FB1 := true -> ! pre(FB1); |};
+      || loop { emit OB1($FB1); next; };
+      ]];
+    } when (?OFF) {};
+  };
+#endif
+
+} //end class Rc

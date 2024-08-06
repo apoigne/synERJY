@@ -1,0 +1,29 @@
+// test-flags O = None true, E = data true, confclass Rc
+class Rc { 
+    static final time timing = 100msec;
+				
+    public Rc () { 
+        active {
+        };
+    };
+    
+    TwoBitCounter counter = new TwoBitCounter();
+}
+
+// tex_start two-bit-counter
+class TwoBitCounter { 
+
+    Sensor    incr = new Sensor(new SimInput());
+    Signal elapsed = new Signal(new SimOutput());
+
+    public TwoBitCounter () { 
+        active {
+            await ?incr;
+            next;
+            await ?incr;
+            emit elapsed;
+        };
+    };
+}
+// tex_end two-bit-counter
+

@@ -1,0 +1,66 @@
+class Rc {
+
+public Rc () {
+  active { b(); };
+};
+
+Sensor BFRAME_P = new Sensor(new SimInput());
+Sensor EFRAME_P = new Sensor(new SimInput());
+Sensor BFRAME_S = new Sensor(new SimInput());
+Sensor EFRAME_S = new Sensor(new SimInput());
+Sensor VETO_P = new Sensor(new SimInput());
+Sensor VETO_S = new Sensor(new SimInput());
+
+Signal FRAME_P = new Signal(new SimOutput());
+Signal FRAME_S = new Signal(new SimOutput());
+
+Signal<bool> P_REC = new Signal<bool>();
+Signal<bool> S_REC = new Signal<bool>();
+
+Signal PRE_BF_P = new Signal();
+Signal PRE_BF_S = new Signal();
+Signal<bool> NO_COLL_WITH_P = new Signal<bool>();
+Signal<bool> NO_COLL_WITH_S = new Signal<bool>();
+Signal<bool> P_SENT = new Signal<bool>();
+Signal<bool> S_SENT = new Signal<bool>();
+
+#ifdef T1
+// trace
+//              ->
+// BFRAME_P     ->
+// EFRAME_P     ->
+//              -> FRAME_P
+//              ->
+// BFRAME_S     ->
+// EFRAME_S     ->
+//              -> FRAME_S
+//              ->
+// BFRAME_P     ->
+// EFRAME_P     ->
+// VETO_S       ->
+//              ->
+//
+
+private void b () {
+  [[ loop { next; if ($P_REC) { emit FRAME_P; }; };
+  || loop { next; if ($S_REC) { emit FRAME_S; }; };
+
+  || sustain {|
+       P_REC   :=  !?VETO_S && pre(P_SENT) && pre(NO_COLL_WITH_S);
+       P_SENT  :=  ?EFRAME_P && ?PRE_BF_P;
+       NO_COLL_WITH_S :=  ! ( ?BFRAME_S || ?EFRAME_S || ?PRE_BF_S );
+
+       S_REC   :=  ! ?VETO_P && pre(S_SENT) && pre(NO_COLL_WITH_P);
+       S_SENT  :=  ?EFRAME_S && ?PRE_BF_S;
+       NO_COLL_WITH_P :=  ! ( ?BFRAME_P || ?EFRAME_P || ?PRE_BF_P );
+     |};
+
+  || loop { await ?BFRAME_P; next; emit PRE_BF_P; next; };
+  || loop { await ?BFRAME_S; next; emit PRE_BF_S; next; };
+
+  ]];
+};
+
+#endif
+
+} //end class Rc

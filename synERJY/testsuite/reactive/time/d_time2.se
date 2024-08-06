@@ -1,0 +1,129 @@
+class Tm {
+
+static final time timing = 1sec;
+
+#ifdef T1
+// trace
+// on  -> delta(0000000)
+//   -> delta(0000000)
+//   -> delta(1000000)
+// on  -> delta(0000000)
+//   -> delta(0000000)
+//   -> delta(1000000)
+//   -> delta(2000000)
+// on  -> delta(0000000)
+//   -> delta(0000000)
+//   -> delta(1000000)
+
+public Tm () {
+  active {
+     sustain {|
+        delta := @on;
+     |}; 
+  };
+};
+#endif
+
+
+#ifdef T2
+// trace
+//   -> delta(0000000)
+//   -> delta(1000000)
+//   -> delta(2000000)
+//   -> delta(0000000) is_on
+//   -> delta(0000000)
+//   -> delta(1000000)
+//   -> delta(2000000)
+//   -> delta(0000000) is_on
+//   -> delta(0000000)
+//   -> delta(1000000)
+//   -> delta(2000000)
+
+public Tm () {
+  active {
+     emit delta(@is_on);
+     next;
+     emit delta(@is_on);
+     next;
+     emit delta(@is_on);
+     next;
+     emit is_on;
+     emit delta(@is_on);
+     next;
+     emit delta(@is_on);
+     next;
+     emit delta(@is_on);
+     next;
+     emit delta(@is_on);
+     next;
+     emit is_on;
+     emit delta(@is_on);
+     next;
+     emit delta(@is_on);
+     next;
+     emit delta(@is_on);
+     next;
+     emit delta(@is_on);
+     next;
+  };
+};
+#endif
+
+#ifdef T3
+// trace
+//   -> delta(0000000)
+// on  -> delta(0000000)
+//   -> delta(0000000)
+//   -> delta(1000000)
+//   -> delta(2000000)
+//   -> delta(3000000)
+//   -> delta(4000000)
+//   -> delta(5000000)
+//   -> is_on delta(6000000)
+// on  -> delta(0000000)
+//   -> delta(0000000)
+// trace
+// on  -> delta(0000000)
+//   -> delta(0000000)
+//   -> delta(1000000)
+// on  -> delta(0000000)
+//   -> delta(0000000)
+//   -> delta(1000000)
+//   -> delta(2000000)
+//   -> delta(3000000)
+//   -> delta(4000000)
+//   -> delta(5000000)
+//   -> is_on delta(6000000)
+//   -> is_on delta(7000000)
+//   -> is_on delta(8000000)
+// on  -> delta(0000000)
+//   -> delta(0000000)
+//   -> delta(1000000)
+//   -> delta(2000000)
+//   -> delta(3000000)
+//   -> delta(4000000)
+//   -> delta(5000000)
+//   -> is_on delta(6000000)
+//   -> is_on delta(7000000)
+public Tm () {
+  active {
+     [[ loop {
+           await @on > 5sec;
+           emit is_on;
+           next;
+        }; 
+     || sustain {|
+           delta := @on;
+        |};
+     ]];
+  };
+};
+#endif
+
+// control
+Sensor on    = new Sensor(new SimInput());
+Signal is_on = new Signal(new SimOutput());
+
+Signal<time> delta = new Signal<time>(new SimOutput());
+
+}

@@ -1,0 +1,105 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+Sensor<int> FII1 = new Sensor<int>(new SimInput());
+Sensor<int> FII2 = new Sensor<int>(new SimInput());
+
+Signal<int> FOI1 = new Signal<int>(new SimOutput());
+Signal<int> FOI2 = new Signal<int>(new SimOutput());
+Signal<int> FOI3 = new Signal<int>(new SimOutput());
+
+#ifdef T1
+// trace
+//
+//  FII1(1)  -> FOI1(1) 
+//  FII1(2)  -> FOI1(2) 
+//  FII1(3)  -> FOI1(3) 
+//  FII1(4)  -> FOI1(4) 
+//  FII1(0)  -> FOI1(0) 
+//  FII1(-1) -> FOI1(-1) 
+//  FII1(-2) -> FOI1(-2) 
+//
+private void c1 () {
+    sustain {| FOI1 := FII1; |};
+  };
+#endif
+
+#ifdef T2
+// trace
+//
+//  FII1(9) FII2(9) -> FOI1(1) 
+//  FII1(2) FII2(1) -> FOI1(3) 
+//  FII1(3) FII2(0) -> FOI1(3) 
+//  FII1(4) FII2(-1) -> FOI1(3) 
+//  FII1(0) FII2(0) -> FOI1(0) 
+//  FII1(-1) FII2(-1) -> FOI1(-2) 
+//  FII1(-2) FII2(2) -> FOI1(0) 
+//
+private void c1 () {
+    sustain {| FOI1 := 1 -> FII1 + FII2; |};
+  };
+#endif
+
+#ifdef T3
+// trace
+//
+//  FII1(9)  -> FOI1(10) 
+//  FII1(0)  -> FOI1(9) 
+//  FII1(1)  -> FOI1(0) 
+//  FII1(2)  -> FOI1(1) 
+//  FII1(3)  -> FOI1(2) 
+//  FII1(4)  -> FOI1(3) 
+//  FII1(5)  -> FOI1(4) 
+//  FII1(0)  -> FOI1(5) 
+//  FII1(-1) -> FOI1(0) 
+//  FII1(-2) -> FOI1(-1) 
+//  FII1(-3) -> FOI1(-2) 
+//
+private void c1 () {
+    sustain {| FOI1 :=  10 -> pre(FII1); |};
+  };
+#endif
+
+#ifdef T4
+// trace
+//
+// FII1(0) -> FOI1(1) 
+// FII1(1) -> FOI1(2) 
+// FII1(1) -> FOI1(3) 
+// FII1(1) -> FOI1(4) 
+// FII1(0) -> FOI1(4) 
+// FII1(-1) -> FOI1(3) 
+// FII1(0)  -> FOI1(3) 
+// FII1(0)  -> FOI1(3) 
+//
+private void c1 () {
+    sustain {| FOI1 := 1 -> FII1 + pre(FOI1); |};
+  };
+#endif
+
+#ifdef T5
+// trace
+//
+// FII1(0) FII2(0) -> FOI1(1) FOI2(1) FOI3(0)
+// FII1(1) FII2(1) -> FOI1(2) FOI2(1) FOI3(0)
+// FII1(1) FII2(2) -> FOI1(3) FOI2(4) FOI3(-1)
+// FII1(1) FII2(-2) -> FOI1(4) FOI2(-6) FOI3(1)
+// FII1(0) FII2(-2) -> FOI1(4) FOI2(-8) FOI3(-10)
+// FII1(-1) FII2(1) -> FOI1(3) FOI2(4) FOI3(-12)
+// FII1(0) FII2(-1)  -> FOI1(3) FOI2(-3) FOI3(1)
+// FII1(0) FII2(0)  -> FOI1(3) FOI2(0) FOI3(-6)
+//
+private void c1 () {
+    sustain {|
+      FOI1 := 1 -> FII1 + pre(FOI1);
+      FOI2 := 1 -> FII2 * pre(FOI1);
+      FOI3 := 0 -> pre(FOI2) - pre(FOI1);
+    |};
+  };
+#endif
+
+} //end class Rc

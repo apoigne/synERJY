@@ -1,0 +1,30 @@
+// test-flags O = None true, E = data true
+class SimpleFourBitCounter { static final time timing = 100msec;
+				
+    public SimpleFourBitCounter () { 
+        active {
+// tex_start simple-four-bit-counter
+            [[ loop {
+                   await ?incr; // first two bit counter
+                   next;
+                   await ?incr;
+                   emit carry;	           
+                   next;
+               }; 
+            || loop {
+                   await ?carry; // second two bit counter
+                   next;
+                   await ?carry;
+                   emit elapsed;	           
+                   next;
+                };              
+            ]];
+// tex_end simple-four-bit-counter
+        };
+    };
+
+    Sensor   reset = new Sensor(new SimInput());
+    Sensor    incr = new Sensor(new SimInput());
+    Signal   carry = new Signal();
+    Signal elapsed = new Signal(new SimOutput());
+}

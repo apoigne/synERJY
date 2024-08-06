@@ -1,0 +1,34 @@
+// test-flags O = None true, E = data true, confclass Rct
+class Rct { 
+    static final time timing = 100msec;
+				
+public Rct () { active { }; };
+
+CountingUp x = new CountingUp();
+}
+
+class CountingUp {
+
+  Sensor start = new Sensor(new SimInput());
+  Sensor stop  = new Sensor(new SimInput());
+
+  public CountingUp () {
+     active {
+loop {
+    Signal<int> count;
+    await ?start;
+    cancel {
+        sustain {|
+// tex_start counting-up-5
+           Signal<int> aux;
+           aux   := count + 1;
+           count := pre(aux);
+// tex_end
+       |};
+    } when (?stop);
+    next;
+};
+};
+};
+}
+

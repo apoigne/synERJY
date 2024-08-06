@@ -1,0 +1,75 @@
+class Rc {
+
+public Rc () {
+    active { a1();
+    };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+Sensor I3 = new Sensor(new SimInput());
+
+Signal S1 = new Signal(new SimOutput());
+Signal S2 = new Signal(new SimOutput());
+Signal S3 = new Signal(new SimOutput());
+
+#ifdef T1
+// trace
+//      -> S1
+//      -> S1
+//      -> S1
+// I1   -> S1
+// I2   -> S1 S2
+// I2   -> S2
+//      -> S2
+// I3   -> S2 S3
+//      -> S3
+// I1 I2 -> S3 S1
+// I3 I2 -> S1 S2
+//      -> S2
+//
+// trace
+//      -> S1
+//      -> S1
+//      -> S1
+// I1   -> S1
+// I1 I2 -> S1
+//      -> S1
+// I2   -> S1 S2
+// I3   -> S2 S3
+//      -> S3
+// I1 I2 -> S3 S1
+// I3 I2 -> S1 S2
+//      -> S2
+//
+private void a1 () {
+  automaton {
+
+    init { next state s1; };
+
+    state s1
+      entry { emit S1; }
+      during { emit S1; }
+      when (?I1 && (?I2 || ?I3)) { next state s1;
+        } else when (?I2) { next state s2;
+        } else when (?I3) { next state s3;
+      };
+
+    state s2
+      entry { emit S2; }
+      during { emit S2; }
+      when (?I1) { next state s1; } else when (?I3) { next state s3;
+      };
+
+    state s3
+      entry { emit S3; }
+      during { emit S3; }
+      when (?I1) { next state s1; } else when (?I2) { next state s2;
+      };
+
+  };
+};
+
+#endif
+
+} //end class Rc

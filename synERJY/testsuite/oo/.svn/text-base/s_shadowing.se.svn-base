@@ -1,0 +1,65 @@
+class Tc1 {
+public Tc1 () {};
+static int x = 1;
+int y = 2;
+}
+
+class Tc2 extends Tc1 {
+public Tc2 () {super(); };
+static int z1 = 3;
+
+#ifdef E5
+// [[InheritErr]]
+static double x;
+#endif
+
+#ifdef E8
+// [[InheritErr]]
+int x;
+#endif
+
+#ifdef E14
+// [[InheritErr]]
+double y;
+#endif
+
+#ifdef E15
+// [[InheritErr]]
+static int y;
+#endif
+
+}
+
+class Tc3 extends Tc2 {
+public Tc3 () { super(); };
+
+static int z2 = 3;
+
+#ifdef E21
+// [[InheritErr]]
+static double x;
+#endif
+
+#ifdef E24
+// [[InheritErr]]
+int x;
+#endif
+
+#ifdef E30
+// [[InheritErr]]
+double y;
+#endif
+
+#ifdef E31
+// [[InheritErr]]
+static int y;
+#endif
+
+}
+
+class Rc {
+   public Rc() {
+      active {};
+   };
+}
+

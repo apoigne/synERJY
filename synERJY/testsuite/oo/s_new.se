@@ -1,0 +1,71 @@
+class Cls1 {
+public Cls1 (int i) { i1 = i; };
+protected int i1;
+}
+
+class Cls2 extends Cls1 {
+public Cls2 (int i) {super(i+1); i2 = i; };
+private int i2;
+}
+
+class Rls2 extends Cls1 {
+public Rls2 () {super(100); active{}; }; // no parameter YET
+}
+
+class Uses {
+
+public Uses ()
+{
+#ifdef E1
+// [[Typing]]
+   u1 = new Uses();
+#endif
+
+   ac = new Cls1 (32);
+   bc = new Cls2 (34);
+   active {};
+};
+
+#ifdef E1
+// test case continuation
+Uses u1;
+#endif
+
+Rls2 ra = new Rls2 ();
+Rls2 rb = new Rls2 ();
+
+Cls1 a = new Cls1 (2);
+Cls1 b = new Cls2 (4);
+
+Cls1 ac;
+Cls1 bc;
+
+Cls1 d;
+Cls1 e;
+
+#ifdef E3
+// [[Typing]]
+Uses u3;
+#endif
+
+#ifdef E4
+// [[Typing]]
+Rls2 rc;
+#endif
+
+private void prohibit_expansion ()
+{
+   d = new Cls1 (8);
+   e = new Cls2 (10);
+#ifdef E3
+// test case continuation
+   u3 = new Uses();
+#endif
+#ifdef E4
+// test case continuation
+   rc = new Rls2 ();
+#endif
+
+};
+
+}

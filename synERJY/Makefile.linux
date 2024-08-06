@@ -1,0 +1,22 @@
+# << installation dependant directories === linux =============================
+TCLA    := /usr/lib/libtcl$(TCLTK_VERSION).so
+TKA     := /usr/lib/libtk$(TCLTK_VERSION).so
+X11A    := /usr/X11R6/lib/libX11.so
+
+TCLH    := /usr/lib/include
+TKH     := /usr/lib/include
+X11H    := /usr/X11R6/include
+
+MLD     := /usr/local/lib/ocaml
+MLA     := $(MLD)/libcamlrun.a
+ILibs   := -I $(SE_HOME)/src -I $(SE_HOME)/builtin -I $(MLD)
+
+LL      := -lm -ldl -lstr -lunix -lthreads
+
+THREAD  := -thread
+THREAD  := 
+CMA     := unix.cma threads.cma
+CMA     := unix.cma
+CMX     := unix.cmxa
+
+TARGET  := unix

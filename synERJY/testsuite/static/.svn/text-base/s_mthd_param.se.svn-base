@@ -1,0 +1,226 @@
+// test-flags O = None true, E = None true
+
+class Rc {
+
+   Signal             a  = new Signal();
+   Signal<int>        b  = new Signal<int>();
+   Signal<int>      c  = new Signal<int>();
+   Signal{true}<int>  d  = new Signal<int>();
+   Signal{true}<bool> e  = new Signal<bool>();
+   Signal{e}<int>     f  = new Signal<int>();
+   Signal{e}<int>     g  = new Signal<int>();
+
+
+#ifdef O1
+ public Rc () {
+     active {
+       m1(a);
+     };
+  };
+
+  Signal<int> y1 = new Signal<int>(new SimOutput());
+
+  void m1 (Sensor x1) {
+           if (?x1) { emit y1(3); };
+    };
+}
+#endif
+
+#ifdef E1
+// [[Typing]]
+ public Rc () {
+     active {
+       m1(a);
+     };
+  };
+
+   Signal y1;
+   void m1 (Sensor x1) {
+       if (?x1) { emit y1; };
+  };
+}
+#endif
+
+
+#ifdef O2
+ public Rc () {
+     active {
+       m1(b);
+     };
+  };
+
+  Signal<int> y1 = new Signal<int>(new SimOutput());
+
+   void m1 (Sensor<int> x1) {
+       emit y1($x1);
+    };
+}
+#endif
+
+#ifdef O3
+ public Rc () {
+     active {
+       m1(a);
+     };
+  };
+
+  void m1 (Signal x1) {
+       emit x1;
+  };
+}
+#endif
+
+#ifdef O4
+ public Rc () {
+     active {
+       m1(b);
+     };
+  };
+   
+   void m1 (Signal<int> x1) {
+       emit x1(3);
+  };
+}
+#endif
+
+
+// Flows
+
+#ifdef O5
+ public Rc () {
+     active {
+       m1(c);
+     };
+  };
+
+   Signal<int> y1 = new Signal<int>(new SimOutput());
+   void m1 (Sensor<int> x1) {
+       sustain {|
+          y1 := x1;
+       |};
+  };
+}
+#endif
+
+#ifdef O6
+  public Rc () {
+     active {
+       m1(c);
+     };
+  };
+
+   void m1 (Signal<int> x1) {
+       sustain {|
+          x1 := 3;
+       |};
+  };
+
+}
+#endif
+
+#ifdef E6
+// [[ClocksInconsistent]]
+public Rc () {
+     active {
+       m1(c);
+     };
+  };
+
+   void m1 (Signal<int> x1) {
+       sustain {|
+          x1 := 3 when ((int)3 < 4);
+       |};
+  };
+
+}
+#endif
+
+#ifdef O7
+ public Rc () {
+     active {
+       m1(d);
+     };
+  };
+
+   Signal{true}<int> y1 = new Signal<int>(new SimOutput());
+   void m1 (Sensor{true}<int> x1) {
+       sustain {|
+          y1 := x1;
+       |};
+  };
+}
+#endif
+
+#ifdef O8
+ public Rc () {
+     active {
+       m1(d);
+     };
+  };
+
+    void m1 (Signal{true}<int> x1) {
+       sustain {|
+          x1 := 3 when true;
+       |};
+  };
+
+}
+#endif
+
+#ifdef E91
+// [[ClocksInconsistentInMethodCall]]
+ public Rc () {
+     active {
+       m1(e,f);
+     };
+  };
+
+   Signal{(int)3 < 5}<bool> y1 = new Signal<bool>(new SimOutput());
+   Signal{y1}<int>    y2 = new Signal<int>(new SimOutput());
+
+   void m1 (Sensor{(int)3 < 5}<bool> x1,
+            Sensor{y1}<int>    x2) {
+       sustain {|
+          y1 := x1;
+          y2 := x2;
+       |};
+  };
+}
+#endif
+
+#ifdef E92
+// [[ClocksInconsistent]]
+  public Rc () {
+     active {
+       m1(e,f);
+     };
+  };
+
+   Signal{true}<bool> y1 = new Signal<bool>(new SimOutput());
+   Signal{y1}<int>    y2 = new Signal<int>(new SimOutput());
+   void m1 (Sensor<bool>  x1,
+            Sensor{x1}<int> x2) {
+       sustain {|
+          y1 := x1;
+          y2 := x2;
+       |};
+  };
+}
+#endif
+
+#ifdef O10
+ public Rc () {
+     active {
+       m1(e,f,g);
+     };
+  };
+
+   void m1 (Sensor{true}<bool> x1,
+            Sensor{x1}<int>    x2,
+            Signal{x1}<int>    x3) {
+       sustain {|
+          x3 := x2;
+       |};
+  };
+}
+#endif

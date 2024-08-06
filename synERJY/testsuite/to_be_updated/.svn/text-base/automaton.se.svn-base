@@ -1,0 +1,45 @@
+reactive class Tc
+
+o1    : signal is public;
+o2    : signal is public;
+i1    : signal is public const;
+i2    : signal is public const;
+
+tc1 is reactive do
+    automaton
+
+      init
+        emit o1;
+        when ?i1
+           then next state st1
+           else next state st2
+        };
+
+      state st1
+        when ?i1
+           then if ?i2
+                   then next state st1
+                   else if ?i1
+                           then emit o1; next state st1
+                           else next state st2
+                        };
+                };
+           elsif ?i2 then next state st2
+        };
+
+      state st2
+        entry emit o1; emit o1
+        exit  emit o2
+        when ?i1
+           then if ?i2
+                   then next state st1
+                   else if ?i1
+                           then emit o1; next state st1
+                           else next state st2
+                        };
+                };
+           elsif ?i2 then next state st2
+        };
+    };
+};
+}

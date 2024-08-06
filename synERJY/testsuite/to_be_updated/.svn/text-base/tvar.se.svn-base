@@ -1,0 +1,70 @@
+class Ac
+int ai;
+}
+
+class Bc
+inherit
+  Ac;
+int bi;
+}
+
+class Xc1 [ _T; _U < Ac; _V < Bc ]
+int ci;
+_T t1;
+_U u1;
+_V v1;
+Ac a1;
+Bc b1;
+}
+
+class Xc2
+int di;
+Ac a2;
+Bc b2;
+}
+
+#ifdef OK
+class Tc [ _T; _U < Ac; _V < Bc ]
+#endif
+#ifdef E1
+class Tc [ _T; _U < Ac ]
+#endif
+#ifdef E2
+class Tc [ _V < Bc; _U < Ac; _T ]
+#endif
+#ifdef E3
+class Tc [ _T; _U < Ac; _V < Bc ]
+#endif
+#ifdef E4
+class Tc [ _T, _U < Ac, _V < Bc ]
+#endif
+
+inherit
+  Xc1; Xc2;
+
+int ei;
+Ac a3;
+Bc b3;
+_T t2;
+_U u2;
+_V v2;
+any aa;
+
+tc1 is
+do
+    ei = ci; ei = di; ei = a1.ai; ei = a2.ai;
+    ei = ci; ei = di; ei = b1.bi; ei = b1.ai; ei = b2.bi; ei = b2.ai;
+    aa = ei; aa = a1; aa = a2;    aa = a3;
+    b1 = v1; b1 = v2; b2 = v1;    b2 = v2;    b3 = v1;   b3 = v2;
+    a1 = u1; a1 = u2; a2 = u1;    a2 = u2;    a3 = u1;   a3 = u2;
+    a1 = v1; a1 = v2; a2 = v1;    a2 = v2;    a3 = v1;   a3 = v2;
+    t1 = t2; u1 = u2; v1 = v2;
+#ifdef E3
+    t1 = 4;
+#endif
+#ifdef E4
+    u1 = a3;
+#endif
+};
+
+}

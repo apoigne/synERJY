@@ -1,0 +1,289 @@
+\documentclass[11pt]{book}
+\usepackage{graphicx,epic,fancybox,curves,fancybox,makeidx}
+\input{../macros}
+\makeindex
+
+%\includeonly{semantics}
+
+\mkTitle{An Introduction to the Language}
+
+\begin{document}
+
+\maketitle
+
+\input{../upshot}
+
+\input{acknowledgement}
+
+\tableofcontents
+
+\include{chpt1}
+
+\include{chpt2}
+
+\include{chpt3}
+
+\include{chpt4}
+
+\include{chpt5}
+
+\include{chpt6}
+
+\include{chpt7}
+
+\include{chpt8}
+
+%\include{chpt9}
+
+%\include{chpt10}
+
+\begin{thebibliography}{9}
+
+\bibitem{synccharts} C.~Andr\'e. Representation and analysis of
+reactive behaviours: A synchronous approach, in: \emph{Proc. CESA'96},
+Lille, France, July 1996.
+
+\bibitem{berry} G.~Berry, The foundations of Esterel, in: G.~Plotkin,
+C.~Stirling, and M.~Tofte (Eds.), \emph{Proofs, Languages, and
+Interaction: Essays in Honour of Robin Milner}, MIT Press, 2000
+
+\bibitem{constructivesemantics} G.~Berry, The Constructive Semantics
+of Pure Esterel, Draft book,
+\texttt{http://www-sop.inria.fr/meije/esterel/doc/main-papers.html}, 1999
+
+\bibitem{esterel} G.~Berry and G.~Gonthier.  The \textsc{Esterel}
+synchronous programming language: design, semantics, implementation.
+{\em Science of Computer Programming}, 19(2):87--152, 1992.
+
+\bibitem{synERJY} R.~Budde, A.~Poign\'e, K.-H-~Sylla.
+synERJY - an Object-oriented Synchronous Language -.
+Workshop on Synchronous Languages and Applications, Barcelona, 2004,\\
+also: \emph{Electronic Notes in Theoretical Computer Science}, Volume 153
+
+\bibitem{budde} R.~Budde, K.-H.~Sylla. 
+Objektorientierte Echtzeit-Anwendungen auf Grundlage perfekter Synchronisation 
+In: \emph{OBJEKTspektrum} 0(2):54-60, 1995, Zeitschrift für objektorientierte Technologien, München und 
+SIGS Conferences GmbH München, Bd.Nr.7, 1995. 
+
+\bibitem{budde2} R.~Budde, K.-H.~Sylla. 
+ObjektorientiertBudde, R.; Merceron, A.; Sylla, K.H. 
+Formal Verification as a Design Tool - The Transponder Lock Example 
+In: Safe Comp'96, Vienna, Austria 23-25 October 1996, Proceedings of the 15th International Conference on Computer Safety, Reliability and Security, Springer Verlag, ISBN 3-540-76070-9 pp. 73-82. 
+
+\bibitem{budde3} R.~Budde, A.~Poign\'e. 
+Complex Reactive Control with Simple Synchronous Models 
+ACM SIGPLAN  Workshop on Languages, Compilers, and Tools for Embedded Systems ( LCTES'00), Vancouver, Canada, June 2000, Lecture Notes in Computer Science 1985,
+Springer, 2000
+
+\bibitem{budde4} R.~Budde, P.~Pl``öo''ger, K.-H.~Sylla. 
+A Synchronous Object-Oriented design flow for Embedded Applications 
+In: Proc. \emph{2nd International Forum on Design Languages} (FDL), ECSI Verlag, Gières, 1999 
+
+\bibitem{budde5} R.~Budde, M.~Pinna, A.~Poign\'e 
+Coordination of Synchronous Programs 
+In: P. Ciancarini, A.I. Wolf (eds.), \emph{3rd Int. Conf. on Coordination Languages and Models}, LNCS 1594, Springer, Heidelberg, 1999 
+
+\bibitem{budde6} R.~Budde, A.~Poign\'e. 
+On the synthesis of Distributed Synchronous Processes.
+in: F.Cassez, C.Jard, B.Rozoy, M.Ryan (Eds.)
+Proceedings of the summer School ``Modelling and Verification of Parallel
+Processes'' (MOVEP'2k), Nantes, June 2000
+
+\bibitem{Clarke} E.M.~Clarke, E.A.~Emerson, A.P.~Sistla, Automatic verification of finite-state concurrent systems using temporal logical specifications, in: \emph{ACM Transaction on Programming Languages and Systems}, 8(2):244-263,
+1986
+
+\bibitem{caspi} P.~Caspi, C.~Mazuet, R.~Salem, D.~Weber, Formal Design
+of Distributed control Systems with Lustre, in: Proc.  Safecomp'99,
+1999
+
+\bibitem {java} J.~Gosling, B.~Joy, G.~Steele.\emph{The \java\
+Language Specification}, Addison-Wesley, Nov. 1999
+
+\bibitem{signal}  P.~Le Guernic, A.~Benveniste, P.~Bournaii, T.~Gautier,
+Signal: a data-flow oriented language for signal processing, {\em
+IEEE-ASSP}, 34(2), 1986.
+
+\bibitem{halbwachs} N.~Halbwachs.  {\em Synchronous Programming of
+Reactive Systems}, Kluwer Academic Publishers, Dordrecht, 1993.
+
+\bibitem{observer} N.~Halbwachs, E.~Lagnier, and P.~Raymond. Synchronous 
+observers and the verification of reactive systems. In: Third 
+Int. Conference on Algebraic Methodology and Software Technology, AMAST’93, Workshops in Computing. Springer Verlag, 
+June 1993. 
+
+\bibitem{statecharts} D.~Harel. Statecharts: A visual approach to
+complex systems, \emph{Science of Computer Programming}, 8:231--274, 1987.
+
+\bibitem{lustre} N.~Halbwachs, P.~Caspi, P.~Raymond, and D.~Pilaud.
+The synchronous dataflow programming language Lustre.
+{\em Proceedings of the IEEE}, 79(9):1305--1320, 1991.
+
+\bibitem{hol1} L.~Holenderski. 
+LUSTRE - a verified production cell controller 
+In: \emph{Formal development of reactive systems} / Lewerentz, Claus (Ed.), 101-112, 1995. NuSMV
+
+\bibitem{hol2} L.~Holenderski, A.~Poign\'e. 
+Synchronous Automata for Synchronous Programming Languages 
+In: Wolisz, A. (Hrsg.); Schieferdecker, I. (Hrsg.); Rennoch, A. (Hrsg.), \emph{Formale Beschreibungstechniken für verteilte Systeme GI/ITG-Fachgespräch}, 19.-20. Juni 1997, Berlin, (GMD-Studien Nr. 315). Sankt Augustin: GMD, 1997, S. 129-134. ISBN 3-88457-315-2 
+Full Paper in Postscript
+
+
+\bibitem {rug-warrior} J.L.~Jones, A.M.~Flynn, {\em Mobile Robots - Inspiration to Implementation}, Wellesley,1993
+
+\bibitem{kowalewski} S.~Kowalewski. Modellierungsmethoden aus der 
+Informatik, at-Automatisierungstechnik, Heft
+5(50): A1-A5, September 2001.
+
+\bibitem{maffeis} O.~Maffeis, A.~Poign\'e. 
+Synchronous Automata for Reactive, Real-Time or Embedded Systems 
+(Arbeitspapiere der GMD Nr. 967). 
+Sankt Augustin: GMD,  Schloß Birlinghoven, D-53754 Sankt Augustin, ISSN 0723-0508, 51 S., 1996. 
+
+\bibitem{Maranchini} F.~Maranchini, Y~.R\'emond.  Mode-Automata:
+About Modes and States in Reactive Systems, Proc. European Symposium
+on Programming, Lisbon, Portugal, 1998
+
+\bibitem{argos} F.~Maranchini.  Operational and compositional
+semantics of synchronous automaton compositions, In {\em Proceedings
+of CONCUR'92}, volume 630 of {\em Lecture Notes in Computer Science},
+Springer-Verlag, 550--564, Aug.  1992.
+
+\bibitem{merceron} A.~Merceron, M.~M\"{u}llerburg, M.~Pinna. 
+Verifying a time-triggered protocol in a multi-language environment 
+In: Ehrenberger, W. (Hrsg.): \emph{Computer Safety, Reliability and Security}. Proc. 17th Intern. Conf. SAFECOMP'98. Lecture Notes in Computer Science (LNCS) No. 1516. 1998. pp 185-195. 
+
+\bibitem{mue1} M.~M\"ullerburg. 
+Systematic Testing: a Means for Validating Reactive Systems 
+In: \emph{Software Testing}, Verification and Reliability 5(3):163-179 (1995). 
+Selected papers from EuroSTAR'94 
+
+\bibitem{mue2} M.~M\"ullerburg, L.~Holenderski, O.~Maffeis, A.~Merceron, M.~Morley. 
+Systematic Testing and Formal Verification to Validate Reactive Programs 
+In: \emph{Software Quality Journal} 4(4):287-307 (1995) 
+
+\bibitem{mue3} M.~M\"{u}llerburg, R.~Budde. 
+Validation und Verifikation in Synchronie: synchronousEifel 
+In: GMA-Kongress '98 Mess- und Automatisierungstechnik. VDI-Berichte 1397, S. 299-308. Düsseldorf : VDI Verlag GmbH, 1998. 
+
+\bibitem{NuSMV} The NUSMV website, \texttt{http://nusmv.irst.itc.it/}
+
+\bibitem{systems} L.~Padulo, and M.~Arbib.  {\em System Theory - A Unified State-Space Approach to Continuous and Discrete Time Systems},
+W.B.~Saunders Company, Philadelphia - London - Toronto, 1974.
+
+\bibitem{Huth} C.S,~Päsäreanu, M.B.~Dwyer, M.~Huth. 
+Assume-Gurantee Model-Checking of Software: A Comparative Case study.
+\emph{Theoretical and Practical Aspects of SPIN Model Checking},Springer, 1999. 
+
+\bibitem{PoHo} A.~Poign\'e, L.~Holenderski. 
+\emph{Boolean Automata for Implementing Pure Esterel} 
+Sankt Augustin: GMD, 1995, 47 S. (Arbeitspapiere der GMD Nr. 964). 
+
+\bibitem {swb} A.~Poign\'e, M.~Morley, O.~Maffeis, L.~Holenderski, R.~Budde. 
+The Synchronous Approach to Designing Reactive Systems 
+In: \emph{Formal Methods in System Design}, 12, pp. 163-187 (1998), Kluwer Academic Publishers, The Netherlands.
+ 
+\bibitem {multi} A.~Poign\'e, L.~Holenderski. 
+The Multi-Paradigm Synchronous Programming Language LEA 
+In Proceedings of the Int. Workshop on Formal Techniques for Hardware and Hardware-like Systems, 1998. 
+
+\bibitem {combination} A.~Poign\'e, L.~Holenderski. 
+On the Combination of Synchronous Languages 
+In: W.P.de Roever (Hrsg.): Workshop on Compositionality: The Significant Difference, Malente September 8-12, 1997, LNCS 1536 Springer Verlag, pp. 490-514, 1998 
+
+\bibitem {swb2} A.~Poign\'e, L.~Holenderski. 
+Synchronie Workbench 
+TOOLS 98, Y. Lakhnech, R. Berghammer (Hrsg.) Advances in Computer Science, 1999. 
+
+\bibitem{reference} \se\ Reference Manual
+
+\bibitem{userguide} \se\ Programming Environment User Guide
+
+
+% \bibitem{Synccharts}
+% C.~Andr\'e,
+% \newblock Representation and Analysis of Reactive Behaviors: A Synchronous Approach,
+% \newblock CESA'96, IEEE-SMC, Lille(F), 1996,
+% 
+% \bibitem{banatyne}
+% R.~Bannatyne,
+% \newblock Time Triggered Protocol: TTP/C,
+% \newblock \emph{Embedded systems Programming}, 9/98, 52-54
+% 
+% \bibitem{benveniste}
+% A.~Benveniste, B.~Cailland, and P.~leGuernic,
+% \newblock From Synchrony to Asynchrony,
+% \newblock In: J.C.M Baeten, and S. Mauw (eds.), CONCUR'99, LNCS 1664, 
+% Springer, 1999
+% 
+% \bibitem{fhdl}
+% R.~Budde, P.~Ploeger, K.H.~Sylla,
+% \newblock A Synchronous object-oriented design Flow for Synchronous 
+% Applications,
+% \newblock Proc. FDL'99, ECSI Verlag, Gieres, 1999
+% Springer, 1999
+% 
+% \bibitem{caspi}
+% P.~Caspi, C.~Mazuet, R.~Salem, D.~Weber,
+% \newblock Formal Design of Distributed control Systems with lustre,
+% \newblock in: Proc. Safecomp'99, 1999
+% 
+% \bibitem{Esterel}
+% G.~Berry and G.~Gonthier,
+% \newblock The synchronous programming language Esterel: design, 
+% semantics, implementation,
+% \newblock {\em Science of Computer Programming}, 19:87--152, 1992.
+% 
+% \bibitem{Lustre}
+% N.~Halbwachs, P.~Caspi, P.~Raymond, and D.~Pilaud,
+% \newblock The synchronous data flow programming language Lustre,
+% \newblock {\em Proceedings of the IEEE}, 79(9):1305--1321, Sep. 1991.
+% 
+% \bibitem{basement}
+% H.~Hansson, H.~Lawson, O.~Bridal, S.~Larsson, H.~L\"{o}n, 
+% M.~Str\"{o}mberg,
+% \newblock BASEMENT: An Architecture and Methodology for Distributed 
+% Automotive Real-Time Systems,
+% \newblock {\em IEEE Transactions on Computers}, 48(9):1016--1027, Sep. 
+% 1997.
+% 
+% 
+% \bibitem{Statecharts} 
+% D.~Harel,
+% \newblock  STATECHARTS: A Visual Formalism for Complex Systems, 
+% \newblock \emph{Science of Computer Programming}, 8(3)231-274,1987
+% 
+% \bibitem{Laprie} 
+% J.C.~Laprie (Ed.),
+% \newblock  \emph{Dependability: Basic Concepts and Terminology - in 
+% English, French, German and Japanese}, 
+% \newblock Vienna, Springer, 1992
+% 
+% 
+% \bibitem{Signal} 
+% P.~Le Guernic, T.~Gautier,M.~ Le Borgne,C.~ Le Maire,
+% \newblock Programming Real-time Applications with SIGNAL, 
+% \newblock \emph{Proceedings of  the IEEE}, 79(9), Sept. 1991
+% 
+% \bibitem{kopetz}
+% H.~Kopetz,
+% \newblock \emph{Real-Time systems: Design principles for distributed 
+% Embedded applications},
+% \newblock Kluwer Academic Publishers, 1997
+% 
+% \bibitem{combination}
+% A.~Poign\'e, and L.~Holenderski, \newblock On the Combination of
+% Synchronous Languages, \newblock In: W.P. de Roever (ed.),
+% \emph{Workshop on Compositionality, The Significant difference}, LNCS
+% 1536, Springer, Heidelberg, pp.  490 - 514, 1998.
+
+\end{thebibliography}
+
+\appendix
+
+\input{genesis}
+
+%\include{semantics}
+
+\printindex
+
+\end{document}

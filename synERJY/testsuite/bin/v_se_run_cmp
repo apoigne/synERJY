@@ -1,0 +1,50 @@
+#!/bin/sh
+
+# purpose:	called to produce compiler output
+
+SE_FILE="$1"
+SE_HOME="$2"
+SE_DBGL="$3"
+SE_SIML="$4"
+SE_COMP="$5"
+SE_TARG="$6"
+SE_TRCE="$7"
+SE_UNIT="$8"
+
+export SE_HOME
+
+case "$SE_DBGL" in
+ ""|"None" ) SE_DBGL='None' ;;
+ *         ) SE_DBGL="Some \"$SE_DBGL\"" ;;
+esac
+
+case "$SE_SIML" in
+ ""        ) SE_SIML='false' ;;
+ true|false) : ;;
+ *         ) SE_SIML='true' ;;
+esac
+
+# code generator options are: "expr-word" "expr-bit" "jmp-bit"
+CG='-cg expr-word'
+DL="set debug level = $SE_DBGL;"
+case "$SE_SIML" in
+  true) MK="make code;" ;;
+  *   ) MK='check configuration;' ;;
+esac
+
+case "$SE_TARG" in
+  verilog) TG="target VerilogSimulation;" ;;
+  *   ) TG='' ;;
+esac
+
+case "$SE_TRCE" in
+  "") TR="" ;;
+  *   ) TR="set trace file = $SE_TRCE;" ;;
+esac
+
+case "$SE_UNIT" in
+  true) UN="make test;" ;;
+  *   ) UN="" ;;
+esac
+
+$SE_HOME/bin/$SE_COMP $CG -b "%$DL $TG load file = $SE_FILE; $TR $MK $UN quit;"

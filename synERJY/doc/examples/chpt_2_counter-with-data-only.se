@@ -1,0 +1,51 @@
+// test-flags O = None true, E = data true
+class Rct {
+    static final time timing = 100msec;
+				
+    public Rct () {
+        active {
+        };
+    };
+
+    CounterWithDataOnly counter = new CounterWithDataOnly(5);
+}
+
+
+// tex_start counter-with-data-only
+class CounterWithDataOnly {
+
+  // signals
+  Sensor   start = new Sensor(new SimInput());
+  Sensor    incr = new Sensor(new SimInput());
+  Signal elapsed = new Signal(new SimOutput());
+
+  public CounterWithDataOnly (int d) {
+      latch = d;
+      active {
+          loop {
+            if (isElapsed(?start,?incr)) {
+                emit elapsed;
+                reset();
+            };
+            next;
+          };
+      };
+  };
+
+  // data fields and data methods
+  static int latch;
+  static int counter = 0;
+  static boolean hasStarted = false;
+
+  static void reset () {
+     counter    = 0;
+     hasStarted = false;
+  };
+
+  static boolean isElapsed(boolean xstart, boolean xincr) {
+          if (xstart) { hasStarted = true; };
+          if (hasStarted && xincr) { counter++; };
+          return (counter >= latch);
+  };
+}
+// tex_end counter-with-data-only

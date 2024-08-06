@@ -1,0 +1,84 @@
+class Rc {
+
+public Rc () {
+   active {};
+};
+
+Signal<int> out = new Signal<int>(new SimOutput());
+
+
+/* ------------------------------------------------------------------------
+ * The tests are defined only to produced code,
+ * in order to check code generation for static final fields.
+ */
+#ifdef T01
+// trace
+public static final boolean   b   = false;
+#endif
+#ifdef T02
+// trace
+public static final char      ch  = ' ';
+#endif
+#ifdef T03
+// trace
+public static final byte      by  = 0;
+#endif
+#ifdef T04
+// trace
+public static final short     sh  = 0;
+#endif
+#ifdef T05
+// trace
+public static final int       in  = 0;
+#endif
+#ifdef T06
+// trace
+public static final long      lo  = 0;
+#endif
+#ifdef T07
+// trace
+public static final float     fl  = 0.0f;
+#endif
+#ifdef T08
+// trace
+public static final double    db  = 0.0;
+#endif
+#ifdef T09
+// trace
+public static final ushort    ush  = 0;
+#endif
+#ifdef T10
+// trace
+public static final uint      uin  = 0;
+#endif
+#ifdef T11
+// trace
+public static final ulong     ulo  = 0;
+#endif
+#ifdef T12
+// trace
+public static final uint8     ui8  = 0;
+#endif
+#ifdef T13
+// trace
+public static final uint16    ui16 = 0;
+#endif
+#ifdef T14
+// trace
+public static final uint32    ui32 = 0;
+#endif
+#ifdef T15
+// trace
+public static final uint64    ui64 = 0;
+#endif
+#ifdef T16
+// trace
+public static final String    str  = " ";
+#endif
+#ifdef T17
+// trace
+public static final time      tm   = 1sec;
+#endif
+
+}
+

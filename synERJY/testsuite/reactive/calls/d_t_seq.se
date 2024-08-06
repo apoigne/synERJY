@@ -1,0 +1,260 @@
+class Rc {
+
+public Rc () {
+    active { c1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+
+Sensor<int> II1 = new Sensor<int>(new SimInput());
+
+Signal<int> OI1 = new Signal<int>(new SimOutput());
+Signal<int> OI2 = new Signal<int>(new SimOutput());
+
+
+private int v;
+
+// int set (int i) {
+void set (int i) {
+  v = i;
+//  return v;
+};
+
+// int incr (int i) {
+void incr (int i) {
+  v = v + i;
+//    return v;
+};
+
+// int decr (int i) {
+void decr (int i) {
+  v = v - i;
+//  return v;
+};
+
+void mult (int i) {
+  v = v * i;
+//  return v;
+};
+
+#ifdef T1
+// trace
+//      -> OI1(10)
+//      -> OI1(11)
+//      -> OI1(11)
+//      ->
+//
+private void c1 () {
+     set(10);
+     emit OI1(v);
+     next;
+     incr(1);
+     emit OI1(v);
+     next;
+     emit OI1(v);
+  };
+
+#endif
+
+#ifdef T2
+// trace
+//      ->
+//      ->
+// II1(10) -> OI1(10)
+//      -> OI1(10)
+//      -> OI1(10)
+// II1(1) -> OI1(11)
+//      -> OI1(11)
+// II1(1)  -> OI1(12)
+//      -> OI1(12)
+//      -> OI1(12)
+//
+private void c1 () {
+     await ?II1;
+     set($II1);
+     emit OI1($II1);
+     next;
+     loop {
+       if (?II1) { incr($II1); }  else { };
+       emit OI1(v);
+       next;
+     };
+  };
+#endif
+
+#ifdef T3
+// trace
+//      ->
+//      ->
+// II1(10) -> OI1(10)
+//      -> OI1(9)
+//      -> OI1(8)
+// II1(1) -> OI1(9)
+//      -> OI1(8)
+// II1(1)  -> OI1(9)
+//      -> OI1(8)
+//      -> OI1(7)
+//
+private void c1 () {
+     await ?II1; set($II1); emit OI1($II1);
+     next;
+     loop {
+       if (?II1) { incr($II1); } else { decr(1); };
+       emit OI1(v);
+       next;
+     };
+  };
+#endif
+
+#ifdef T4
+// trace
+//      ->
+//      ->
+// II1(10) -> OI1(10)
+//      -> OI1(0)
+//      -> OI1(-10)
+// II1(1) -> OI1(-9)
+//      -> OI1(-10)
+// II1(1)  -> OI1(-9)
+//      -> OI1(-10)
+//      -> OI1(-11)
+//
+
+private void c1 () {
+     await ?II1; set($II1); emit OI1($II1);
+     next;
+     loop {
+       if (?II1) { incr($II1); } else { decr($II1); };
+       emit OI1(v);
+       next;
+     };
+  };
+#endif
+
+#ifdef T5
+// trace
+//       -> OI1(10)
+//       -> OI1(10)
+// I1    -> OI1(11)
+//       -> OI1(11)
+// I1 I2 -> OI1(11)
+// I2    -> OI1(10)
+// I1 I2 -> OI1(10)
+// I1    -> OI1(11)
+//       -> OI1(11)
+// I2    -> OI1(10)
+//       -> OI1(10)
+//
+private void c1 () {
+    set(10); emit OI1(v); next;
+      [[
+        loop {
+          await ?I1 && ! ?I2; incr(1); next;
+        };
+      ||
+        loop {
+          await ?I2 && ! ?I1; decr(1); next;
+        };
+      ||
+        loop { emit OI1(v); next; };
+      ]];
+
+  };
+
+  precedence {
+    incr(int) < decr(int) < v;
+  };
+#endif
+
+#ifdef T6
+// trace
+//       -> OI1(10)
+//       -> OI1(10)
+// I1    -> OI1(11)
+//       -> OI1(11)
+// I1 I2 -> OI1(11)
+// I2    -> OI1(10)
+// I1 I2 -> OI1(10)
+// I1    -> OI1(11)
+//       -> OI1(11)
+// I2    -> OI1(10)
+//       -> OI1(10)
+//
+private void c1 () {
+    set(10); emit OI1(v); next;
+      [[
+        loop {
+          await ?I1; incr(1); next;
+        };
+      ||
+        loop {
+          await ?I2; decr(1); next;
+        };
+      ||
+        loop { emit OI1(v); next; };
+      ]];
+
+  };
+
+  precedence {
+    incr(int) < decr(int) < v;
+  };
+#endif
+
+#ifdef T7
+// trace
+//      -> OI1(1)
+//      -> OI1(1)
+// I1   -> OI1(2)
+//      -> OI1(2)
+// I2   -> OI1(4)
+//      -> OI1(4)
+// I1 I2 -> OI1(9)
+//       -> OI1(9)
+//
+private void c1 () {
+    set(1); emit OI1(v); next;
+      [[
+        loop { await ?I1; incr(1); next; };
+      ||
+        loop { await ?I2; mult(2); next; };
+      ||
+        loop { emit OI1(v); next; };
+      ]];
+
+  };
+
+  precedence {
+    set(int) < mult(int) < incr(int) < v;
+  };
+#endif
+
+#ifdef T8
+// trace
+//      -> OI1(1)
+//      -> OI1(1)
+// I1   -> OI1(2)
+//      -> OI1(2)
+// I2   -> OI1(4)
+//      -> OI1(4)
+// I1 I2 -> OI1(10)
+//       -> OI1(10)
+//
+private void c1 () {
+    set(1); emit OI1(v); next;
+      [[
+        loop { await ?I1; incr(1); next; };
+      ||
+        loop { await ?I2; mult(2); next; };
+      ||
+        loop { emit OI1(v); next; };
+      ]];
+  };
+
+  precedence {
+    set(int) < incr(int)  < mult(int) < v;
+  };
+#endif
+
+} //end class Rc

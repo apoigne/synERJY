@@ -1,0 +1,48 @@
+class Rc {
+
+public Rc () {
+ active { c1(); };
+};
+
+Sensor i1 = new Sensor(new SimInput());
+Sensor i2 = new Sensor(new SimInput());
+
+int i,j;
+void f(int x) {};
+
+
+#ifdef E1
+// [[TimeRaceInClass]]
+private void c1 () { [[ i = 1; || i = 1; ]]; };
+#endif
+#ifdef E2
+// [[TimeRaceInClass]]
+private void c1 () { [[ i++;   || i++;   ]]; };
+#endif
+#ifdef E3
+// [[TimeRaceInClass]]
+private void c1 () { [[ i = 1; || f(i); ]]; };
+#endif
+#ifdef E4
+// [[TimeRaceInClass]]
+private void c1 () { [[ i = 1; || j = i; ]]; };
+#endif
+#ifdef E5
+// [[TimeRaceInClass]]
+private void c1 () { [[ i = 1; || i++; ]]; };
+#endif
+
+#ifdef O1
+private void c1 () {
+  [[ i = 1; || j = 1; ]]; next;
+  [[ f(i);  || f(i);  ]]; next;
+  [[ f(i);  || f(j);  ]]; next;
+  [[ i = 1; || j++;   ]]; next;
+};
+#endif
+
+precedence {
+f(int)*;
+};
+
+} //end class Rc

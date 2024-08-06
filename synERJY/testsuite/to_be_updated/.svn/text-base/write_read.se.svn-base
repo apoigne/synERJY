@@ -1,0 +1,32 @@
+class Rc
+
+  run (e : ExceptionEnum) is creation
+    do
+      v = 0;
+      reactive loop;
+    };
+
+  output ASK [int];
+  output ANSWER [int];
+
+  ask_answer is
+    reactive
+       [[ next;
+          emit ASK(v);
+          if value(ASK) < 4 then ------- if darf NICHT vor EMIT stehen -------
+             await ANSWER;
+          else
+             halt;
+          };
+       || await ASK;
+          emit ANSWER (incr( value(ASK) ));
+          next;
+       ]];
+       next;
+       emit ANSWER(0);
+    };
+
+  incr ( int i ) : int { return i+1; };
+: int;
+
+}

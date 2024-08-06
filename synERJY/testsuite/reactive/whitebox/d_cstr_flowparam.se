@@ -1,0 +1,154 @@
+class Rc {
+
+  public Rc () {
+    active {
+    };
+  };
+
+#ifdef T1
+// trace
+// -> c(1)
+// -> c(2)
+// -> c(3)
+// -> c(4)
+
+  Signal<int> c  = new Signal<int>(new SimOutput());
+  Rc1 rc1 = new Rc1(c);
+}
+
+class Rc1 {
+   public Rc1 (Signal<int> x1) {
+       active {
+         sustain {|
+           x1 := 1 -> pre(x1) + 1;
+         |};
+       };
+    };
+}
+#endif
+
+#ifdef T2
+// trace
+// -> c(1)
+// -> c(2)
+// -> c(3)
+// -> c(4)
+
+  Signal<int> c  = new Signal<int>(new SimOutput());
+  Rc1 rc1 = new Rc1(c);
+}
+
+class Rc1 {
+   Signal<int> y1;
+   public Rc1 (Signal<int> x1) {
+       y1 = x1;
+       active {
+         sustain {|
+           y1 := 1 -> pre(y1) + 1;
+         |};
+       };
+    };
+}
+#endif
+
+#ifdef T3
+// trace
+// -> c(1)
+// -> c(2)
+// -> c(3)
+// -> c(4)
+
+  Signal{true}<int> c = new Signal<int>(new SimOutput());
+  Rc1 rc1 = new Rc1(c);
+}
+
+class Rc1 {
+   public Rc1 (Signal{true}<int> x1) {
+       active {
+         sustain {|
+           x1 := 1 when (true) -> pre(x1) + 1 when (true);
+         |};
+       };
+    };
+}
+#endif
+
+#ifdef T4
+// trace
+// -> c(1)
+// -> c(2)
+// -> c(3)
+// -> c(4)
+
+  Signal{true}<int> c = new Signal<int>(new SimOutput());
+  Rc1 rc1 = new Rc1(c);
+}
+
+class Rc1 {
+   Signal{true}<int> y1;
+   public Rc1 (Signal{true}<int> x1) {
+       y1 = x1;
+       active {
+         sustain {|
+           y1 := 1 when (true) -> pre(y1) + 1 when (true);
+         |};
+       };
+    };
+}
+#endif
+
+#ifdef T5
+// trace
+// e(false) ->
+// e(false) ->
+// e(true)  -> f(1)
+// e(false) ->
+// e(true)  -> f(2)
+// e(false) ->
+// e(true)  -> f(3)
+
+  Sensor<bool> e = new Sensor<bool>(new SimInput());
+  Signal{e}<int> f = new Signal<int>(new SimOutput());
+  Rc1 rc1 = new Rc1(e,f);
+}
+
+class Rc1 {
+   public Rc1 (Sensor<bool> x1, Signal{x1}<int> x2) {
+       active {
+         sustain {|
+           x2 := 1 when (x1) -> pre(x2) + 1 when (x1);
+         |};
+       };
+    };
+}
+#endif
+
+#ifdef T6
+// trace
+// e(false) ->
+// e(false) ->
+// e(true)  -> f(1)
+// e(false) ->
+// e(true)  -> f(2)
+// e(false) ->
+// e(true)  -> f(3)
+
+  Sensor<bool> e = new Sensor<bool>(new SimInput());
+  Signal{e}<int> f = new Signal<int>(new SimOutput());
+  Rc1 rc1 = new Rc1(e,f);
+}
+
+class Rc1 {
+   Sensor<bool>  y1;
+   Signal{y1}<int> y2;
+   public Rc1 (Sensor<bool> x1, Signal{x1}<int> x2) {
+       y1 = x1;
+       y2 = x2;
+       active {
+         sustain {|
+           y2 := 1 when (x1) -> pre(y2) + 1 when (y1);
+         |};
+       };
+    };
+}
+#endif

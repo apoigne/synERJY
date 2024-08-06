@@ -1,0 +1,135 @@
+class Xc
+int   ai is protected;
+}
+
+reactive class Tc
+inherit
+  Xc;
+
+int bi;
+int ci () {};
+
+tc1 do
+    local k0       = 1;
+    bi = 0;
+    local k1 : int = 2;
+    bi = 0;
+    local k2 : int;
+    bi = 0;
+    k2 = 4;
+    k2 = 8;
+    if bi > 0 then
+       local k3 : int;
+       k3 = k3 + k2;
+       local k4 = 16;
+       k3 = k3 + k2 + k4;
+    else
+       local k3 : bool;
+       k3 = true;
+    };
+#ifdef E1
+// [[Lhs1Err]]
+    k0 = 0;
+#endif
+#ifdef E2
+// [[Lhs1Err]]
+    k1 = 0;
+#endif
+#ifdef E3
+// [[ParseError]]
+    local signal k5;
+#endif
+#ifdef E4
+// [[Typing]]
+    local signal k5 is reactive;
+#endif
+#ifdef E5
+// [[Typing]]
+    local k5 : signal(p : int) is reactive;
+#endif
+#ifdef E6
+// [[ParseError]]
+    local k5 : int is class;
+#endif
+#ifdef E7
+// [[Typing]]
+    local k5;
+#endif
+#ifdef E8
+// [[IdentifierTwice]]
+    local k1 : int = 2;
+#endif
+#ifdef E9
+// [[IdentifierTwice]]
+    local k1 : int;
+#endif
+};
+
+rc1 is reactive do
+    local s0 : signal is reactive;
+    local s1 : signal( int i) is reactive;
+    local s2 : signal( int value) is reactive at true;
+    local s3 : signal( int i) is reactive delayed;
+    local s4 : signal( int i) is reactive with add;
+
+    [[ local s5 : signal( bool j) is reactive;
+       if s5.j then nothing else nothing; };
+    || local s5 : signal( int i) is reactive with add;
+       emit s5( 9 );  emit s5( s1.i + (if ?s2 then $s2 else 5 }) );
+    || local s5 : signal( int value) is reactive at true;
+       sustain {|
+         $s5 = 0 -> 1+pre($s5);
+       |};
+    ]];
+
+#ifdef E10
+// [[IdentifierTwice]]
+    local s0 : signal is reactive;
+#endif
+#ifdef E11
+// [[IdentifierTwice]]
+    local s0 : signal( int i) is reactive;
+#endif
+#ifdef E12
+// [[ParseError]]
+    local s0 : signal( int i) is reactive final;
+#endif
+#ifdef E13
+// [[ParseError]]
+    local s0 : signal( int i) is final;
+#endif
+#ifdef E14
+// [[ParseError]]
+    local s0 : signal( int i);
+#endif
+#ifdef E15
+// [[Typing]]
+    local s0 : int;
+#endif
+#ifdef E16
+// [[Typing]]
+    local s0 = 4;
+#endif
+#ifdef E17
+// [[InvalidSigDecl]]
+    local s0 : signal( int timestamp) is reactive;
+#endif
+#ifdef E18
+// [[InvalidSigDecl]]
+    local s0 : signal( int i) is reactive at true delayed;
+#endif
+#ifdef E19
+// [[InvalidSigDecl]]
+    local now : signal( int i) is reactive;
+#endif
+#ifdef E20
+// [[Flowval]]
+    local s2 : signal( int i) is reactive at true;
+#endif
+};
+
+add( int i,j ) : int do
+   return i+j;
+};
+
+}

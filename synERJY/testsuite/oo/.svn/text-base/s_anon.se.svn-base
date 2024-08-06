@@ -1,0 +1,126 @@
+class Anon {
+
+  int i = 4;
+
+  public Anon() {
+    y = new UseIt() { public void incr() { i = i + 2 + get3(); };
+                      public int get()   { return get3()*geti()*i;};
+                    };
+    s = new SuperUseIt() { public void incr() { i = i + 2 + get3(); };
+                           public int get()   { return i*3;}; //useless
+                         };
+
+    active{};
+  };
+
+  SuperUseIt r = new SuperUseIt() { public void incr() { i += 2; };
+                                  };
+  SuperUseIt s;
+  SuperUseIt t;
+
+#ifdef O1
+  UseIt x = new UseIt() { public void incr() { i += 2; };
+                          public int get()   { return (int)2*geti();};
+                        };
+#endif
+
+#ifdef E10
+// [[InheritErr]]
+  UseIt x = new UseIt() { public void incr() { i += 2; };
+                        };
+#endif
+
+#ifdef E11
+// [[InheritErr]]
+  UseIt x = new UseIt() { public int get()   { return 2*geti(); };
+                        };
+#endif
+
+#ifdef E12
+// [[InheritErr]]
+  UseIt x = new UseIt() { public void incr() { i += 2; };
+                          public void get()  { return 2*geti();};
+                        };
+#endif
+
+#ifdef E20
+// [[Subtyping]]
+  UseIt x = new SuperUseIt() { public void incr() { i += 2; };
+                               public int  get()  { return 2*geti();};
+                             };
+#endif
+
+#ifdef E21
+// [[Subtyping]]
+  UseIt x = new SuperUseIt() { public void incr() { i += 2; };
+                             };
+#endif
+
+#ifdef E30
+// [[InheritErr]]
+  UseIt x = new SuperUseIt() { public int  get()  { return 2*geti();};
+                             };
+#endif
+
+#ifdef E31
+// [[UnknownId]]
+  UseIt x = new UseIt() { public void incr() { i += 2; };
+                          public int  get()  { return get()*2;};
+                        };
+#endif
+
+#ifdef E32
+// [[UnknownId]]
+  UseIt x = new UseIt() { public void incr() { i += 2; };
+                          public int  get()  { incr(); return 2;};
+                        };
+#endif
+
+#ifdef E33
+// [[Typing]]
+  UseIt x = new UseIt() { public void incr() { i += 2; };
+                          public int  get()  { return 2;};
+                          public int  geti() { return 2;};
+                        };
+#endif
+
+#ifdef E34
+// [[Typing]]
+  UseIt x = new UseIt() { public void incr() { i += 2; };
+                          public int  get()  { return 2;};
+                          public void geti() { i = 0;};
+                        };
+#endif
+
+  UseIt y;
+  UseIt z;
+
+  // public static final void main (String[] args) {
+    // XXX ERROR! local Anon a = new Anon();
+    // XXX ERROR! a.run();
+  // };
+
+  private int geti() {
+    return i;
+  };
+
+  private int get3() {
+    return 3;
+  };
+
+  private void run() {
+    z = new UseIt() { public void incr() { i = i + get3(); };
+                      public int get()   { return get3()*geti()*i;};
+                    };
+    t = new SuperUseIt() { public void incr() { i = i + get3(); };
+                         };
+  };
+}
+
+interface SuperUseIt {
+  void incr();
+}
+
+interface UseIt extends SuperUseIt {
+  int  get();
+}

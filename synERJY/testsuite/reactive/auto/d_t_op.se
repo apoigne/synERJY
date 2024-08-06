@@ -1,0 +1,343 @@
+class Rc {
+
+public Rc () {
+   active { a1();
+   };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+
+Sensor<int> start = new Sensor<int>(new SimInput());
+
+Signal time_out = new Signal(new SimOutput());
+
+Signal so1 = new Signal(new SimOutput());
+Signal so2 = new Signal(new SimOutput());
+
+Signal<int> t = new Signal<int>(new SimOutput());
+Signal<int> vs1 = new Signal<int>(new SimOutput());
+Signal<int> vs2 = new Signal<int>(new SimOutput());
+
+Signal entry1 = new Signal(new SimOutput());
+Signal entry2 = new Signal(new SimOutput());
+
+#ifdef T1
+// trace
+//          -> t(0) so1
+//          -> t(0)
+// start(3) -> t(0) so2
+//          -> t(2)
+//          -> t(1)
+//          -> t(0) time_out so1
+//          -> t(0)
+// start(2) -> t(0) so2
+//          -> t(1)
+//          -> t(0) time_out so1
+//          -> t(0)
+//          -> t(0)
+//
+private void a1 () {
+  automaton {
+
+    init {
+        set(0); emit t(0); next state st1; };
+
+    state st1
+       entry { emit so1;   }
+       during { emit t(counter); }
+       when (?start) { set($start);  next state st2; };
+
+    state st2
+      entry { emit so2; }
+      during { decr(); emit t(counter); }
+      when (counter == 0 && elapsed() )
+           { emit time_out; next state st1; };
+
+   };
+};
+
+private int counter;
+
+void set (int i) {
+  counter = i;
+};
+
+void decr () {
+  counter = counter - 1;
+};
+
+bool elapsed () {
+  if (counter == 0) {return(true);} else {return(false);};
+};
+
+ precedence {
+   counter < elapsed();
+ };
+
+#endif
+
+#ifdef T2
+// trace
+//      -> so1
+//          -> t(0)
+// start(3) -> t(0) so2
+//          -> t(2)
+//          -> t(1)
+//          -> t(0) so1 time_out
+//          -> t(0)
+// start(2) -> t(0) so2
+//          -> t(1)
+//          -> t(0) so1 time_out
+//          -> t(0)
+//          -> t(0)
+//
+private void a1 () {
+  automaton {
+
+    init {
+      next state st1; };
+
+    state st1
+      entry { emit so1; }
+      do { loop { next; emit t(counter); };       }
+      when (?start) { set($start); next state st2; };
+
+    state st2
+      entry { emit so2; }
+      do { loop { next; decr(); emit t(counter); };  }
+      when (counter == 0 && elapsed() ) { emit time_out; next state st1; };
+
+  };
+};
+
+private int counter;
+
+void set (int i) {
+  counter = i;
+};
+
+void decr () {
+  counter = counter - 1;
+};
+
+bool elapsed () {
+  if (counter == 0) {return true;} else {return false;};
+};
+
+precedence {
+  counter < set(int);
+  decr() < counter < elapsed();
+};
+
+#endif
+
+#ifdef T3
+// trace
+//          -> so1
+//          -> t(0)
+// start(3) -> t(0) so1
+//          -> t(3)
+//          -> t(3)
+//          -> t(3)
+//          -> t(3)
+// start(2) -> t(3) so1
+//          -> t(2)
+//          -> t(2)
+//          -> t(2)
+//          -> t(2)
+//
+private void a1 () {
+  automaton {
+
+    init {
+      next state st1;
+    };
+
+    state st1
+      entry { emit so1; }
+      do { loop {  next; emit t(counter); }; }
+      when (?start) { set($start); next state st1; };
+
+  };
+};
+
+private int counter;
+
+void set (int i) {
+  counter = i;
+};
+
+#endif
+
+#ifdef T4
+// trace
+//          -> so1
+//          -> t(0)
+//          ->
+// start(3) -> so2
+//          -> t(2)
+//          -> t(1)
+//          -> t(0) time_out so1
+//          -> t(0)
+//          ->
+// start(2) -> so2
+//          -> t(1)
+//          -> t(0) time_out so1
+//          -> t(0)
+//          ->
+//
+private void a1 () {
+  automaton {
+
+    init {
+      next state st1;
+    };
+
+    state st1
+      entry { emit so1; }
+      do { next; emit t(counter); }
+      when (?start) { set($start); next state st2; };
+
+    state st2
+      entry { emit so2; }
+      do { loop { next; decr(); emit t(counter); }; }
+      when (counter == 0 && elapsed() ) { emit time_out; next state st1; };
+
+  };
+};
+
+private int counter;
+
+void set (int i) {
+  counter = i;
+};
+
+void decr () {
+  counter = counter - 1;
+};
+
+bool elapsed () {
+  if (counter == 0) {return true;} else {return false; };
+};
+
+precedence {
+  decr() < counter < elapsed();
+  counter < set(int);
+};
+
+#endif
+
+#ifdef T5
+// trace
+//          ->
+//          ->
+// start(3) -> t(3)
+//          -> t(2)
+//          -> t(1)
+//          -> t(0) time_out
+//          ->
+// start(2) -> t(2)
+//          -> t(1)
+//          -> t(0) time_out
+//          ->
+//          ->
+//
+private void a1 () {
+  automaton {
+
+    init {
+      next state st1;
+    };
+
+    state st1
+      do  {}
+      when (?start) { set($start); emit t(counter); next state st2; };
+
+    state st2
+      do { loop { next; decr(); emit t(counter); }; }
+      when (counter == 0 && elapsed()) { emit time_out; next state st1; };
+
+  };
+};
+
+private int counter;
+
+void set (int i) {
+  counter = i;
+};
+
+void decr () {
+  counter = counter - 1;
+};
+
+bool elapsed () {
+  if (counter == 0) {return true;} else {return false; };
+};
+
+precedence {
+ counter < elapsed();
+};
+#endif
+
+
+#ifdef T6
+// trace
+//      -> entry1
+//      ->
+//      ->
+// I1   -> vs1(11)
+// I1   -> vs1(12)
+// I2   ->
+// I1   -> vs1(13)
+// I1   -> vs1(14)
+// I1   -> vs1(15) entry2
+//      ->
+// I1 I2 -> vs2(11)
+// I2   -> vs2(12)
+// I2   -> vs2(13)
+// I2   -> vs2(14)
+// I2   -> vs2(15) entry1
+// I2   ->
+//      ->
+// I1   -> vs1(11)
+//
+private void a1 () {
+  automaton {
+
+    init {
+        next state st1;
+    };
+
+    state st1
+      entry { emit entry1; set(); }
+      do { loop { next; await ?I1; incr1(); emit vs1(i1); }; }
+      when (i1 == 15) { next state st2;
+    };
+
+    state st2
+      entry {  emit entry2; }
+      do { loop { next; await ?I2; incr2(); emit vs2(i2); }; }
+      when (i2 > 14) { next state st1;
+    };
+
+  };
+};
+
+private int i1,i2;
+
+void set () {
+  i1 = 10; i2 = 10;
+};
+
+void incr1 () {
+  i1 = i1 + 1;
+};
+
+void incr2 () {
+  i2 = i2 + 1;
+};
+
+#endif
+
+} //end class Rc

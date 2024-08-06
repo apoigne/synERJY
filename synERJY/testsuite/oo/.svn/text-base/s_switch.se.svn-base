@@ -1,0 +1,105 @@
+class Xc {
+
+public Xc () { 
+};
+
+protected int x; // used to write an assignments as example statements. 
+
+#ifdef O1
+public void f1 () {
+    int b = 0;
+    switch (b) {
+    case 0: 
+        x = 1;
+        break;
+    };
+};
+#endif
+
+
+#ifdef O2
+public void f2 () {
+    int b = 0;
+    switch (b) {
+    case 0: 
+        x = 1;
+    };
+};
+#endif
+
+#ifdef O3
+public void f3 () {
+    int b = 0;
+    switch (b) {
+    default : 
+        x = 1;
+    };
+};
+#endif
+
+
+#ifdef O4
+public void f4 () {
+    int b = 0;
+    switch (b) {
+    default: 
+    };
+};
+#endif
+
+#ifdef O5
+public void f5 () {
+    int b = 0;
+    switch (b) {
+    case 0: 
+    };
+};
+#endif
+
+#ifdef O90
+public void f90 () {
+    int b = 0;
+    switch (b) {
+    case 0: 
+        x = 1;
+        break;
+    case 1:
+        break;
+    case 2:
+    case 3:
+        break;
+    default:
+        break;
+    };
+};
+#endif
+
+#ifdef O91
+public void f91 () {
+    byte b = 0;
+    switch (b) {
+    case 0: 
+        x = 1;
+        break;
+    case 0x01:
+        break;
+    case 0X2:
+    case 3:
+        break;
+    default:
+        break;
+    };
+};
+#endif
+} // end class Xc
+
+
+class Rc {
+
+public Rc () { 
+    active {};
+};
+
+}
+
+

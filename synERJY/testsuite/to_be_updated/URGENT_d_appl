@@ -1,0 +1,141 @@
+class Combine_test {
+
+private static final time timing = 1sec;
+
+public static final void main (String[] args) {
+  while (instant() == 0) {};
+};
+
+
+#ifdef T1
+// trace
+//  -> trigger out(30)
+//  -> trigger out(30)
+public Combine_test() {
+  active { [[ triggerit(); || react(); ]]; };
+};
+
+Signal trigger = new Signal(new Output());
+
+Signal<int> out = new Signal<int>(new Output<int>()) ; // TODO combinator (my_add);
+
+private void triggerit() {
+  loop {
+    emit trigger;
+    next;
+  };
+};
+
+private void react() {
+  [[
+    loop {
+        await ?trigger;
+        emit out(10);
+        next;
+    };
+  ||
+    loop {
+        await ?trigger;
+        emit out(20);
+        next;
+    };
+  ]] ;
+};
+
+private static int my_add( int value1, int value2) {
+  return ( value1 + value2 );
+};
+
+#endif
+
+#ifdef T2
+// trace
+//  -> trigger out(30)
+//  -> trigger out(30)
+public Combine_test() {
+  active { [[ triggerit(); || react1(); || react2(); ]]; };
+};
+
+Signal trigger = new Signal(new Output());
+
+Signal<int> out = new Signal<int>(new Output<int>()) ; // TODO combinator (my_add);
+
+private void triggerit() {
+  loop {
+    emit trigger;
+    next;
+  };
+};
+
+private void react1() {
+    loop {
+        await ?trigger;
+        emit out(10);
+        next;
+    };
+};
+
+private void react2() {
+    loop {
+        await ?trigger;
+        emit out(20);
+        next;
+    };
+};
+
+private static int my_add( int value1, int value2) {
+  return ( value1 + value2 );
+};
+#endif
+
+#ifdef T3
+// trace
+//  -> trigger out(30)
+//  -> trigger out(30)
+public Combine_test() {
+  active { aMethod(); };
+};
+
+output Signal      trigger; // TODO Mapto(o1.trigger,o2.trigger);
+
+Signal<int> out = new Signal<int>(new Output<int>()) ; // TODO combinator (my_add) Mapto (o1.out,o2.out);
+
+private Dummy o1 = new Dummy(10);
+private Dummy o2 = new Dummy(20);
+
+private void aMethod() {
+  loop {
+    emit trigger;
+    next;
+ };
+};
+
+private static int my_add( int value1, int value2) {
+  return ( value1 + value2 );
+};
+
+}
+
+class Dummy {
+
+public Dummy(int value) {
+  ret = value;
+  active { aMethod(); };  
+};
+
+ConstSignal trigger = new ConstSignal(new Input());
+
+Signal<int> out = new Signal<int>(new Output<int>());
+
+private int ret;
+
+private void aMethod() {
+  loop {
+    await ?trigger;
+    emit out(ret);
+    next;
+  };
+};
+#endif
+
+}

@@ -1,0 +1,38 @@
+// test-flags O = None true, E = data true, confclass Rct
+class Rct { 
+    static final time timing = 100msec;
+				
+    public Rct () {
+      active {};
+    };
+
+    VisualIncrDecr x = new VisualIncrDecr();
+
+}
+
+// tex_start visual-incr-decr
+class VisualIncrDecr {
+
+    public VisualIncrDecr () {
+      val = 2;
+      active { automaton "chpt_4_inc_dec.sec"; };
+    };
+
+    Sensor inc   = new Sensor(new SimInput());
+    Sensor dec   = new Sensor(new SimInput());
+    Sensor reset = new Sensor(new SimInput());
+
+    Signal<int> intval = new Signal<int>(new SimOutput());
+    Signal ci = new Signal(new SimOutput());
+    Signal co = new Signal(new SimOutput());
+    int val;
+
+    void resetv () { val = 0; };
+    void incv   () { val++;   };
+    void decv   () { val--;   };
+// tex_end tex_start visual-incr-decr
+
+    precedence {
+      incv() < decv() < resetv() < val;
+    };
+}

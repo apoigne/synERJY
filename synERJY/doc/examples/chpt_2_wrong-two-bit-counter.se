@@ -1,0 +1,16 @@
+// test-flags O = None true, E = data true
+class TwoBitCounter { static final time timing = 100msec;
+				
+    public TwoBitCounter () { 
+        active {
+// tex_start wrong-two-bit-counter
+            await ?incr;
+            await ?incr;
+            emit elapsed;	           
+// tex_end wrong-two-bit-counter
+        };
+    };
+
+    Sensor    incr = new Sensor(new SimInput());
+    Signal elapsed = new Signal(new SimOutput());
+}

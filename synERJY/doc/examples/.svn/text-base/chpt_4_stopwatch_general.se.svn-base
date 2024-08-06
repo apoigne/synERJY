@@ -1,0 +1,51 @@
+// test-flags O = None true, E = data true
+class Stopwatch {
+
+static final time timing = 10msec;
+				
+time the_time;
+
+Sensor   start_stop = new Sensor(new SimInput());
+Sensor freeze_reset = new Sensor(new SimInput());
+
+Signal<time> display_time = new Signal<time>(new SimOutput());
+Signal<time>   elapsed_time = new Signal<time>();
+
+public Stopwatch () {
+  active {
+// tex_start stopwatch-general-automaton
+    automaton {
+       init { next state reset; };
+
+       state reset
+          exit { the_time = 0msec;
+                 emit elapsed_time(the_time);
+                 emit display_time($elapsed_time);
+          }
+       when (?start_stop) { next state running; };
+
+       state stopped
+       when (?start_stop) { next state running; }
+       else when (?freeze_reset) { next state reset; };
+
+       state running
+           during {
+             the_time = the_time + timing;
+             emit elapsed_time(the_time);
+             emit display_time($elapsed_time);
+          }
+       when (?start_stop) { next state stopped; }
+       else when (?freeze_reset) { next state frozen; };
+
+       state frozen
+           during {
+             the_time = the_time + timing;
+             emit elapsed_time(the_time);
+          }
+       when (?freeze_reset) { next state running; };
+    };
+// tex_end
+  };
+};
+}
+

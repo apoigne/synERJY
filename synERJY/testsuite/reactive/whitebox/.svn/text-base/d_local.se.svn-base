@@ -1,0 +1,137 @@
+class Rc {
+
+static final time timing = 600msec;
+
+Sensor         a = new Sensor(new SimInput());
+Sensor         b = new Sensor(new SimInput());
+Signal<int> out1 = new Signal<int>(new SimOutput());
+Signal<int> out2 = new Signal<int>(new SimOutput());
+
+public Rc () {
+  active { 
+     c ();
+  };
+};
+
+#ifdef T1
+// trace
+//    -> out1(42)
+//    -> out1(3)
+//    -> out1(4)
+void c() {
+    Signal<int> x = new Signal<int>();
+    emit x(42);
+    emit out1($x);
+    next;
+    Signal y = new Signal();
+    emit y;
+    if (?y) {
+       emit out1(3);
+    };
+    next;
+    if (?y) {
+       emit out1(3);
+    } else {
+       emit out1(4);
+    };
+};
+#endif
+
+#ifdef T2
+// trace
+//    -> out1(0)
+//    -> out1(1)
+//    -> out1(2)
+void c() {
+    Signal<int> x = new Signal<int>();
+    [[ sustain {|
+          x := 0 -> pre(x) + 1;
+       |};
+    || sustain {
+          emit out1($x);
+       };
+    ]];
+
+};
+#endif
+
+#ifdef T3
+// trace
+//    -> out1(0)
+//    -> out1(1)
+// a  -> out1(2)
+//    -> out1(0)
+//    -> out1(1)
+//    -> out1(2)
+void c() {
+    loop {
+        cancel {
+            Signal<int> x = new Signal<int>();
+            [[ sustain {|
+                  x := 0 -> pre(x) + 1;
+               |};
+            || sustain {
+                  emit out1($x);
+               };
+            ]];
+        } when (?a);
+       next;
+    };
+};
+#endif
+
+#ifdef T4
+// trace
+//    -> out1(0) out2(0)
+//    -> out1(1) out2(1)
+// a  -> out1(2) out2(2)
+//    -> out1(0) out2(3)
+//    -> out1(1) out2(4)
+// b  -> out1(2) out2(5)
+//    -> out1(3) out2(0)
+//    -> out1(4) out2(1)
+// a  -> out1(5) out2(2)
+//    -> out1(0) out2(3)
+//    -> out1(1) out2(4)
+// b  -> out1(2) out2(5)
+//    -> out1(3) out2(0)
+//    -> out1(4) out2(1)
+
+void c() {
+  [[ loop {
+        cancel {
+            Signal<int> x = new Signal<int>();
+            [[ sustain {|
+                  x := 0 -> pre(x) + 1;
+               |};
+            || sustain {
+                  emit out1($x);
+               };
+            ]];
+        } when (?a);
+       next;
+    };
+  ||
+    loop {
+        cancel {
+            Signal<int> x = new Signal<int>();
+            [[ sustain {|
+                  x := 0 -> pre(x) + 1;
+               |};
+            || sustain {
+                  emit out2($x);
+               };
+            ]];
+        } when (?b);
+       next;
+    };
+  ]];
+};
+
+
+#endif
+
+
+
+
+}

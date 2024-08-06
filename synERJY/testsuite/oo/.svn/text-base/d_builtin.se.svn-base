@@ -1,0 +1,207 @@
+#ifdef T1
+// trace
+// -> outb(1)
+// -> outb(126)
+// -> outb(-26)
+// -> outb(-56)
+//
+// -> outc(1)
+// -> outc(126)
+// -> outc(200)
+// -> outc(230)
+//
+// -> outs(1)
+// -> outs(126)
+// -> outs(1989)
+// -> outs(-1991)
+// -> outs(-36)
+//
+// -> outus(1)
+// -> outus(126)
+// -> outus(1998)
+// -> outus(63537)
+//
+// -> outi(1)
+// -> outi(126)
+// -> outi(1989)
+// -> outi(2147483647)
+// -> outi(-2147483647)
+// -> outi(-1)
+//
+// -> outui(1)
+// -> outui(126)
+// -> outui(1998)
+// -> outui(2147483647)
+// -> outui(4294967295)
+// -> outui(2147483649)
+//
+// -> outl(1)
+// -> outl(126)
+// -> outl(1989)
+// -> outl(2147483647)
+// -> outl(1)
+// -> outl(-1)
+// -> outl(1)
+//
+// -> outul(1)
+// -> outul(126)
+// -> outul(1998)
+// -> outul(2147483647)
+// -> outul(4294967295)
+// -> outul(1)
+// -> outul(1)
+//
+// -> outc(1)
+// -> outc(2)
+// -> outc(3)
+// -> outc(4)
+// -> outc(5)
+// -> outc(4)
+#endif
+
+class Rc {
+
+Signal<byte>           outb  = new Signal<byte>(new SimOutput());
+Signal<char>           outc  = new Signal<char>(new SimOutput());
+Signal<short>          outs  = new Signal<short>(new SimOutput());
+Signal<unsigned short> outus = new Signal<unsigned short>(new SimOutput());
+Signal<int>            outi  = new Signal<int>(new SimOutput());
+Signal<unsigned int>   outui = new Signal<unsigned int>(new SimOutput());
+Signal<long>           outl  = new Signal<long>(new SimOutput());
+Signal<unsigned long>  outul = new Signal<unsigned long>(new SimOutput());
+Signal<float>          outf  = new Signal<float>(new SimOutput());
+Signal<double>         outd  = new Signal<double>(new SimOutput());
+ 
+byte           b;
+char           c;
+short          s;
+unsigned short us;
+int            i;
+unsigned int   ui;
+long           l;
+unsigned long  ul;
+float          f;
+double         d;
+
+public Rc ()
+{
+active {
+      s1();  emit outb(b);
+next; s2();  emit outb(b);
+next; s3();  emit outb(b);
+next; s4();  emit outb(b);
+
+next; s5();  emit outc(c);
+next; s6();  emit outc(c);
+next; s7();  emit outc(c);
+next; s8();  emit outc(c);
+
+next; s9();  emit outs(s);
+next; s10(); emit outs(s);
+next; s11(); emit outs(s);
+next; s12(); emit outs(s);
+next; s13(); emit outs(s);
+
+next; s14(); emit outus(us);
+next; s15(); emit outus(us);
+next; s16(); emit outus(us);
+next; s17(); emit outus(us);
+
+next; s18(); emit outi(i);
+next; s19(); emit outi(i);
+next; s20(); emit outi(i);
+next; s21(); emit outi(i);
+next; s22(); emit outi(i);
+next; s23(); emit outi(i);
+
+next; s24(); emit outui(ui);
+next; s25(); emit outui(ui);
+next; s26(); emit outui(ui);
+next; s27(); emit outui(ui);
+next; s28(); emit outui(ui);
+next; s29(); emit outui(ui);
+
+next; s30(); emit outl(l);
+next; s31(); emit outl(l);
+next; s32(); emit outl(l);
+next; s33(); emit outl(l);
+next; s34(); emit outl(l);
+next; s35(); emit outl(l);
+next; s36(); emit outl(l);
+
+next; s37(); emit outul(ul);
+next; s38(); emit outul(ul);
+next; s39(); emit outul(ul);
+next; s40(); emit outul(ul);
+next; s41(); emit outul(ul);
+next; s42(); emit outul(ul);
+next; s43(); emit outul(ul);
+
+next; s44(); emit outc(c);
+next; s45(); emit outc(c);
+next; s46(); emit outc(c);
+next; s47(); emit outc(c);
+next; s48(); emit outc(c);
+next; s49(); emit outc(c);
+};
+};
+
+void s1()  { b=1; };
+void s2()  { b=126; };
+void s3()  { b=-26; };
+void s4()  { c=200;b=(byte)c; };
+
+void s5()  { c=1; };
+void s6()  { c=126; };
+void s7()  { c=200; };
+void s8()  { b=-26;c=(char)b; };
+
+void s9()  { s=1; };
+void s10() { s=126; };
+void s11() { s=1989; };
+void s12() { s=-1991; };
+void s13() { us=65500;s=(short)us; };
+
+void s14() { us=1; };
+void s15() { us=126; };
+void s16() { us=1998; };
+void s17() { s=-1999;us=(uint16)s; };
+
+void s18() { i=1; };
+void s19() { i=126; };
+void s20() { i=1989; };
+void s21() { i=2147483647; };
+void s22() { i=-2147483647; };
+void s23() { ui=4294967295;i=(int)ui; };
+
+void s24() { ui=1; };
+void s25() { ui=126; };
+void s26() { ui=1998; };
+void s27() { ui=2147483647; };
+void s28() { ui=4294967295; };
+void s29() { i=-2147483647;ui=(uint32)i; };
+
+void s30() { l=1; };
+void s31() { l=126; };
+void s32() { l=1989; };
+void s33() { l=2147483647; };
+void s34() { l=4611686018427387905; };
+void s35() { l=-4611686018427387905; };
+void s36() { l=(long)4611686018427387905; };
+
+void s37() { ul=1; };
+void s38() { ul=126; };
+void s39() { ul=1998; };
+void s40() { ul=2147483647; };
+void s41() { ul=4294967295; };
+void s42() { ul=4611686018427387905; };
+void s43() { ul=(uint64)4611686018427387905; };
+
+void s44() { c=1; };
+void s45() { c=c+1; };
+void s46() { c=1+c; };
+void s47() { c++; };
+void s48() { ++c; };
+void s49() { c--; };
+
+}

@@ -1,0 +1,54 @@
+class Rc {
+
+
+#ifdef T1
+// trace
+//         ->  x(5)
+//         ->  x(6)
+//         ->  x(7)
+public Rc ()
+{
+  active { c1(5); };
+};
+
+Signal<int>  x = new Signal<int>(new SimOutput());
+int store;
+
+void c1 (int i) {
+   emit x(i);
+   next;
+   emit x(i+1);
+   store = i;
+   next;
+   emit x(store+2);
+};
+#endif
+
+#ifdef T2
+// trace
+//         ->  x(true)
+//         ->  x(false)
+//         ->  x(true)
+public Rc ()
+{
+  active { c1(true); };
+};
+
+Signal<bool>  x = new Signal<bool>(new SimOutput());
+bool store;
+
+void c1 (bool i) {
+   emit x(i);
+   next;
+   emit x(!i);
+   store = i;
+   next;
+   emit x(! ! store);
+};
+#endif
+
+
+
+}
+
+

@@ -1,0 +1,69 @@
+#ifdef T1
+// trace
+// -> outi(1) outf(0.314280)
+// -> outi(2) outf(0.628280)
+// -> outi(3) outf(0.942280)
+// -> outi(4) outf(1.256280)
+// -> outi(5) outf(1.570280)
+// -> outi(6) outf(1.884280)
+#endif
+
+class List<T> {
+
+List<T> tail;
+T head;
+
+public List() {
+   tail = null;
+};
+
+private List(T elem,List<T> list) {
+   head = elem;
+   tail = list;
+};
+
+public T head() {
+   return head;
+};
+
+public List<T> tail() {
+   return tail;
+};
+
+public void prepend(T elem) {
+   tail = new List<T>(head,tail);
+   head = elem;
+};
+
+}
+
+class Rc {
+
+   List<int>   listi = new List<int>();
+   List<float> listf = new List<float>();
+   int   ci = 0;
+   float cf = 0.0f;
+
+   void cons_all() {
+      ci++;
+      listi.prepend(ci);
+      cf += 0.314f;
+      listf.prepend(cf);
+      listf.prepend(cf+0.00028f);
+   };
+
+   Signal<int>   outi = new Signal<int>  (new SimOutput());
+   Signal<float> outf = new Signal<float>(new SimOutput());
+
+   public Rc () {
+      active {
+         loop {
+            cons_all();
+            emit outi(listi.head());
+            emit outf(listf.head());
+            next;
+         };
+      };
+   };
+
+}

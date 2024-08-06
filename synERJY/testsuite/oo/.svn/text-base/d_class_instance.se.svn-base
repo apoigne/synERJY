@@ -1,0 +1,100 @@
+interface Ifc {
+int ifc1 = 5;
+int ifc2 = ifc1*2;
+int ifc3 = ifc2*2 + 42;
+}
+
+class Fields {
+
+public Fields (int inc)
+{
+  cls1  = 1;
+  ins2  = inc+2;
+  ins4  = ins4 + inc;
+  cls5  = 5;
+  ins6  = inc+6;
+  ins8  = ins8+inc;
+  ins11 = inc+11;
+  ins12 = inc+12;
+  ins14 = cls1+ins2+cls3+ins4+cls9+cls10;
+  ins15 = sum(cls1+ins2+cls3,ins4+cls9+cls10);
+};
+public static int cls1;
+public        int ins2;
+public static int cls3 = 3;
+public        int ins4 = 4;
+private static int cls5;
+private        int ins6;
+private static int cls7 = 7;
+private        int ins8 = 8;
+public  static final int cls9  = 9;
+private static final int cls10 = cls9+1;
+public  final int ins11;
+private final int ins12;
+public        int ins13 = cls1+ins2+cls3+ins4+cls9+cls10;
+public        int ins14;
+public        int ins15;
+
+public int get_private ()    { return cls5+ins6+cls7+ins8+cls10; };
+public int sum(int a, int b) { return a+b; };
+}
+
+class Rc {
+
+public Rc ()
+{
+   active { react(); };
+};
+
+Signal<int> osig = new Signal<int>(new SimOutput());
+
+Fields a = new Fields(100);
+
+Fields d;
+
+int i;
+
+private void create_fields ()
+{
+  d = new Fields(200);
+};
+
+#ifdef T1
+// trace
+//             ->
+//             -> osig(3)
+//             -> osig(304)
+//             -> osig(9)
+//             -> osig(308)
+//             -> osig(236)
+//             -> osig(436)
+//             -> osig(27)
+//             -> osig(322)
+//             -> osig(26)
+//             -> osig(229)
+//             -> osig(229)
+//             -> osig(5)
+//             -> osig(10)
+//             -> osig(62)
+//
+private void react ()
+{
+   create_fields ();
+   next; emit osig(Fields.cls1 + a.cls1 + d.cls1);
+   next; emit osig(a.ins2 + d.ins2);
+   next; emit osig(Fields.cls3 + a.cls3 + d.cls3);
+   next; emit osig(a.ins4 + d.ins4);
+   next; emit osig(a.get_private());
+   next; emit osig(d.get_private());
+   next; emit osig(Fields.cls9 + a.cls9 + d.cls9);
+   next; emit osig(a.ins11 + d.ins11);
+   next; emit osig(a.ins13);
+   next; emit osig(a.ins14);
+   next; emit osig(a.ins15);
+   next; emit osig(Ifc.ifc1);
+   next; emit osig(Ifc.ifc2);
+   next; emit osig(Ifc.ifc3);
+};
+#endif
+
+}

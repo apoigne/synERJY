@@ -1,0 +1,73 @@
+class Rc {
+
+static final time timing = 700msec;
+
+public Rc() { active {}; };
+
+#ifdef E1
+// [[MissingClass]]
+TravelFlow x = new TravelFlow();
+#endif
+}
+
+#ifdef E2
+// [[MissingClass]]
+class TravelFlow {
+
+public TravelFlow () {
+   active {
+// tex_start travel-flow
+nothing;
+sustain {|
+   delta  := 0sec -> (pre(delta) > 2sec) ? 0sec : (pre(delta) + dt);
+   swap   := false -> delta > 2sec;
+   right  := true  -> swap ? (! pre(right)) : pre(right);
+   left   := ! right;
+
+   left_coll  := sensing & ? sensorA;
+   right_coll := sensing & ? sensorB & (! left_coll);
+   collision  := left_coll | right_coll;
+   time_coll  := 0sec  -> collision ? now : pre(time_coll);
+   duration   := 1sec  -> (collision ? 1sec : 0sec) 
+                                           + pre(duration);
+   sensing    := false -> pre(time_coll + duration < now);
+
+   l_speed := left_coll         ?  30 :
+              right_coll        ? 180 :
+              (sensing & right) ? 200 :
+              (sensing & left)  ?  10 : pre(l_speed);
+   r_speed := left_coll         ? 180 :
+              right_coll        ?  30 :
+              (sensing & right) ?  10 :
+              (sensing & left)  ? 200 : pre(r_speed);
+   l_dir   := sensing & (! collision) ? 1 : 2;
+   r_dir   := l_dir;
+|};
+// tex_end travel-flow
+};
+};
+
+Signal<time> delta = new Signal<time>();
+Signal<bool> swap  = new Signal<bool>();
+Signal<bool> right = new Signal<bool>();
+Signal<bool> left  = new Signal<bool>();
+
+Signal<bool> left_coll  = new Signal<bool>();
+Signal<bool> right_coll = new Signal<bool>();
+Signal<bool> collision  = new Signal<bool>();
+Signal<time> time_coll  = new Signal<time>();
+Signal<time> duration   = new Signal<time>();
+Signal<bool> sensing    = new Signal<bool>();
+
+Signal<uint8>  l_speed  = new Signal<uint8>(new MotorSpeed(Motor.AT_A));
+Signal<uint8>  r_speed  = new Signal<uint8>(new MotorSpeed(Motor.AT_C));
+
+Signal<uint8>  l_dir    = new Signal<uint8>(new MotorDir(Motor.AT_A));
+Signal<uint8>  r_dir    = new Signal<uint8>(new MotorDir(Motor.AT_C));
+
+Sensor sensorA = new Sensor(new TouchSensor(TouchSensor.AT_1));
+Sensor sensorB = new Sensor(new TouchSensor(TouchSensor.AT_3));
+
+}
+#endif
+

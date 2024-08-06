@@ -1,0 +1,44 @@
+class Rc {
+
+public Rc () {
+    active { c1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+Sensor I3 = new Sensor(new SimInput());
+
+Signal O1 = new Signal(new SimOutput());
+Signal O2 = new Signal(new SimOutput());
+Signal O3 = new Signal(new SimOutput());
+Signal O4 = new Signal(new SimOutput());
+Signal O5 = new Signal(new SimOutput());
+
+//
+// loop { S };
+//
+
+#ifdef T1
+// trace
+//      ->
+//      -> O1
+//      -> O1
+//      -> O1
+//
+private void c1 () {
+    loop { next; emit O1; };
+  };
+#endif
+
+#ifdef T2
+// trace
+//      -> O1
+//      -> O1
+//      -> O1
+//
+private void c1 () {
+    loop { emit O1; next; };
+  };
+#endif
+
+} //end class Rc

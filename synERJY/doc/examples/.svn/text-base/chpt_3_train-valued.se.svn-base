@@ -1,0 +1,61 @@
+// test-flags O = None true, E = data true
+class SingleLine {
+
+static final time timing = 300msec;
+
+// tex_start train-valued
+static final boolean   red = false; // constants for status ..
+static final boolean green = true;  // ... of traffic lights
+
+static final boolean  left = false; // constants for position ..
+static final boolean right = true; // .. of pointings
+
+public SingleLine () {
+   active {
+      emit leftSignal(red);
+      emit rightSignal(red);
+      loop {
+          [[ if ( $lineFree && $leftTrainWaiting ) {
+                 emit rightPointingToOut;
+                 await (?leftPointingIsIn && 
+                        ?rightPointingIsOut);
+                 emit leftSignal(green);
+                 await (! $lineFree);
+                 emit leftSignal(red);
+             }; 
+          || if ( $lineFree && $rightTrainWaiting
+                  && ! $leftTrainWaiting ) {
+                 emit rightPointingToIn;
+                 emit leftPointingToOut;
+                 await (?rightPointingIsIn && 
+                        ?leftPointingIsOut);
+                 emit rightSignal(green);
+                 await (! ?lineFree);
+                 emit rightSignal(red);
+              };
+          ]];    
+          next;
+      };
+   }; 
+};
+// tex_end train-valued
+
+Sensor<boolean> lineFree = new Sensor<boolean>(new SimInput());
+
+Sensor<boolean>  leftTrainWaiting = new Sensor<boolean>(new SimInput());
+Sensor<boolean> rightTrainWaiting = new Sensor<boolean>(new SimInput());
+
+Sensor   leftPointingIsIn = new Sensor(new SimInput());
+Sensor  leftPointingIsOut = new Sensor(new SimInput());
+Sensor  rightPointingIsIn = new Sensor(new SimInput());
+Sensor rightPointingIsOut = new Sensor(new SimInput());
+
+Signal<boolean> leftSignal = new Signal<boolean>(new SimOutput());
+Signal<boolean> rightSignal = new Signal<boolean>(new SimOutput());
+
+Signal  leftPointingToOut = new Signal(new SimOutput());
+Signal   leftPointingToIn = new Signal(new SimOutput());
+Signal rightPointingToOut = new Signal(new SimOutput());
+Signal  rightPointingToIn = new Signal(new SimOutput());
+
+}

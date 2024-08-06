@@ -1,0 +1,66 @@
+class Rc {
+
+public Rc () {
+    active { t(); };
+};
+
+static final time timing = 1sec;
+
+Sensor START_T1 = new Sensor(new SimInput());
+Sensor START_T2 = new Sensor(new SimInput());
+Sensor SYNCHRO_P = new Sensor(new SimInput());
+Sensor SYNCHRO_S = new Sensor(new SimInput());
+
+Signal TIMEOUT = new Signal(new SimOutput());
+
+#ifdef T1
+// trace
+//      ->
+// START_T1 ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      -> TIMEOUT
+//      ->
+//      ->
+// START_T2 ->
+//      ->
+//      ->
+// SYNCHRO_S ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//      ->
+//
+#endif
+
+private void t() {
+  loop {
+    next;
+    await ?START_T1;
+    next;
+    await 8sec;    
+    emit TIMEOUT;
+    next;
+    cancel {
+      await ?START_T2;
+      next;
+      await 8sec;
+      emit TIMEOUT;
+    } when (?SYNCHRO_P || ?SYNCHRO_S) {};
+  };
+};
+
+} //end class Rc

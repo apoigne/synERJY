@@ -1,0 +1,34 @@
+// test-flags O = None true, E = data true
+
+class Rc {
+
+  int x;
+
+  public Rc() {
+    active{ f1(); };
+  };
+
+  private reactive void f1() {
+    fr();
+    f2();
+  };
+
+  private reactive void fr() {
+#ifdef E1
+// [[ParseError]] method declared reactive has
+    while (true) {};
+#endif
+    x++;
+    --x;
+    f3();
+  };
+
+  private void f2() {
+    nothing;
+    f3();
+  };
+
+  private void f3() {
+  };
+
+}

@@ -1,0 +1,136 @@
+class Rc {
+
+public Rc () {
+    active { c1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+Sensor I3 = new Sensor(new SimInput());
+Sensor I4 = new Sensor(new SimInput());
+
+
+Signal O1 = new Signal(new SimOutput());
+Signal O2 = new Signal(new SimOutput());
+Signal O3 = new Signal(new SimOutput());
+Signal O4 = new Signal(new SimOutput());
+Signal O5 = new Signal(new SimOutput());
+Signal O6 = new Signal(new SimOutput());
+
+//
+// cancel S when THENELSE };
+//
+// S == E == if
+//
+
+#ifdef T1
+// trace
+// I1   -> O1
+//      -> O2
+//      ->
+//      ->
+//
+// trace
+// I2   -> O2
+//      ->
+//      ->
+//      ->
+//
+// trace
+// I1 I2 -> O1 O2
+//      ->
+//      ->
+//      ->
+//
+private void c1 () {
+    cancel {
+      if (?I1) { emit O1; }; next;
+    } when (?I2) {};
+    emit O2;
+  };
+#endif
+
+#ifdef T2
+// trace
+// I1   -> O1
+//      -> O2
+//      ->
+//      ->
+//
+// trace
+// I2   -> O2
+//      ->
+//      ->
+//      ->
+//
+// trace
+// I1 I2 -> O1 O2
+//      ->
+//      ->
+//      ->
+//
+private void c1 () {
+    cancel {
+      if (?I1) { emit O1; next; };
+    } when (?I2) {};
+    emit O2;
+  };
+#endif
+
+#ifdef T3
+// trace
+// I1   -> O1
+//      -> O2
+//      ->
+//      ->
+//
+// trace
+// I2   ->
+//      -> O2
+//      ->
+//      ->
+//
+// trace
+// I1 I2 -> O1
+//      -> O2
+//      ->
+//      ->
+//
+private void c1 () {
+    cancel {
+      if (?I1) { emit O1; };
+    } when (?I2) {};
+    next;
+    emit O2;
+  };
+#endif
+
+#ifdef T4
+// trace
+// I1   -> O1 O2
+//      ->
+//      ->
+//      ->
+//
+// trace
+// I2   -> O2
+//      ->
+//      ->
+//      ->
+//
+// trace
+// I1 I2 -> O1 O2
+//      ->
+//      ->
+//      ->
+//
+private void c1 () {
+    cancel {
+      if (?I1) { emit O1; };
+    } when (?I2) {};
+    emit O2;
+  };
+#endif
+
+} //end class Rc
+

@@ -1,0 +1,24 @@
+class Rc {
+
+public Rc () {
+  active { c1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Signal<bool> FB1 = new Signal<bool>(new SimOutput());
+
+
+private void c1 () {
+    loop {
+#ifdef E1
+// [[UnusedCode]]
+      sustain {|
+         FB1 := true;
+      |};
+#endif
+      next;
+    };
+};
+
+} //end class Rc
+

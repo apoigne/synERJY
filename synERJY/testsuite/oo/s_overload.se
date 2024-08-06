@@ -1,0 +1,92 @@
+class Tc4 {
+
+public Tc4 () {};
+
+int m;
+static int ma;
+int m () { return 1; };
+int m (int x) { return 2; };
+int m (short a, short b) { return 3; };
+static int ma () { return 11; };
+static int ma (int x) { return 21; };
+static int ma (short a, short b) { return 31; };
+
+#ifdef E1
+// [[ParseError]]
+double m;
+#endif
+
+#ifdef E2
+// [[ParseError]]
+static double ma;
+#endif
+
+#ifdef E3
+// [[ParseError]]
+static double m;
+#endif
+
+#ifdef E4
+// [[ParseError]]
+double ma;
+#endif
+
+#ifdef E5
+// [[ParseError]]
+int m (short a, short b) { return 50; };
+#endif
+
+#ifdef E6
+// [[ParseError]]
+static int ma (char u, char w) { return 32; };
+#endif
+
+#ifdef E7
+// [[ParseError]]
+static int m (int x) { return 6; };
+#endif
+
+#ifdef E8
+// [[ParseError]]
+int ma (char u, char w) { return 32; };
+#endif
+
+#ifdef E9
+// [[ParseError]]
+int m () { return 30; };
+#endif
+
+#ifdef E10
+// [[ParseError]]
+static int ma () { return 81; };
+#endif
+
+#ifdef E11
+// [[ParseError]]
+static int m () { return 82; };
+#endif
+
+#ifdef E12
+// [[ParseError]]
+static int ma () { return 83; };
+#endif
+
+#ifdef E13
+// [[ParseError]]
+public static void main (String[] args) {
+   while (instant() == 0) {};
+};
+
+public static void main (String[] args) {
+   while (instant() == 0) {};
+};
+#endif
+
+}
+
+class Rc {
+   public Rc() {
+      active {};
+   };
+}
+

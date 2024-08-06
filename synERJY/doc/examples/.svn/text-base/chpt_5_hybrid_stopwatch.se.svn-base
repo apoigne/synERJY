@@ -1,0 +1,53 @@
+// test-flags O = None true, E = data true
+class HybridStopwatch {
+
+static final time timing = 10msec;
+				
+
+// tex_start flow-hybrid-stopwatch
+Sensor   start_stop = new Sensor(new SimInput());
+Sensor freeze_reset = new Sensor(new SimInput());
+
+Signal<time> display_time = new Signal<time>(new SimOutput());
+Signal<time> elapsed_time = new Signal<time>();
+
+public HybridStopwatch () {
+  active {
+    automaton {
+       init { next state reset; };
+
+       state reset
+          during {|
+             elapsed_time := 0msec -> pre(elapsed_time);
+             display_time := elapsed_time;
+          |}
+       when (?start_stop) { next state running; };
+
+       state stopped
+          during {|
+             elapsed_time := pre(elapsed_time);
+             display_time := elapsed_time;
+          |}
+       when (?start_stop) { next state running; }
+       else when (?freeze_reset) { next state reset; };
+
+       state running
+           during {|
+             elapsed_time := pre(elapsed_time) + timing;
+             display_time := elapsed_time;
+          |}
+       when (?start_stop) { next state stopped; }
+       else when (?freeze_reset) { next state frozen; };
+
+       state frozen
+           during {|
+             elapsed_time := pre(elapsed_time) + timing;
+             display_time := pre(display_time);
+          |}
+       when (?freeze_reset) { next state running; };
+    };
+  };
+};
+// tex_end
+}
+

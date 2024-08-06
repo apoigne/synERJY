@@ -1,0 +1,33 @@
+// test-flags O = None true, E = data true, confclass Rct
+class Rct { 
+    static final time timing = 1sec;
+				
+    public Rct () { 
+        active {           
+        };
+    };
+   UpAndDownCounter x = new UpAndDownCounter();
+}
+
+// tex_start up-and-down-counter-ref
+class UpAndDownCounter {
+
+  Signal<int> count = new Signal<int>(new SimOutput());
+
+  public UpAndDownCounter () {
+      active {
+          emit count(0);
+          automaton {
+              init { next state up; };
+              state up     // count upwards
+                  during {|  count := pre(count) + 1; |} 
+              when  ($count > 9) { next state down; };
+              state down  // count downwards
+                  during {| count := pre(count) - 1; |} 
+              when  ($count < 1) { next state up; };
+          };
+      };
+   };
+}
+// tex_end up-and-down-couter
+

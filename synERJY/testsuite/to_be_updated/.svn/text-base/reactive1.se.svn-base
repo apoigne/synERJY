@@ -1,0 +1,46 @@
+// trace -- no error --------------
+//             ->
+// isig 4      -> osig
+// isig 5      -> osig
+//             -> osig
+// isig 1      -> osig
+//             -> osig
+//
+// trace -- no error, too ---------
+// tsig        ->
+//             ->
+// isig 2;tsig -> osig
+// tsig;isig 3 -> osig
+//             -> osig
+// tsig        ->
+//             ->
+//
+// trace -- 3.trace: error --------
+//             ->
+// tsig        -> osig
+//
+
+class Rc
+
+run (e : exception_enum) is creation
+  do
+    v = 10;
+    reactive loop;
+  };
+
+signal tsig is public const;
+signal isig( int i ) is public const;
+signal osig            is public;
+
+e1 is reactive
+   do
+     loop
+       await ?isig;
+       emit osig; next; emit osig
+     };
+   };
+
+int v        is private;
+add( int i ) is private do v = v+i };
+
+}

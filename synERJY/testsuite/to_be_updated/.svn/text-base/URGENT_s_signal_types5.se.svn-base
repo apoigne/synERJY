@@ -1,0 +1,145 @@
+class Rc {
+
+#ifdef E1
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(new Signal());   
+#endif
+
+#ifdef E2
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(new Signal(new SimOutput()));   
+#endif
+
+#ifdef E3
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(new Signal(new SimInput()));   
+#endif
+
+#ifdef E4
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(new Signal<int> ());   
+#endif
+
+#ifdef E5
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(new Signal<int>(new SimOutput()));   
+#endif
+
+#ifdef E6
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(new Signal<int>(new SimInput()));   
+#endif
+
+#ifdef E7
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(new Signal<int> ());   
+#endif
+
+#ifdef E8
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(new Signal<int> ());   
+#endif
+
+#ifdef E9
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(new Signal<int>(new SimOutput()));   
+#endif
+
+} //end class Rc
+
+class Rc1 {
+ 
+  Sensor ss1;
+        Signal xx1;
+
+  Sensor<int> ss2;
+        Signal<int> xx2;
+   
+  Sensor<int> ss3;
+        Signal<int> xx3;
+ 
+#ifdef E1
+// test case continuation
+  public Rc1(Signal x) {
+      xx1 = x;
+      active {
+      };
+  };
+#endif
+
+#ifdef E2
+// test case continuation
+  public Rc1(Sensor x) {
+      xx1 = x;
+      active {
+      };
+  };
+#endif
+
+
+#ifdef E3
+// test case continuation
+  public Rc1(Sensor x) {
+      xx1 = x;
+      active {
+      };
+  };
+#endif
+
+#ifdef E4
+// test case continuation
+  public Rc1(Signal<int> x) {
+      x = xx2;
+      active {
+      };
+  };
+#endif
+
+#ifdef E5
+// test case continuation
+  public Rc1(Sensor<int> x) {
+      x = ss2;
+      active {
+      };
+  };
+#endif
+
+
+#ifdef E6
+// test case continuation
+  public Rc1(Sensor<int> x) {
+      xx2 = x;
+      active {
+      };
+  };
+#endif
+
+#ifdef E7
+// test case continuation
+  public Rc1(Signal<int> x) {
+      x = xx3;
+      active {
+      };
+  };
+#endif
+
+#ifdef E8
+// test case continuation
+  public Rc1(Sensor<int> x) {
+      x = ss3;
+      active {
+      };
+  };
+#endif
+
+
+#ifdef E9
+// test case continuation
+  public Rc1(Sensor<int> x) {
+      xx3 = x;
+      active {
+      };
+  };
+#endif
+
+} //end class Rc

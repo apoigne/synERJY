@@ -1,0 +1,22 @@
+// test-flags O = None true, E = data true
+
+class Rc {
+
+static final time timing = 1sec;
+				
+public Rc () {
+  active {
+#ifdef E1
+// [[CausalityCycle]]
+   [[if (?a) { emit b; };
+   || cancel strongly  { emit a;
+      } when (?b);
+   ]];
+#endif
+  };
+};
+   Signal a = new Signal();
+   Signal b = new Signal();
+
+}
+

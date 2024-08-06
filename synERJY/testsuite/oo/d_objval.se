@@ -1,0 +1,72 @@
+final class Xc {
+
+public Xc (int inc)
+{
+  xc_ar = inc+1;
+  xc_av = inc+2;
+  xc_au = inc+3;
+};
+
+public Xc ()
+{
+  xc_ar = 301;
+  xc_av = 302;
+  xc_au = 303;
+};
+
+protected int xc_ar;
+private   int xc_av;
+public    int xc_au;
+
+public Xc set (int r, int v, int u)
+{
+   xc_ar = r;
+   xc_av = v;
+   xc_au = u;
+   return this;
+};
+}
+
+final class Yc {
+public Yc () { };
+}
+
+class Rc {
+
+public Rc ()
+{
+   active { react(); };
+};
+
+Signal<Xc> out = new Signal<Xc>(new SimOutput());
+Signal<Yc> ety = new Signal<Yc>(new SimOutput());
+
+Xc x1 = new Xc(100);
+Xc x2 = new Xc(200);
+Xc x3 = new Xc();
+Yc y  = new Yc();
+
+#ifdef T1
+// trace
+//             -> out(xc_au(103),xc_av(102),xc_ar(101))
+//             -> out(xc_au(203),xc_av(202),xc_ar(201))
+//             -> out(xc_au(303),xc_av(302),xc_ar(301))
+//             -> out(xc_au(3),xc_av(2),xc_ar(1))
+//             -> out(xc_au(6),xc_av(5),xc_ar(4))
+//             -> out(xc_au(12),xc_av(11),xc_ar(10))
+//             -> ety
+
+private void react ()
+{
+   emit out(x1); next;
+   emit out(x2); next;
+   emit out(x3); next;
+   emit out(x1.set(1,2,3)); next;
+   emit out(x1.set(4,5,6)); next;
+   emit out(x1.set(7,8,9)); emit out(x1.set(10,11,12)); next;
+   emit ety(y); next; // object without fields - a bit strange
+   next;
+};
+#endif
+
+}

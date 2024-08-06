@@ -1,0 +1,35 @@
+class Builtin_Types
+
+run( exception_enum e ) is creation do
+  reactive loop
+};
+
+int   i;
+bool   b;
+float   r;
+double   d;
+byte   b1;
+char   c;
+string   st;
+array   a0[bool];
+array   a1[float];
+array   a2[int];
+array   a3[string];
+array   a4[array[int] ];
+
+any   aany;
+
+string   cs;
+  ca: const array[int];
+
+  ea:  array[int].make(20);
+  cea: const array[int].make(20);
+
+  proc () {
+    i = 6;
+// st    = "qaz";
+// ea[4] = 5;
+// i     = ea[14];
+  };
+
+}

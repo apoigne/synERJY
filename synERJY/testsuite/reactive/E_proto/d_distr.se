@@ -1,0 +1,81 @@
+class Rc {
+
+public Rc () {
+    active { distributor(); };
+};
+
+Sensor SYNC_P = new Sensor(new SimInput());
+Sensor SYNC_S = new Sensor(new SimInput());
+
+Signal MY_SLICE = new Signal(new SimOutput());
+Signal SLICE_P = new Signal(new SimOutput());
+Signal SLICE_S = new Signal(new SimOutput());
+
+Signal NEXT_SLICE = new Signal();
+
+#ifdef T1
+// trace
+//              ->
+//              ->
+// SYNC_P       ->
+//              -> MY_SLICE
+//              -> MY_SLICE
+//              -> MY_SLICE
+//              -> SLICE_S
+//              -> SLICE_S
+//              -> SLICE_S
+//              -> SLICE_P
+//              -> SLICE_P
+//              -> SLICE_P
+//              -> MY_SLICE
+//              -> MY_SLICE
+//              -> MY_SLICE
+//
+// trace
+//              ->
+//              ->
+// SYNC_S       ->
+//              -> SLICE_P
+//              -> SLICE_P
+//              -> SLICE_P
+//              -> MY_SLICE
+//              -> MY_SLICE
+//              -> MY_SLICE
+//              -> SLICE_S
+//              -> SLICE_S
+//              -> SLICE_S
+//              -> SLICE_P
+//              -> SLICE_P
+//
+#endif
+
+private void distributor () {
+    [[
+    automaton {
+
+      init { next state wait_for_synch; };
+
+      state wait_for_synch
+        when (?SYNC_P) { next state slice_2;
+             } else when (?SYNC_S) { next state slice_1;
+             } else { next state wait_for_synch; };
+
+      state slice_1
+        during {emit SLICE_P;}
+        when (?NEXT_SLICE) { next state slice_2; };
+
+      state slice_2
+         during {emit MY_SLICE;}
+        when (?NEXT_SLICE) { next state slice_3; };
+
+      state slice_3
+        during {emit SLICE_S;}
+        when (?NEXT_SLICE) { next state slice_1; };
+    };
+    || await ?SYNC_P || ?SYNC_S; loop { next; next; next; emit NEXT_SLICE; };
+    ]];
+
+};
+
+} //end class Rc
+

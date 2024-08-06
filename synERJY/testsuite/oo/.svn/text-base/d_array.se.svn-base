@@ -1,0 +1,192 @@
+class Csts {
+
+private Csts () {};
+
+public static int[] ia3 = {(int)11,12,13,14};
+public static double[] da3 = {11.0,12.0,13.0,14.0};
+static final int[] ia4 = new int[10];
+public static final int[] ia5 = {(int)16,17,18,19,20,21};
+static final double[] da4 = new double[10];
+public static final double[] da5 = {16.0,17.0,18.0,19.0,20.0,21.0};
+
+}
+
+class Rc {
+
+public Rc ()
+{
+   ia2 = {(int)1,2,3,4,5,6,7,8,9};
+   da1 = new double[20];
+   da2 = {1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0};
+   t3 = new TrArIt(ia2[2]); // set for scramble_trarit()
+   active { react(); };
+};
+
+Signal<int> outi = new Signal<int>(new SimOutput());
+Signal<double> outd = new Signal<double>(new SimOutput());
+
+int[] ia1 = new int[20];
+double[] da1; // init in constructor
+
+int[] ia2;    // init in constructor
+double[] da2; // init in constructor
+
+int[] ia3 = {(int)10,11,12,13};
+double[] da3 = {10.0,11.0,12.0,13.0};
+
+int[] ia4;
+double[] da4;
+
+static int[] cia5;
+static int[] cia6 = new int[10];
+static int[] cia7 = {(int)10,11,12,13,14};
+
+static double[] cda5;
+static double[] cda6 = new double[10];
+static double[] cda7 = {10.0,11.0,12.0,13.0,14.0};
+
+static final int[] cia9 = new int[10];
+static final int[] cia10 = {(int)15,16,17,18,19,20,21};
+
+static final double[] cda9 = new double[10];
+static final double[] cda10 = {15.0,16.0,17.0,18.0,19.0,20.0,21.0};
+
+#ifdef T1
+// trace
+//             ->
+//             -> outi(4)
+//             -> outi(20)
+//             -> outi(10)
+//             -> outi(15)
+//             -> outd(10.000000)
+//             -> outd(15.000000)
+//             -> outi(11)
+//             -> outi(16)
+//             -> outd(11.000000)
+//             -> outd(16.000000)
+//             ->
+//             -> outi(54)
+//             -> outi(67)
+//             -> outi(63)
+//             -> outi(62)
+//             -> outi(48)
+//             -> outi(57)
+//             ->
+//             -> outd(54.000000)
+//             -> outd(67.000000)
+//             -> outd(63.000000)
+//             -> outd(62.000000)
+//             -> outd(48.000000)
+//             -> outd(57.000000)
+//             ->
+//             -> outi(2)
+//             -> outi(3)
+//             -> outi(5)
+//             -> outi(18)
+//             -> outi(13)
+
+private void scramble_iarray ()
+{
+   ia3 = {(int)14,15,16,17};
+   this.ia4 = new int[30];
+   ia1[0]  = 18;
+   ia1[19] = 19;
+   ia1[10] = 20;
+   ia4[0]  = 21;
+   ia4[29] = 22;
+   this.ia4[15] = 23;
+   ia1[3] = ia1[19]; // 19
+   ia2[3] = ia2[4];  // 5
+   ia3[2] = ia3[3];  // 17
+   this.ia4[9] = ia4[0];  // 21
+   cia5         = {(int)15,16,17};
+   cia6[3]      = 18;
+   this.cia6[4] = 19;
+   Rc.cia6[5]   = 20;
+};
+
+private void scramble_darray (double[] la1)
+{
+   da3 = {14.0,15.0,16.0,17.0};
+   da4 = new double[30];
+   la1[0]  = 18.0;
+   la1[19] = 19.0;
+   la1[10] = 20.0;
+   da4[0]  = 21.0;
+   da4[29] = 22.0;
+   da4[15] = 23.0;
+   la1[3] = la1[19]; // 19.0
+   da2[3] = da2[4];  // 4.0
+   da3[2] = da3[3];  // 17.0
+   da4[9] = da4[0];  // 21.0
+   cda5         = {15.0,16.0,17.0};
+   cda6[3]      = 18.0;
+   this.cda6[4] = 19.0;
+   Rc.cda6[5]   = 20.0;
+};
+
+private void scramble_trarit ()
+{
+   t4 = new TrArIt(ia2[3]);
+   t5 = new TrArIt(ia1[0]);
+};
+
+private TrArIt t1 = new TrArIt(2);
+private TrArIt t3;
+private TrArIt t4;
+private TrArIt t5;
+
+private void react ()
+{
+   next; emit outi (ia3.length());
+   next; emit outi (da1.length());
+   next; emit outi (cia7[0]);
+   next; emit outi (cia10[0]);
+   next; emit outd (cda7[0]);
+   next; emit outd (cda10[0]);
+   next; emit outi (Csts.ia3[0]);
+   next; emit outi (Csts.ia5[0]);
+   next; emit outd (Csts.da3[0]);
+   next; emit outd (Csts.da5[0]);
+   next;
+   scramble_iarray ();
+   next; emit outi (ia1[0]+ia2[0]+ia3[0]+ia4[0]); // 18+1+14+21 = 54
+   next; emit outi (ia1[19]+ia2[8]+ia3[3]+ia4[29]); // 19+9+17+22 = 67
+   next; emit outi (ia1[10]+ia2[4]+ia3[1]+ia4[15]); // 20+5+15+23 = 63
+   next; emit outi (ia1[3]+ia2[3]+ia3[2]+ia4[9]); // 19+5+17+21 = 62
+   next; emit outi (cia5[0]+this.cia5[1]+Rc.cia5[2]); // 48
+   next; emit outi (cia6[5]+this.cia6[4]+Rc.cia6[3]); // 57
+   next;
+   scramble_darray (da1);
+   next; emit outd (da1[0]+da2[0]+da3[0]+da4[0]); // see above
+   next; emit outd (da1[19]+da2[8]+da3[3]+da4[29]);
+   next; emit outd (da1[10]+da2[4]+da3[1]+da4[15]);
+   next; emit outd (da1[3]+da2[3]+da3[2]+da4[9]);
+   next; emit outd (cda5[0]+this.cda5[1]+Rc.cda5[2]);
+   next; emit outd (cda6[5]+this.cda6[4]+Rc.cda6[3]);
+   next;
+   scramble_trarit ();
+   next; emit outi (t1.getIt()); // 2
+   next; emit outi (t3.getIt()); // 3
+   next; emit outi (t4.getIt()); // 4
+   next; emit outi (t5.getIt()); // 18
+   next; emit outi (Csts.ia3[2]);
+};
+#endif
+
+}
+
+class TrArIt {
+public TrArIt (int i)
+{
+  si = i;
+};
+
+private int si = 1;
+
+public int getIt ()
+{
+  return si;
+};
+
+}

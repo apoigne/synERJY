@@ -1,0 +1,34 @@
+// test-flags O = None true, E = data true
+
+class Rc {
+
+public Rc () {
+  active {
+    emit outs(1); emit outs(2);
+    };
+};
+
+Delayed<int> outs = new Delayed<int>(new SimOutput());
+Delayed<int> prc  = new Delayed<int>(new SimOutput());
+
+Emit1 o1 = new Emit1(101,outs);
+
+}
+
+class Emit1 {
+
+public Emit1(int x, Delayed<int> s) {
+  active {
+#ifdef O1
+    next; emit s(10); emit s(11);
+#endif
+
+#ifdef E1
+// [[MultEmitInAppl]]
+    emit s(10); emit s(11);
+#endif
+
+  };
+};
+
+}

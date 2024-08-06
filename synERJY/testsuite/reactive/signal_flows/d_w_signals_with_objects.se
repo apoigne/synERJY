@@ -1,0 +1,73 @@
+final class Data {
+   public Data() {};
+
+   int x;
+
+   public void set (int _x) { x = _x; };
+   public int  get () { return x; };
+}
+
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+#ifdef T1
+// trace
+Signal<Data> a = new Signal<Data>(new SimOutput());
+
+Data b = new Data();
+
+private void c1 () {
+  emit a(b);
+};
+#endif
+
+#ifdef T2
+// trace
+Signal<Data> a = new Signal<Data>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+
+Data c = new Data();
+
+private void c1 () {
+  sustain {| a := c; 
+             b := c.get(); 
+          |};
+};
+#endif
+
+#ifdef T3
+// trace
+Signal<Data> a = new Signal<Data>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+
+Data c = new Data();
+
+private void c1 () {
+  sustain {| a := c; 
+             b := a.get(); 
+          |};
+};
+#endif
+
+#ifdef T4
+// trace
+Signal<Data> a = new Signal<Data>(new SimOutput());
+Signal<Data> b = new Signal<Data>(new SimOutput());
+
+Data c = new Data();
+
+private void c1 () {
+  sustain {| a := c; 
+             b := a; 
+          |};
+};
+#endif
+
+
+}
+
+

@@ -1,0 +1,205 @@
+class Rc {
+
+public Rc () {
+   active { react(); };
+};
+
+static int instrc;
+
+#ifdef T1
+// this is the OK case, all other cases which have to throw an exception
+public static final void main (String[] args) {
+   instrc = instant(); instrc += instant();
+   if (instrc == 0 && o.result == 1) {
+      print_string("T1 ok");
+   } else {
+      print_string("T1 error");
+   };
+};
+
+private void react () {
+   o.set_result(0); o.post_m(3); o.bds_w(1); o.bds_r(1); next; o.set_result(1);
+};
+#endif
+
+#ifdef T2
+public static final void main (String[] args) {
+   instrc = instant();
+   if (instrc == 102 && o.result == 2) {
+      print_string("T2 ok");
+   } else {
+      print_string("T2 error");
+   };
+};
+
+private reactive void react () {
+   o.set_result(2);
+   o.pre_m(0);
+};
+#endif
+
+#ifdef T3
+public static final void main (String[] args) {
+   instrc = instant();
+   if (instrc == 103 && o.result == 3) {
+      print_string("T3 ok");
+   } else {
+      print_string("T3 error");
+   };
+};
+
+private reactive void react () {
+   o.set_result(3);
+   o.post_m(0);
+};
+#endif
+
+#ifdef T4
+public static final void main (String[] args) {
+   instrc = instant();
+   if (instrc == 104 && o.result == 4) {
+      print_string("T4 ok");
+   } else {
+      print_string("T4 error");
+   };
+};
+
+private reactive void react () {
+   o.set_result(4);
+   o.violate_i();
+};
+#endif
+
+#ifdef T5
+public static final void main (String[] args) {
+   instrc = instant();
+   if (instrc == 105 && o.result == 5) {
+      print_string("T5 ok");
+   } else {
+      print_string("T5 error");
+   };
+};
+
+private reactive void react () {
+   o.set_result(5);
+   o.violate_a();
+};
+#endif
+
+#ifdef T6
+public static final void main (String[] args) {
+   instrc = instant();
+   if (instrc == 106 && o.result == 6) {
+      print_string("T6 ok");
+   } else {
+      print_string("T6 error");
+   };
+};
+
+private reactive void react () {
+   o.set_result(6);
+   o.throw_m();
+};
+#endif
+
+#ifdef T7
+public static final void main (String[] args) {
+   instrc = instant();
+   if (instrc == null_pointer_exception && o.result == 7) {
+      print_string("T7 ok");
+   } else {
+      print_string("T7 error");
+   };
+};
+
+private reactive void react () {
+   o.set_result(7);
+   o.null_m();
+};
+#endif
+
+#ifdef T8
+public static final void main (String[] args) {
+   instrc = instant();
+   if (instrc == array_index_out_of_bounds_exception && o.result == 8) {
+      print_string("T8 ok");
+   } else {
+      print_string("T8 error");
+   };
+};
+
+private reactive void react () {
+   o.set_result(8);
+   o.bds_w(-1);
+};
+#endif
+
+#ifdef T9
+public static final void main (String[] args) {
+   instrc = instant();
+   if (instrc == array_index_out_of_bounds_exception && o.result == 9) {
+      print_string("T9 ok");
+   } else {
+      print_string("T9 error");
+   };
+};
+
+private reactive void react () {
+   o.set_result(9);
+   o.bds_r(100);
+};
+#endif
+
+static native("printString") void print_string (String s);
+
+static DataObject o = new DataObject();
+
+}
+
+class DataObject {
+
+public DataObject () {
+};
+
+public static int result;
+public static int inv = 0;
+public static int[] ia = {(int)1,2,3,4};
+
+invariant {
+  (inv == 0) else throw(104);
+};
+
+public void set_result (int r) { result = r; };
+
+public void pre_m  (int r)
+     pre assert { (r>0) else throw(102); }
+     { nothing; };
+
+public void post_m (int r)
+     { nothing; }
+     post assert { (r>0) else throw(103); };
+
+public void violate_i ()
+     { inv = 1; };
+
+public void violate_a ()
+     { nothing; assert { (true) then throw(105); }; nothing; };
+
+public void throw_m ()
+     { nothing; throw(106); nothing; };
+
+public void null_m ()
+     { MyNull m = null; m.f(); };
+
+public void bds_w (int i)
+     { ia[i] = 10; };
+
+public void bds_r (int i)
+     { int a = ia[i]; };
+
+}
+
+class MyNull {
+  public MyNull() {};
+  public void f() {};
+}

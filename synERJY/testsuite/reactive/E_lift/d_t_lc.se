@@ -1,0 +1,102 @@
+class Rc {
+
+public Rc () {
+    active { control();
+    };
+};
+
+Sensor start = new Sensor(new SimInput());
+Sensor reset = new Sensor(new SimInput());
+
+Sensor req_above = new Sensor(new SimInput());
+Sensor req_below = new Sensor(new SimInput());
+Sensor req_floor = new Sensor(new SimInput());
+
+Sensor req_served = new Sensor(new SimInput());
+
+Signal stop = new Signal(new SimOutput());
+Signal move_up = new Signal(new SimOutput());
+Signal move_dn = new Signal(new SimOutput());
+
+#ifdef T1
+// trace
+//                      ->
+// start                ->
+//                      ->
+// req_above            -> move_up
+// req_above            -> move_up
+// req_floor            -> stop
+//                      ->
+// req_served req_below -> move_dn
+// req_floor            -> stop
+//                      ->
+// reset                -> stop
+//                      ->
+//                      ->
+//                      ->
+//
+private void control () {
+  automaton {
+
+    init { next state off; };
+
+    state off
+      when (?start) { next state on; };
+
+    state on
+      do {
+        automaton {
+
+          init { next state idle; };
+
+          state idle
+          when (?req_above) {
+              emit move_up;  next state moveUP;
+          } else when (?req_below) {
+              emit move_dn; next state moveDN;
+          };
+
+          state moveUP
+          when (?req_floor) {
+              emit stop; next state stopWhileUP;
+          } else {
+              emit move_up;  next state moveUP;
+          };
+
+          state moveDN
+          when (?req_floor) { emit stop; next state stopWhileDN;
+            } else { emit move_dn; next state moveDN; };
+
+          state stopWhileUP
+          when (?req_served && ?req_above) {
+          emit move_up; next state moveUP;
+          } else when (?req_served && ?req_below) {
+               emit move_dn; next state moveDN;
+          } else when (?req_served) {
+               next state idle;
+          } else {
+               next state stopWhileUP;
+          };
+
+          state stopWhileDN
+          when (?req_served && ?req_below) {
+              emit move_dn; next state moveDN;
+          } else when (?req_served && ?req_above) {
+              emit move_up; next state moveUP;
+          } else when (?req_served) {
+              next state idle;
+          } else {
+              next state stopWhileDN; };
+          };
+      }
+      when (?reset) { next state reset_state; };
+
+    state reset_state
+      entry  { emit stop; }
+      when (?req_served) { next state off; };
+  };
+};
+
+#endif
+
+} //end class Rc

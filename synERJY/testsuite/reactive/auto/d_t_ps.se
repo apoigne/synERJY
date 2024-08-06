@@ -1,0 +1,125 @@
+class Rc {
+
+public Rc () {
+    active { a1();
+    };
+};
+
+Sensor on = new Sensor(new SimInput());
+Sensor off = new Sensor(new SimInput());
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+
+Signal o11 = new Signal(new SimOutput());
+Signal o12 = new Signal(new SimOutput());
+Signal O21 = new Signal(new SimOutput());
+Signal o22 = new Signal(new SimOutput());
+
+Signal s21Do = new Signal(new SimOutput());
+Signal s22Do = new Signal(new SimOutput());
+
+Signal s2Entry = new Signal(new SimOutput());
+Signal s2During = new Signal(new SimOutput());
+Signal s2Exit = new Signal(new SimOutput());
+
+#ifdef T1
+// trace
+//      ->
+// on   -> s21Do
+//      ->
+// I2   ->
+//      ->
+// I1   -> o11 s22Do
+// I1   ->
+// I2   -> o12 s21Do
+//      ->
+// off  ->
+//      ->
+//
+private void a1 () {
+  automaton {
+
+    init {
+      next state s1;
+    };
+
+    state s1
+      when (?on) { next state s2; };
+
+    state s2
+       do {
+          automaton {
+            init { next state s21; };
+
+            state s21
+              do { emit s21Do; }
+              when (?I1) { emit o11; next state s22; };
+
+            state s22
+              do { emit s22Do; }
+              when (?I2) { emit o12; next state s21; };
+           };
+       }
+       when (?off) { next state s1; };
+   };
+};
+#endif
+
+#ifdef T2
+// trace
+//      ->
+//      ->
+// on   -> s2Entry
+//      -> s2During
+//      -> s2During
+//      -> s2During
+// I2   -> s2During
+//      -> s2During
+// I1   -> s2During o11 O21
+// I1   -> s2During
+// I2   -> s2During o12 o22
+//      -> s2During
+// off  -> s2During s2Exit
+//      ->
+//
+private void a1 () {
+  automaton {
+
+    init {
+      next state s1;
+    };
+
+    state s1
+      when (?on) { next state s2; };
+
+    state s2
+       entry { emit s2Entry; }
+       during { emit s2During; }
+       exit { emit s2Exit; }
+       do {
+          [[
+              automaton {
+                 init { next state s21; };
+                 state s21
+                   when (?I1) { emit o11; next state s22; };
+                 state s22
+                   when (?I2) { emit o12; next state s21; };
+              };
+          ||
+              automaton {
+                 init { next state s23; };
+                 state s23
+                   when (?I1) { emit O21; next state s24; };
+                 state s24
+                   when (?I2) { emit o22; next state s23; };
+              };
+          ]];
+       }
+       when (?off) { next state s1; };
+   };
+};
+
+#endif
+
+} //end class Rc

@@ -1,0 +1,125 @@
+class Rc {
+
+public Rc () {
+   active { c1(); };
+};
+
+Signal<int> OI1 = new Signal<int>(new SimOutput());
+Signal<int> OI2 = new Signal<int>(new SimOutput());
+Signal O1 = new Signal(new SimOutput());
+
+Sensor<int>         FI1 = new Sensor<int>(new SimInput());
+Signal{FI1 == 5}<int> FI2 = new Signal<int>(new SimOutput());
+
+//
+// int flow (input):  clock: true
+// int flow (output): clock: expr( int flow (input) )
+//
+
+#ifdef T1
+// trace
+//
+// FI1(1)       ->
+// FI1(2)       ->
+// FI1(3)       ->
+// FI1(4)       ->
+// FI1(5)       -> OI1(5)
+// FI1(2)       ->
+// FI1(2)       ->
+//
+private void c1 () {
+      await $FI1 == 5; emit OI1($FI1);
+  };
+#endif
+
+#ifdef T2
+// trace
+//
+// FI1(1)       ->
+// FI1(2)       ->
+// FI1(3)       ->
+// FI1(4)       ->
+// FI1(5)       -> FI2(1) OI1(5) OI2(1)
+// FI1(2)       ->
+// FI1(2)       ->
+//
+private void c1 () {
+    [[ await $FI1 == 5; emit OI1($FI1);  emit OI2($FI2);
+    || sustain {|
+         FI2 := 1 when (FI1 == 5) -> pre(FI1) when (FI1 == 5);
+       |};
+    ]];
+  };
+#endif
+
+#ifdef T3
+// trace
+//
+// FI1(1)       ->
+// FI1(2)       ->
+// FI1(3)       ->
+// FI1(4)       ->
+// FI1(5)       -> FI2(1)
+// FI1(2)       ->
+// FI1(2)       ->
+// FI1(5)       -> FI2(2)
+// FI1(2)       ->
+//
+// trace
+//
+// FI1(1)       ->
+// FI1(2)       ->
+// FI1(3)       ->
+// FI1(4)       ->
+// FI1(5)       -> FI2(1)
+// FI1(2)       ->
+// FI1(5)       -> FI2(2)
+// FI1(5)       -> FI2(5) OI1(5) OI2(5)
+// FI1(2)       ->
+//
+private void c1 () {
+    [[ await $FI1 == 5 && $FI2 == 5; emit OI1($FI1); emit OI2($FI2);
+    || sustain {|
+         FI2 := 1 when (FI1 == 5) -> pre(FI1) when (FI1 == 5);
+       |};
+    ]];
+  };
+#endif
+
+#ifdef T4
+// trace
+//
+// FI1(1)       -> OI1(1) OI2(0)
+// FI1(2)       -> OI1(2) OI2(0)
+// FI1(3)       -> OI1(3) OI2(0)
+// FI1(4)       -> OI1(4) OI2(0)
+// FI1(5)       -> FI2(1) OI1(5) OI2(1)
+// FI1(2)       -> OI1(2) OI2(1)
+// FI1(2)       -> OI1(2) OI2(1)
+// FI1(5)       -> FI2(2) OI1(5) OI2(2)
+// FI1(2)       -> OI1(2) OI2(2)
+//
+// trace
+//
+// FI1(1)       -> OI1(1) OI2(0)
+// FI1(2)       -> OI1(2) OI2(0)
+// FI1(3)       -> OI1(3) OI2(0)
+// FI1(4)       -> OI1(4) OI2(0)
+// FI1(5)       -> FI2(1) OI1(5) OI2(1)
+// FI1(2)       -> OI1(2) OI2(1)
+// FI1(5)       -> FI2(2) OI1(5) OI2(2)
+// FI1(5)       -> FI2(5) OI1(5) OI2(5) O1
+// FI1(2)       -> OI1(2) OI2(5)
+//
+private void c1 () {
+    [[ await $FI1 == 5 && $FI2 == 5; emit O1;
+    || sustain {|
+         FI2 := 1 when (FI1 == 5) -> pre(FI1) when (FI1 == 5);
+       |};
+    || loop { emit OI1($FI1); emit OI2($FI2); next; };
+    ]];
+  };
+#endif
+
+} //end class Rc
+

@@ -1,0 +1,110 @@
+/**
+ * @class
+ * The Test of the Avr_at90s8515-MCU is to be done on the
+ * CanDIP Evaluation board.
+ */
+
+public class CanDIP {
+    private CanDIP() {};
+
+    public static final int OFF = 0;
+    public static final int ON  = 1;
+
+    public static void initialize () {
+
+        /* button 0: input PB0 */
+        AvrIO.bit_set  (Avr.PORTB,Avr.PB0);  /* activate pull-up resistor */
+        AvrIO.bit_clear(Avr.DDRB ,Avr.DDD0); /* set pin for input */
+
+        /* button 1: input PB1 */
+        AvrIO.bit_set  (Avr.PORTB,Avr.PB1);  /* activate pull-up resistor */
+        AvrIO.bit_clear(Avr.DDRB ,Avr.DDD1); /* set pin for input */
+
+        /* LED2: output PB2 */
+        AvrIO.bit_set(Avr.PORTB,Avr.PB2); /* switch led off */
+        AvrIO.bit_set(Avr.DDRB,Avr.DDD2); /* set pin for output */
+
+        /* LED3: output PB3 */
+        AvrIO.bit_set(Avr.PORTB,Avr.PB3); /* switch led off */
+        AvrIO.bit_set(Avr.DDRB,Avr.DDD3); /* set pin for output */
+    };
+
+    public static boolean b0Pressed() {
+        return AvrIO.bit_is_clear(Avr.PINB,Avr.PINB0);
+    };
+
+    public static boolean b1Pressed() {
+        return AvrIO.bit_is_clear(Avr.PINB,Avr.PINB1);
+    };
+
+    public static void setLED2(int onoff) {
+        if (onoff == ON) {
+            AvrIO.bit_clear(Avr.PORTB,Avr.PB2);
+        } else {
+            AvrIO.bit_set  (Avr.PORTB,Avr.PB2);
+        };
+    };
+
+    public static void setLED3(int onoff) {
+        if (onoff == ON) {
+            AvrIO.bit_clear(Avr.PORTB,Avr.PB3);
+        } else {
+            AvrIO.bit_set  (Avr.PORTB,Avr.PB3);
+        };
+    };
+} // end class CanDIP
+
+
+public class Avr_at90s8515_Test {
+
+    private static final time timing = 500msec;
+
+    Sensor button_0 = new Sensor( new Input() {
+                                        public boolean new_val () {
+                                            return CanDIP.b0Pressed();
+                                        };
+                                      });
+
+    Sensor button_1 = new Sensor( new Input() {
+                                        public boolean new_val () {
+                                            return CanDIP.b1Pressed();
+                                        };
+                                      });
+
+    Signal<int> led_2 = new Signal<int>(new Output() {
+                                            public void put_val (int v) {
+                                                CanDIP.setLED2(v);
+                                            };
+                                        });
+
+    Signal<int> led_3 = new Signal<int>(new Output() {
+                                            public void put_val (int v) {
+                                                CanDIP.setLED3(v);
+                                            };
+                                        });
+
+    public Avr_at90s8515_Test () {
+        CanDIP.initialize();
+        active {
+            loop {
+                cancel {
+                    loop {
+                        emit led_2(CanDIP.ON);
+                        emit led_3(CanDIP.OFF);
+                        next;
+                        emit led_2(CanDIP.OFF);
+                        emit led_3(CanDIP.ON);
+                        next;
+                    };
+                } when (?button_0) {
+                    emit led_2(CanDIP.ON);
+                    emit led_3(CanDIP.ON);
+                };
+                next;
+                await ?button_1;
+            };
+        };
+    };
+
+} // end class Avr_at90s8515_Test
+/* ------------------------------------------------------------------------ */

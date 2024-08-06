@@ -1,0 +1,119 @@
+class Rc {
+
+public Rc () {
+    active {
+    
+#ifdef E1
+// [[InstantLoop]]
+        loop { emit o1; 
+        };
+#endif
+
+#ifdef E2
+// [[InstantLoop]]
+        loop { incr(); 
+        };
+#endif
+
+#ifdef E3
+// [[InstantLoop]]
+        loop { emit o1; emit o2; 
+        };
+#endif
+
+#ifdef E4
+// [[InstantLoop]]
+        loop { if (?i1) { 
+                   next; emit o1; 
+               }; 
+        };
+#endif
+
+#ifdef E5
+// [[InstantLoop]]
+        loop { if (?i1) { 
+                   next; emit o1; 
+               }; 
+        };
+#endif
+
+#ifdef E6
+// [[InstantLoop]]
+        loop { if (?i1) { 
+                   next; emit o1; 
+               } else if (?i2) {
+                   next; emit o2;
+                }; 
+        };
+#endif
+
+#ifdef E7
+// [[InstantLoop]]
+        loop { if (?i1) { 
+                   next; emit o1; 
+               } else {
+                   if (?i2) {
+                       next; emit o2;
+                   };
+                }; 
+        };
+#endif
+
+#ifdef O2
+        loop { if (?i1) { 
+                   next; emit o1; 
+               } else {
+                   if (?i2) {
+                       next; emit o2;
+                   } else {
+                       next;
+                   };
+                }; 
+        };
+#endif
+
+#ifdef E8
+// [[InstantLoop]]
+        loop { if (?i1) { 
+                   next; emit o1; 
+               } else {
+                   if (?i2) {
+                       next; emit o2;
+                   } else {
+                       incr();
+                   };
+                }; 
+        };
+#endif
+
+#ifdef E9
+// [[InstantLoop]]
+        loop { 
+            cancel {
+               next;
+            } when (?i1) {};
+        };
+#endif
+
+#ifdef E10
+// [[InstantLoop]]
+        loop { 
+            await (?i1);
+        };
+#endif
+
+
+    };
+};
+
+Sensor i1 = new Sensor(new SimInput());
+Sensor i2 = new Sensor(new SimInput());
+
+Signal o1 = new Signal(new SimOutput());
+Signal o2 = new Signal(new SimOutput());
+
+private int v;
+
+private void incr() { v++; };
+
+} //end class Rc

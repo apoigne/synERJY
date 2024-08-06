@@ -1,0 +1,23 @@
+enum class exception_enum
+  startup,
+  memory_exc,
+  assert_exc,
+  invariant_exc,
+  observer_exc;
+}
+
+enum class Fenster_Bedienwunsch
+    kein_bedienwunsch,
+    oeffnen,
+    schliessen,
+    ganz_oeffnen,
+    ganz_schliessen;
+}
+
+enum class Enum_Class
+  qaz,wsx,edc,rfv,tgb,yhn;
+}
+
+enum class Enum_Class2
+  qaz,wsx,edc,rfv,tgb,yhn;
+}

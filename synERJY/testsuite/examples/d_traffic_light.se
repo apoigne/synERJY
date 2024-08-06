@@ -1,0 +1,103 @@
+#include "../../target/examples/TrafficLight/traffic_light.se"
+
+#ifdef T1
+// trace   press_button
+// button   -> ped_start_clear ped_red car_red
+//          -> ped_red car_red
+//          -> ped_red car_red
+//          -> ped_red car_red
+//          -> ped_end_clear car_start_green car_to_green ped_red car_red
+//          -> car_yellow ped_red car_red
+//          -> ped_red car_green
+//          -> car_end_green ped_red car_green
+//          -> car_to_red ped_red car_green
+//          -> ped_red car_yellow
+//          -> ped_red car_red ped_to_green ped_start_cross
+//          -> ped_green car_red
+//          -> ped_green car_red
+//          -> ped_end_cross ped_green car_red
+//          -> ped_start_clear ped_red car_red
+//          -> ped_red car_red
+//	    -> ped_red car_red
+//
+// trace   press_button_many_times
+// 	    -> ped_start_clear ped_red car_red
+//          -> ped_red car_red
+// 	    -> ped_red car_red
+// 	    -> ped_red car_red
+// 	    -> ped_red car_red car_to_green car_start_green ped_end_clear
+//          -> ped_red car_yellow car_red
+//          -> ped_red car_green
+// button   -> car_end_green ped_red car_green
+//          -> ped_red car_green car_to_red
+//          -> ped_red car_yellow
+// 	    -> ped_red car_red ped_start_cross ped_to_green
+//          -> ped_green car_red
+//	    -> ped_green car_red
+//          -> ped_green car_red ped_end_cross
+// button   -> ped_red car_red ped_start_clear
+//	    -> ped_red car_red
+//	    -> ped_red car_red
+// 	    -> ped_red car_red
+//          -> ped_red car_red car_start_green car_to_green ped_end_clear
+//	    -> ped_red car_red car_yellow
+// button   -> ped_red car_green
+// 	    -> ped_red car_green car_end_green
+// 	    -> ped_red car_green car_to_red
+// 	    -> ped_red car_yellow
+// button   -> ped_red car_red ped_start_cross ped_to_green
+// 	    -> ped_green car_red
+//  	    -> ped_green car_red
+// button   -> ped_green ped_end_cross car_red
+//	    -> ped_red car_red ped_start_clear
+//	    -> ped_red car_red
+//	    -> ped_red car_red
+// 	    -> ped_red car_red
+//	    -> ped_red car_red car_start_green car_to_green ped_end_clear
+// 	    -> ped_red car_yellow car_red
+// 	    -> ped_red car_green
+// 	    -> ped_red car_end_green car_green
+// 	    -> ped_red car_green
+// 	    -> ped_red car_green
+//          -> ped_red car_green
+//
+// trace   no_button_pressed
+//          -> ped_red car_red ped_start_clear
+//          -> ped_red car_red
+//          -> ped_red car_red
+//          -> ped_red car_red
+//          -> ped_red car_red car_to_green car_start_green ped_end_clear
+//          -> ped_red car_red car_yellow
+//          -> ped_red car_green
+//          -> ped_red car_green car_end_green
+//          -> ped_red car_green
+//          -> ped_red car_green
+//          -> ped_red car_green
+//          -> ped_red car_green
+//          -> ped_red car_green
+//          -> ped_red car_green
+//          -> ped_red car_green
+//          -> ped_red car_green
+//
+// trace   button_pressed_after_car_green
+// button   -> ped_start_clear ped_red car_red
+//          -> ped_red car_red
+//          -> ped_red car_red
+//          -> ped_red car_red
+//          -> ped_end_clear car_start_green car_to_green ped_red car_red
+//          -> car_yellow ped_red car_red
+//          -> ped_red car_green
+// button   -> ped_red car_green car_end_green
+//          -> ped_red car_green car_to_red
+//          -> ped_red car_yellow
+//          -> ped_red car_red ped_to_green ped_start_cross
+//          -> ped_green car_red
+//          -> ped_green car_red
+//          -> ped_green car_red ped_end_cross
+//          -> ped_red car_red ped_start_clear
+//          -> ped_red car_red
+//          -> ped_red car_red
+//          -> ped_red car_red
+#endif
+
+

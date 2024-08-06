@@ -1,0 +1,44 @@
+#!/bin/sh
+# this script assumes, that perl is accessible using PATH
+
+pl="$*"
+wd=''
+bn=`basename $0`
+dn=`dirname $0`
+dn="$PATH:$dn"
+
+for f in $pl # get the file (first parameter not prefixed with '-')
+do
+    case "$f" in
+    -*) : ;;
+    * ) v_fl=$f; break ;;
+    esac
+done
+
+case "$bn:$f" in
+ v_fl:s_*) bn='v_sta_file' ;;
+ v_cs:s_*) bn='v_sta_case' ;;
+ v_fl:d_*) bn='v_dyn_file' ;;
+ v_cs:d_*) bn='v_dyn_case' ;;
+ v_fl:*  ) echo "script 'v_fl' is for use with file names 's_*' or 'd_*'"; exit 1;;
+ v_cs:*  ) echo "script 'v_cs' is for use with file names 's_*' or 'd_*'"; exit 1;;
+esac
+
+IFS=:
+for PathDir in $dn
+do
+    IFS=" "
+    set $PathDir/$bn
+    for File do
+        if [ -f $File ]; then wd=$PathDir; break; fi
+    done
+    IFS=":"
+done
+IFS=" "
+
+case "$wd" in
+ '') echo 'test-software not found - mail reinhard.budde@ais.fhg.de';
+     exit 1 ;;
+ * ) ;;
+esac
+perl $wd/v_se_testdriver.pl $bn $pl

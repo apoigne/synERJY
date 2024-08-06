@@ -1,0 +1,37 @@
+set:1
+next present:1
+set:2
+no
+next present:2
+set:3
+no
+no
+next present:3
+set:4
+no
+no
+no
+next present:4
+set:5
+no
+no
+no
+no
+next present:5
+set:6
+no
+no
+no
+no
+no
+next present:6
+done
+next present:6
+next present:6
+next present:6
+next present:6
+next present:6
+next present:6
+next present:6
+next present:6
+next present:6

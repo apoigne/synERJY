@@ -1,0 +1,109 @@
+class Cls1 {
+public Cls1 (int i) { i1 = i; };
+public int f () { return i1;};
+private int i1;
+}
+
+class Cls2 extends Cls1 {
+public Cls2 (int i) {super(i+1); i2 = i; };
+public int f () { return i2;};
+private int i2;
+}
+
+class Cls3 extends Cls1 {
+public Cls3 (int i) {super(i+1); i3 = i;};
+private int i3;
+}
+
+// the even values reflect the fact [see the constructors], that the
+// field is found in the subclass, the odd value [even+1] reflect the
+// fact, that the value is found in the superclass [whose constructor
+// is called with (...+1)
+
+#ifdef T1
+// trace
+//             -> report(2)
+//             -> report(4)
+//             -> report(7)
+//
+//             -> report(8)
+//             -> report(10)
+//             -> report(13)
+//             -> report(14)
+//             -> report(17)
+//
+//             -> report(2)
+//             -> report(4)
+//             -> report(7)
+//             -> report(18)
+//             -> report(21)
+//
+//             -> report(22)
+//             -> report(25)
+//             ->
+#endif
+
+class Uses {
+
+Signal<int> report = new Signal<int>(new SimOutput());
+
+Cls1 a = new Cls1 (2);  // expanded, dynamically bound
+Cls1 b = new Cls2 (4);  // expanded, dynamically bound
+Cls1 c;                 // expanded, dynamically bound (xx1)
+
+Cls1 d;                 // not expanded, dynamically bound
+Cls1 e;                 // not expanded, dynamically bound
+Cls1 f;                 // not expanded, dynamically bound
+
+private void alloc1 ()
+{
+   d = new Cls1 (8);     // this prohibits the expansion
+   e = new Cls2 (10);    // this prohibits the expansion
+   f = new Cls3 (12);    // this prohibits the expansion
+};
+
+Cls2 g = new Cls2 (14); // not expanded, statically bound
+Cls3 h;                 // not expanded, statically bound (xx2)
+
+private void alloc2 ()
+{
+   d = a;
+   e = b;
+   f = c;
+   g = new Cls2 (18);    // this prohibits the expansion
+   h = new Cls3 (20);    // this prohibits the expansion
+};
+
+Cls2 i = new Cls2 (22); // expanded, statically bound
+Cls3 j;                 // expanded, statically bound (xx3)
+
+public Uses ()
+{
+   c = new Cls3 (6);    // expanded, dynamically bound,    see xx1
+   h = new Cls3 (16);   // not expanded, statically bound, see xx2
+   j = new Cls3 (24);   // expanded, statically bound,     see xx3
+   active { react(); };
+};
+
+private void react ()
+{
+   emit report (a.f()); next;
+   emit report (b.f()); next;
+   emit report (c.f()); next;
+   alloc1 ();
+   emit report (d.f()); next;
+   emit report (e.f()); next;
+   emit report (f.f()); next;
+   emit report (g.f()); next;
+   emit report (h.f()); next;
+   alloc2 ();
+   emit report (d.f()); next;
+   emit report (e.f()); next;
+   emit report (f.f()); next;
+   emit report (g.f()); next;
+   emit report (h.f()); next;
+   emit report (i.f()); next;
+   emit report (j.f()); next;
+                        next;
+};
+}

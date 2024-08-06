@@ -1,0 +1,65 @@
+// test-flags O = None true, E = data true, confclass Rct
+class Rct { 
+    static final time timing = 100msec;
+				
+public Rct () { active { }; };
+
+ControlSingleLine x = new ControlSingleLine();
+}
+
+class ControlSingleLine {
+
+Sensor<bool> isLineFree  = new Sensor<bool>(new SimInput());
+
+Sensor<bool>  leftTrainWaiting = new Sensor<bool>(new SimInput());
+Sensor<bool> rightTrainWaiting = new Sensor<bool>(new SimInput());
+
+Sensor<bool>   leftPointingIsIn = new Sensor<bool>(new SimInput());
+Sensor<bool>  leftPointingIsOut = new Sensor<bool>(new SimInput());
+Sensor<bool>  rightPointingIsIn = new Sensor<bool>(new SimInput());
+Sensor<bool> rightPointingIsOut = new Sensor<bool>(new SimInput());
+
+Signal<bool>   leftPointingToIn = new Signal<bool>(new SimOutput());
+Signal<bool>  leftPointingToOut = new Signal<bool>(new SimOutput());
+Signal<bool>  rightPointingToIn = new Signal<bool>(new SimOutput());
+Signal<bool> rightPointingToOut = new Signal<bool>(new SimOutput());
+
+Signal<bool>  leftSignal = new Signal<bool>(new SimOutput());
+Signal<bool> rightSignal = new Signal<bool>(new SimOutput());
+
+public ControlSingleLine () {
+  active { 
+// tex_start train-data-flow-equations
+sustain {|
+  Signal<bool> change;
+  Signal<bool> priority;
+  Signal<bool> trainWaiting;
+  Signal<bool> trainArriving;
+  Signal<bool> lineFreed;
+  priority       := if (change) {
+                       leftTrainWaiting && rightTrainWaiting;
+                    } else if (! pre(priority)) {
+                       leftTrainWaiting;
+                    } else { 
+                       pre(priority);
+                    };
+   change        :=   isLineFree && trainArriving 
+                    || lineFreed && trainWaiting;
+   trainWaiting  := leftTrainWaiting || rightTrainWaiting;            
+   trainArriving := false -> trainWaiting && ! pre(trainWaiting);   
+   lineFreed     := false -> isLineFree && ! pre(isLineFree);
+   leftPointingToIn   := priority; 
+   rightPointingToOut := priority; 
+   rightPointingToIn  := ! priority; 
+   leftPointingToOut  := ! priority; 
+   leftSignal   := 
+       false -> leftTrainWaiting && isLineFree && 
+                  leftPointingIsIn && rightPointingIsOut;
+   rightSignal  := 
+       false -> rightTrainWaiting  && isLineFree &&
+                  rightPointingIsIn && leftPointingIsOut;
+|};
+// tex_end train-data-flow-equations
+};
+};
+}

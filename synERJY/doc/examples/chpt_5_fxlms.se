@@ -1,0 +1,116 @@
+// test-flags O = None false, E = data true
+
+// tex_start fxlms
+class SysId {
+  static final time timing = 0sec;
+
+  Sensor<float> acc_sensor  = new Sensor<float>(new CodecRightInput());
+  Signal<float> piezo_act  = new Signal<float>(new CodecRightOutput());
+  Signal<float> shaker_act  = new Signal<float>(new CodecLeftOutput());
+
+  Sensor          dip0 = new Sensor(new Dip(0));
+  Sensor          dip1 = new Sensor(new Dip(1));
+  Sensor          dip2 = new Sensor(new Dip(2));
+  Signal<boolean> led0 = new Signal<boolean>(new Led(0));
+  Signal<boolean> led1 = new Signal<boolean>(new Led(1));
+  Signal<boolean> led2 = new Signal<boolean>(new Led(2));
+
+  Signal<float>         y = new Signal<float>();
+  Signal<float[256]> w_id = new Signal<float[256]>();
+  Signal<float[400]>  w    = new Signal<float[400]>();
+
+  static final float mu_id   = 1.0e-11f;
+  static final float mu_ctrl = 1.0e-11f;
+  static final float err     = 500.0f;
+
+  public SysId () {
+     active {
+        automaton {
+           init { next state identification; };
+           
+           state identification
+              entry { emit led2(false); emit led0(true); }
+              during {|
+                 Signal<float> e;
+                 piezo_act := noise_gen();
+                 w_id      := pre(w_id + mu_id * e * piezo_act..);
+                 y         := w_id * piezo_act..^t;
+                 e         := acc_sensor-y;
+                 led0      := e*e < err;
+              |}
+           when (?dip0) { next state shaker_only; };
+           
+           state shaker_only
+              entry  { emit led1(true); emit led0(false); }    
+              during {| shaker_act  := noise_gen(); |}
+           when(?dip1) {next state controlling; };  
+           
+           state controlling
+              entry { emit led2(true); emit led1(false); }
+              during {|
+                 Signal<float> z  = new Signal<float>();
+                 shaker_act := noise_gen(); 
+                 z          :=  w_id * shaker_act..^t;
+                 w          := pre(w - mu_ctrl * acc_sensor * z..);
+                 piezo_act  := w * shaker_act..^t;
+              |}
+           when  (?dip2) { next state identification; };
+        };
+     };
+  };
+
+  precedence {
+     noise_gen() < mu_id;
+     noise_gen() < mu_ctrl;
+  };
+
+  static native private float noise_gen();
+}
+// tex_end
+
+class CodecRightInput implements Input {
+ 
+   public CodecRightInput() { };
+
+   boolean new_val () {
+       return true;
+   }; 
+
+   float get_val () {
+       return 0.0f;
+   };
+}
+
+class Dip implements Input {
+ 
+   public Dip(int x) { };
+
+   boolean new_val () {
+       return true;
+   }; 
+}
+
+class CodecLeftOutput implements Output {
+
+   public CodecLeftOutput() { };
+
+   void put_val (float x) {
+   };
+}
+
+class CodecRightOutput implements Output {
+
+   public CodecRightOutput() { };
+
+   void put_val (float x) {
+   };
+}
+
+class Led implements Output {
+
+   public Led(int x) { };
+
+   void put_val () {
+   };
+}
+

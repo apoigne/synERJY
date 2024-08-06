@@ -1,0 +1,54 @@
+// tex_start in-out-signals
+class InOutSignals {
+    Input     sensor_input = new MyInput();
+    Output actuator_output = new MyOutput();
+
+    Sensor<int>   sensor = new Sensor<int>(sensor_input);
+    Signal<int> actuator = new Signal<int>(actuator_output);
+
+    public InOutSignals() { 
+        active {
+            if (?sensor) { emit actuator($sensor + 1); };
+        };
+    };
+} 
+// tex_end in-out-signals
+
+
+// tex_start my-in-out-signals
+class MyInput  implements Input  { 
+   public MyInput()  {};
+
+   native boolean new_val ();
+   native int     get_val ();
+}
+
+class MyOutput implements Output { 
+   public MyOutput() {};
+  
+   native void put_val ();
+}
+// tex_end my-in-out-signals
+
+// tex_start anon-in-out-signals
+class AnonInOutSignals {
+    Sensor<int>   sensor = 
+       new Sensor<int>(
+              new Input(){ native boolean new_val ();
+                           native int     get_val ();
+                         }
+       );
+    Signal<int> actuator = 
+       new Signal<int>(
+              new Output(){ native void put_val ();
+                          }
+       );
+
+    public AnonInOutSignals() { 
+        active {
+            if (?sensor) { emit actuator($sensor + 1); };
+        };
+    };
+} 
+// tex_end anon-in-out-signals
+

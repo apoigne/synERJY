@@ -1,0 +1,39 @@
+final class Data {
+
+final double x = 1.0;
+final double y = 2.0;
+
+public Data () {
+};
+
+}
+
+class Rc {
+
+static final time timing = 1sec;
+
+#ifdef T1
+// trace
+//  -> u({1.000000,2.000000,3.000000,4.000000,5.000000}) v({{1.000000,2.000000},{3.000000,4.000000},{5.000000,6.000000}}) w(x(1.000000),y(2.000000))
+
+
+double [5]   a = {1.0,2.0,3.0,4.0,5.0};
+double [3,2] b = {{1.0,2.0},{3.0,4.0},{5.0,6.0}};
+Data         c = new Data();
+
+Signal<double[5]>   u  = new Signal<double[5]>(new SimOutput()); 
+Signal<double[3,2]> v  = new Signal<double[3,2]>(new SimOutput()); 
+Signal<Data>        w  = new Signal<Data>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         u := a;
+         v := b;
+         w := c;
+     |};
+  };
+};
+#endif
+
+}

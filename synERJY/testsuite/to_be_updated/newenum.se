@@ -1,0 +1,67 @@
+enum class Enum1
+#ifdef OK
+    a, b, c, d;
+#endif
+#ifdef E1
+// [[ParseError]]
+  1,2,3,1,2,3,1,2,3;
+#endif
+#ifdef E2
+// [[ParseError]]
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z,
+  a,b,c,d,e,f,g,h,i,j,k,l,m,n,q,r,s,t,u,v,w,x,y,z;
+#endif
+#ifdef E4
+// [[ParseError]]
+   Mon .. Fri;
+#endif
+#ifdef E5
+// [[ParseError]]
+   'A', 'B', 'C', 'D', 'E', 'F';
+#endif
+#ifdef E7
+// [[ParseError]]
+   Hearts .. Spades;
+#endif
+#ifdef E8
+// [[ParseError]]
+   if, then, else, signal;
+#endif
+
+#ifdef E9
+// [[ParseError]]
+    null;
+#endif
+
+#ifdef E10
+// [[ParseError]]
+;
+#endif
+}
+
+#ifdef OK
+enum class Stmts
+   If, Then, Else, Signal;
+}
+enum class Cards
+   Clubs, Diamonds, Hearts, Spades;
+}
+enum class singleton
+    a;
+}
+enum class Enum3
+  a,b,c,d;
+}
+#endif

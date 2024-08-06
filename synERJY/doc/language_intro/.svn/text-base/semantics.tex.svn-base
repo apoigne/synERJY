@@ -1,0 +1,978 @@
+\chapter{Semantics}\label{semantics}
+
+\paragraph{The general layout.}
+
+Our intention is to provide a (slightly simplified) version of the
+translation scheme for \se. The following schema explains the general
+setting
+
+\se\ programs are translated to an internal representation of the 
+reactive part with a control structure in terms of a sequential
+circuit and data part for the Java-like host language. Semantical
+checks for causality and time races are performed on this internal
+representation. Code for the different targets is generated from the
+internal representation. The target code is typically C to which
+back-end compilers are applied. For specific targets such as the
+simulator, Simulink, or Scicos the C code is instrumented, but in a way
+that the code kernel is exactly the one that runs on micro controllers,
+DSPs, or similar like. The situation is special for verification and
+FPGA generation. These translation demand for particular code formats
+such as Verilog. However, in both cases the translations of the internal
+code to these targets is of so elementary nature that we claim equivalence
+of the resulting target code. This may be proved by code inspection comparing
+the C code (which is annotated by readable version of the internal representation) with the other respective targets.
+
+Thus we will only be concerned with the translation of the \se\ code
+to the internal representation only.
+
+\paragraph{A hardware translation.}
+
+We define synchronous behaviour in terms of ``Synchronous Automata''
+which have commands of the form
+\begin{quote} 
+\BEP
+s <= $\phi$;          \textit{(Emittance of the signal \emph{s})}
+r <- $\phi$;          \textit{(Setting a register \emph{r}} 
+if ($s$)  $\!$\{ f \};    \textit{(triggering a data operation \emph{f})}
+\EEP
+\end{quote}
+where $\phi$ is a Boolean expression respectively. The difference between
+signals and registers is thus:
+\begin{itemize}
+\item the status of a signal can be read only in the instant it is emitted
+\item the status of a register can be read only in the next instant after it has been set.
+\end{itemize}
+The difference is indicated by using the different symbols \pp{<=} and
+\pp{<-}. The data operation \pp{f} is executed if the signal \pp{s} is present.
+
+A \emph{synchronous automaton} consists of a sequence of such commands. The 
+execution model is simple: the whole sequence of commands is executed exactly 
+once at every instant. We refrain from spelling out a formal definition
+of behaviour or semantics at this point, but believe that everybody will
+have an intuitive understanding of how synchronous automata execute.
+
+The translation scheme is compositional. Each statement generates a synchronous automaton, and the language operators of \se\ define operators on these automata.\footnote{Actually, one should be careful with the term compositionality here. The translation scheme is compositional but not the behaviour. The causality analysis will reschedule the sequence of equations genersted.} If there is any substantial idea in the translation scheme it the use of particular \emph{system signals} that are used in this translation scheme to glue together automata.
+
+To give an example, we translate the elementary statement
+\begin{center}
+\pp{emit s}
+\end{center}
+The corresponding synchronous automaton is
+\begin{quote} 
+\BEP
+ s <= $\alpha$;
+ $\omega$ <= $\alpha$;
+ $\kappa$ <= false;
+\EEP
+\end{quote}
+Here $\alpha$ is the \emph{start} signal, and $\omega$ the termination. Execution of the automaton starts if $\alpha$ is present, and terminates
+at the same instant. Then $|omega$ will be present at the same instant.
+The signal $\kappa$ stands for ``is in control'', meaning that the automaton
+does not terminate at the given instant. of course, the emit statement
+never gets control.
+
+Somewhat more elaborated is the translation of \pp{await ?s}:
+\begin{quote} 
+\BEP
+    r <- !s \& ($\alpha$ | r);
+    $\omega$ <=  s \& ($\alpha$ | r);
+    $\kappa$ <= r;
+\EEP
+\end{quote}
+Here a new \emph{control register} \pp{r} is generated. The automaton keeps
+control until the signal \pp{s} is present. It then terminates at the same
+instant, and looses control.
+
+\emph{Sequential composition} now almost comes for free. Assume that $A_{1}$ and $A_{2}$ are synchronous automata. Then ``$A_{1}\ A_{2}$'' denotes the synchronous automaton
+\begin{quote} 
+\BEP
+ $A_{1}[\gamma/\omega,\kappa_{1}/\kappa]$
+ $A_{2}[\gamma/\alpha,\kappa_{2}/\kappa]$
+ $\kappa$ <= $\kappa_{1}$ | $\kappa_{2}$;
+\EEP
+\end{quote}
+where $\gamma$, $\kappa_{1}$, $\kappa_{2}$ are new pure signals ($\gamma/\omega$ denotes the substitution of $\omega$ by $\gamma$). If started $A_{1}$ is executed. If $A_{1}$ terminates, $A_{2}$ is started. The sequential composition is in control if one of the sub-automata is in control.
+
+We apply these rules to
+\begin{quote}
+\BEP
+    emit car\_to\_red;
+    await ?car\_red;
+\EEP
+\end{quote}
+and obtain the synchronous automaton
+\begin{quote}
+\BEP
+car\_to\_red <= $\alpha$;
+       $\gamma$  <= $\alpha$;
+       $\kappa_{1}$ <= false;
+       r  <- !car\_red \& ($\gamma$ or r);
+       $\omega$  <= car\_red  \& ($\gamma$ or r);
+       $\kappa_{2}$ <= r;
+       $\kappa$  <= $\kappa_{1}$ | $\kappa_{2}$;    
+\EEP
+\end{quote}
+
+The \emph{parallel composition} ``\pp{$A_{1}$ || $A_{2}$;}'' is slightly more complicated. If started, both the sub-automata start to execute. The parallel composition
+terminates if either both sub-automata terminate at the same instant, of if
+one of the sub-automata terminates while the other has terminated computation at an earlier instant. Here the control signal $\kappa$ comes handy:
+\begin{quote}
+\BEP
+    $A_{1}$[$\omega_{1}$/$\omega$,$\kappa_1$/$\kappa$]
+    $A_{2}$[$\omega_{2}$/$\omega$,$\kappa_2$/$\kappa$]
+    $\omega$ <=    $\!\omega_1$ \& $\omega_2$ 
+         | $\omega_1$ \& $\kappa_1$ \& not $\kappa_2$ 
+         | $\omega_2$ \& $\kappa_2$ \&  !$\kappa_1$;
+    $\kappa$ <= $\kappa_1$ or $\kappa_2$;
+\EEP
+\end{quote}
+The condition  ``\pp{$\omega_1$ \& $\kappa_1$ \& !$\kappa_2$}''
+states: if the automaton $A_{1}$ is in control and terminates, and
+if the automaton $A_{2}$ is not in control (has terminated earlier),
+then the parallel composition terminates. 
+
+The \emph{loop statement} ``\pp{loop \{ $A$ \};}'' is again simple
+\begin{quote}
+\BEP
+   $\gamma$ <= $\alpha$ \& $\omega_{1}$;
+   $A$[$\gamma$/$\alpha$,$\omega_{1}$/$\omega$]
+   $\omega$ <= false;
+\EEP
+\end{quote}
+as is the \emph{conditional} ``\pp{if ($\phi$) \{ $A_{1}$ \} else \{ $A_{2}$ \}}''
+\begin{quote}
+\BEP
+   $\gamma_{1}$ <= $\phi$ \& $\alpha$;
+   $\gamma_{2}$ <= not $\gamma_{1}$ \& $\alpha$;
+   $A_{1}$[$\gamma_{1}$/$\alpha$,$\omega_{1}$/$\omega$,$\kappa_{1}$/$\kappa$]
+   $A_{2}$[$\gamma_{2}$/$\alpha$,$\omega_{2}$/$\omega$,$\kappa_{2}$/$\kappa$]
+   $\omega$ <= $\omega_{1}$ | $\omega_{2}$;
+   $\kappa$ <= $\kappa_{1}$ | $\kappa_{2}$;
+\EEP
+\end{quote}
+with \pp{r} being a new control register. Note that $A$ should always be in control for the loop statement because otherwise $A$ would be executed infinitely often at one instant. The conditional can easily be iterated.
+
+The power of the imperative part of the language stems from the \emph{pre-emption statement}. In preparation, we take a closer look at the \pp{halt} statement. It keeps control forever except if it pre-empted. We model pre-emption by introducing a new system signal $\tau$ which is supposed to trigger pre-emption. For each \pp{halt} statement a control register $r$ is generated
+
+\begin{quote}
+\BEP
+    $r$ <- $\alpha$ | !$\tau$ \& r;
+    $\omega$ <= $\tau$ \& r;
+    $\kappa$ <= r;
+
+\EEP
+\end{quote}
+Pre-emption is then modelled using the system signal $\tau$. We consider a simple case of the cancel statement
+\begin{quote}
+\BEP
+    cancel \{
+       $A$
+    \} when ($\phi_{1}$) \{ $A_{1}$ \}
+       \ldots
+       else when ($\phi_{n}$) \{ $A_{n}$ \}    
+\EEP
+\end{quote}
+that translates to
+\begin{quote}
+\BEP
+    $\tau_{1}$ <= $\tau$ | $\kappa$ \& ($\phi_{1}$ | \ldots | $\phi_{n}$);
+    $A$[$\tau_{1}$/$\tau$]
+    $\gamma_{1}$ <= $\tau_{1}$ \& $\phi_{1}$;
+    $A_{1}$[$\gamma_{1}$/$\alpha$,$\kappa_{1}$/$\kappa$]
+    \ldots
+    $A_{1}$[$\gamma_{1}$/$\alpha$,$\kappa_{1}$/$\kappa$]
+\EEP
+\end{quote}
+The automaton $A$ is pre-empted if it is in control, and if one of the conditions $\phi_{i}$ becomes true. Then the respective branch is executed. The other cases like strong pre-emption are considerably more complicated and omitted here. Note that the cancel statement may be pre-empted from the context, hence the \pp{$\tau$ | \ldots}.
+
+Just to convince ourselves that the translation scheme operates properly, let us consider the statement
+\begin{quote}
+\BEP
+     await ($\phi$); = cancel \{
+                       loop \{
+                          next;
+                       \};
+                   \} when ?s;
+\EEP
+\end{quote}
+The next statement is defined by 
+\pp{next;} statement
+\begin{quote}
+\BEP
+    r <- $\alpha$; 
+    $\omega$ <= $\tau$ \& r;
+    $\kappa$ <= !$\tau$ \& r;
+\EEP
+\end{quote}
+Not surprisingly, the loop generates
+\begin{quote}
+\BEP
+    $r$ <- $\alpha$ | $\gamma$;
+    $\gamma$ <= $\tau$ \& r;
+    $\kappa$ <= !$\tau$ \& r;
+    $\omega$ <= false;
+\EEP
+\end{quote}
+which exactly is the semantics of the halt statement. The cancel statement then generates (modulo renaming and rearrangement, and using that $A_{1}$ is the nothing statement)
+\begin{quote}
+\BEP
+    $\tau_{1}$ <= $\tau$ | $\kappa$ \& ?$s$;
+    $r$ <- $\alpha$ | $\gamma$;
+    $\gamma$ <= $\tau$ \& r;
+    $\kappa$ <= !$\tau$ \& r;
+    $\omega$ <= false;
+     $\omega$ <= $\tau$ \& r;
+    $\omega$ <= $\tau$ \& ?$s$;
+\EEP
+\end{quote}
+This is equivalent to 
+\begin{quote} 
+\BEP
+    r <- !s \& ($\alpha$ | r);
+    $\omega$ <=  s \& ($\alpha$ | r);
+    $\kappa$ <= r;
+\EEP
+\end{quote}
+
+
+and 
+We omit translation of the other available constructs to the reader who also
+may want to check that the \emph{await} statement does not need its own translation rule but can be synthesised 
+
+\paragraph{Dealing with data.}
+
+Using \pp{await x > 5} we demonstrate the interaction of data and control
+The obvious idea is that if started a time counter is set to 0 that is
+increased by the ddelta of time \pp{dt} at every instant till the counter exceeds the time limit of 30 seconds.
+l\"{a}sst sich die Interaktion von
+\begin{quote}
+\BEP
+    r <- $\alpha$ | !$\delta$ \& r; 
+    if (r) \{ $\delta$ = x > 5 \};
+    $\omega$ <= $\delta$ \& r;
+    $\kappa$ <= r;
+\EEP
+\end{quote}
+The counter is initialized when \pp{alpha} is present.
+The other data actions are executed whenever the register \pp{r} is set. The register is set for the next instant when \pp{alpha} is present. The Boolean signal $\delta$ interfaces the data with the control structure.
+
+The general idea is thus: data actions like routine calls, assignments, etc. 
+are embedded by the scheme
+\begin{quote}
+\BEP
+    if ($\alpha$) \{ \emph{data action} \};
+    $\omega$ <= $\alpha$;
+    $\kappa$ <= \emph{ff};
+\EEP
+\end{quote}
+and atomic Boolean expressions by
+\begin{quote}
+\BEP
+    if ($\alpha$) \{ $\delta$ = \emph{atomic proposition} \};
+    $\omega$ <= $\alpha$;
+    $\kappa$ <= \emph{ff};
+\EEP
+\end{quote}
+One notices a clear separation of control and data operations that are activated by signals and that provide feedback using pure signals.
+
+to be continued
+
+%\paragraph{Reincarnation.}
+
+%
+%\paragraph{Translating \se charts.}
+%\statecharts~\cite{statecharts}
+
+%\paragraph{Finally, data flow.}
+
+%\lustre~\cite{lustre} 
+
+%\paragraph{On scheduling.}
+
+%Der \"{U}berschrift ``Von Verhalten zu Schaltwerken'' enth\"{a}lt
+%implizit die Behauptung, dass die \"{U}bersetzung (sequentielle)
+%Schaltwerke erzeugt.  Damit dies der Fall ist, muss f\"{u}r synchrone
+%Automaten zus\"{a}tzlich gelten, dass jedes Signal nur noch gelesen
+%werden kann, wenn es einmal emittiert ist (``write-before-read'').
+
+%Nun macht man sich leicht klar, dass der \"{U}bersetzungsprozess die 
+%Eigenschaft nicht notwendig gew\"{a}hrleistet. Zum Beispiel erzeugt 
+%das Programm
+% 
+%\begin{quote}
+%\BEP
+%    await (not ?a);
+%    emit a;
+%\EEP
+%\end{quote}
+% 
+%den synchronen Automaten
+% 
+%\begin{quote}
+%\BEP
+%    r  <-      a  and ($\alpha$ or r);
+%    $\gamma$  <= (not a) and ($\alpha$ or r);  //    (1)
+%    $\kappa_{1}$ <= r;   
+%    a  <= $\gamma$;                     //    (2)
+%    $\omega$  <= $\gamma$;
+%    $\kappa_{2}$ <= false;
+%    $\kappa$  <= $\kappa_{1}$ or $\kappa_{2}$;
+%\EEP
+%\end{quote}
+
+%Wenn wir annehmen, dass das Signal \pp{a} nicht pr\"{a}sent ist, wird
+%das Warten beendet ($\gamma$ wird wahr  (1)), und \emph{das Signal
+%\pp{a} emittiert} (2); es ist in einem Takt also absent und pr\"{a}sent,
+%im Widerspruch zu den Annahmen des synchronen Auswertungsmodells.
+
+%Ein anderes Beispiel ist
+% 
+%\begin{quote}
+%\BEP
+%    [[ await (not ?a);
+%    || emit a;
+%    ]];
+%\EEP
+%\end{quote}
+% 
+%das in den synchronen Automaten
+% 
+%\begin{quote}
+%\BEP
+%    r  <-      a  and ($\alpha$ or r);
+%    $\omega_{1}$ <= (not a) and ($\alpha$ or r);
+%    $\kappa_{1}$ <= r;   
+%    a  <= $\alpha$;
+%    $\omega_{2}$ <= $\alpha$;
+%    $\kappa_{2}$ <= false;
+%    $\omega$  <=    $\!\omega_1$ and $\omega_2$ 
+%          or $\omega_1$ and $\kappa_1$ and not $\kappa_2$ 
+%          or $\omega_2$ and $\kappa_2$ and not $\kappa_1$;
+%    $\kappa$  <= r;
+%\EEP
+%\end{quote}
+
+%\"{u}bersetzt. Scheinbar liegt ein ``read-before-write'' Konflikt vor.
+
+%
+
+%der aber durch einfaches Umsortieren der Befehle ohne 
+%Bedeutungsver\"{a}nderung gel\"{o}st werden kann. Dies ist im 
+%vorhergehenden Fall nicht m\"{o}glich.
+
+%Generell muss der Kompilierer eine synchronen Sprache die
+%\"{U}bersetzung durch ein statisches Scheduling erg\"{a}nzen, das
+%``read-before-write'' Konflikte aufl\"{o}st, wenn es m\"{o}glich ist, 
+%und Programme andernfalls zur\"{u}ckweist.
+
+%
+% Nun mag man sich nach den Vorteilen fragen, wenn erzwingt, dass 
+% Signale nur vor einem Lesezugriff geschrieben werden k\"{o}nnen. 
+% 
+% 
+
+% Alle Zyklen m\"{u}ssen \"{u}ber Register gehen.
+% 
+% Man beachte, dass sowohl der \"{U}bersetzungsmechanismus wie der 
+% erzeugte (Zwischen-) Kode der synchronen Automaten elementar ist. Dies 
+% erh\"{o}ht die Verl\"{a}sslichkeit des erzeugten Kodes zumindest in der 
+% Hinsicht, dass der Kompilerer die Semantik pr\"{a}zise abbildet.
+
+%\begin{thebibliography}{9}
+
+%    \bibitem{sp1} R.~Budde, A.~Poign\'e, K.H.~Sylla. Synchrone 
+%    Programmierung - Grundlagen, at-Automatisierungstechnik, Heft
+%    4(50): A31-A34, April 2002
+
+%    \bibitem{sp2} R.~Budde, A.~Poign\'e, K.H.~Sylla. Synchrone 
+%    Programmierung - Sprachen, at-Automatisierungstechnik, Heft
+%    7(50): A39-A42, Juli 2002.
+
+%    \bibitem{sp3} R.~Budde, A.~Poign\'e, K.H.~Sylla. Synchrone 
+%    Programmierung - Anwendung, at-Automatisierungstechnik, Heft
+%    8(50): A39-A42, August 2002.
+
+%    \bibitem{Clarke} J.R.~burch, E.M.~Clarke, K.L.~McMillan, D.L.~Dill, 
+%    L.J.Hwang. symbolic Model checking: $10^{20}$ States an Beyond, 
+%    \emph{Information and Computation}, 98(2):142-170,June 1992.
+%    
+%				\bibitem{SDL} J.~Ellsberger, D.~Hogrefe, A.~Sarma,\emph{SDL -
+%				Formal Object-oriented Language for Communicating Systems}. 
+%				Prentice Hall Europe, 1997, ISBN 0-13-621384-7.
+%  
+%    \bibitem{lustre} N.~Halbwachs, P.~Caspi, P.~Raymond, and
+%				D.~Pilaud.  The synchronous dataflow programming language Lustre. 
+%				{\em Proceedings of the IEEE}, 79(9):1305--1320, 1991.
+
+%				\bibitem{statecharts} D.~Harel.  Statecharts: A visual approach to
+%				complex systems, \emph{Science of Computer Programming},
+%				8:231--274, 1987.
+%    
+%				\bibitem{se} \texttt{http://www.ais.fraunhofer.de/~ap/sE}
+
+%\end{thebibliography}
+
+%
+% \begin{thebibliography}{}
+%     
+% \bibitem{Synccharts}
+% C.~Andr\'e,
+% \newblock Representation and Analysis of Reactive Behaviors: A Synchronous Approach,
+% \newblock CESA'96, IEEE-SMC, Lille(F), 1996,
+% 
+% \bibitem{banatyne}
+% R.~Bannatyne,
+% \newblock Time Triggered Protocol: TTP/C,
+% \newblock \emph{Embedded systems Programming}, 9/98, 52-54
+% 
+% \bibitem{benveniste}
+% A.~Benveniste, B.~Cailland, and P.~leGuernic,
+% \newblock From Synchrony to Asynchrony,
+% \newblock In: J.C.M Baeten, and S. Mauw (eds.), CONCUR'99, LNCS 1664, 
+% Springer, 1999
+% 
+% \bibitem{fhdl}
+% R.~Budde, P.~Ploeger, K.H.~Sylla,
+% \newblock A Synchronous object-oriented design Flow for Synchronous 
+% Applications,
+% \newblock Proc. FDL'99, ECSI Verlag, Gieres, 1999
+% Springer, 1999
+% 
+% \bibitem{caspi}
+% P.~Caspi, C.~Mazuet, R.~Salem, D.~Weber,
+% \newblock Formal Design of Distributed control Systems with lustre,
+% \newblock in: Proc. Safecomp'99, 1999
+% 
+% \bibitem{Esterel}
+% G.~Berry and G.~Gonthier,
+% \newblock The synchronous programming language Esterel: design, 
+% semantics, implementation,
+% \newblock {\em Science of Computer Programming}, 19:87--152, 1992.
+% 
+% \bibitem{Lustre}
+% N.~Halbwachs, P.~Caspi, P.~Raymond, and D.~Pilaud,
+% \newblock The synchronous data flow programming language Lustre,
+% \newblock {\em Proceedings of the IEEE}, 79(9):1305--1321, Sep. 1991.
+% 
+% \bibitem{basement}
+% H.~Hansson, H.~Lawson, O.~Bridal, S.~Larsson, H.~L\"{o}n, 
+% M.~Str\"{o}mberg,
+% \newblock BASEMENT: An Architecture and Methodology for Distributed 
+% Automotive Real-Time Systems,
+% \newblock {\em IEEE Transactions on Computers}, 48(9):1016--1027, Sep. 
+% 1997.
+% 
+% 
+% \bibitem{Statecharts} 
+% D.~Harel,
+% \newblock  STATECHARTS: A Visual Formalism for Complex Systems, 
+% \newblock \emph{Science of Computer Programming}, 8(3)231-274,1987
+% 
+% \bibitem{Laprie} 
+% J.C.~Laprie (Ed.),
+% \newblock  \emph{Dependability: Basic Concepts and Terminology - in 
+% English, French, German and Japanese}, 
+% \newblock Vienna, Springer, 1992
+% 
+% 
+% \bibitem{Signal} 
+% P.~Le Guernic, T.~Gautier,M.~ Le Borgne,C.~ Le Maire,
+% \newblock Programming Real-time Applications with SIGNAL, 
+% \newblock \emph{Proceedings of  the IEEE}, 79(9), Sept. 1991
+% 
+% \bibitem{kopetz}
+% H.~Kopetz,
+% \newblock \emph{Real-Time systems: Design principles for distributed 
+% Embedded applications},
+% \newblock Kluwer Academic Publishers, 1997
+% 
+% \bibitem{combination}
+% A.~Poign\'e, and L.~Holenderski, \newblock On the Combination of
+% Synchronous Languages, \newblock In: W.P. de Roever (ed.),
+% \emph{Workshop on Compositionality, The Significant difference}, LNCS
+% 1536, Springer, Heidelberg, pp.  490 - 514, 1998.
+% 
+% 
+% \end{thebibliography}
+
+% 
+% 
+% 
+% Wir definieren ein einfaches operationales Modell, \emph{synchrone
+% Automaten}, und \"{u}bersetzen einige typische Sprachelemente der
+% synchronen Programmierung in dieses Modell.
+% 
+% \subsection{Eine einfaches operationales Modell}\label{Modell}
+% 
+% Wir pr\"{a}sentieren das Verhalten eines synchronen Automaten $P$
+% syntaktisch durch eine Sequenz von Befehlen $p$ der Form
+% \begin{quote}
+%     \begin{tabular}{ll}
+%         $s \Leftarrow \phi$; & // das Signal $s$ wird emittiert \\
+%         $c \leftarrow \phi$; & // das Kontrollregister $c$ \ldots\\
+%                                 & // \ldots wird gesetzt  \\
+%         $if\ (?a)\ \{\ action;\ \};$ & // konditionale Aktion\\
+%         $s\Leftarrow cond;$ & // Boolesche Aktion
+%     \end{tabular}
+% \end{quote}
+% Die Bedingung $\phi$ ist ein Boolescher Ausdruck.  Der atomare
+% Boolesche Ausdruck $?a$ fragt, ob das Signal $a$ pr\"{a}sent'' ist.
+% 
+% Deren Bedeutung wird durch \emph{Mikroschritte} der Form  
+% $$(\kappa',\sigma',E')  \ARROW{\kappa}{p}  (\kappa'',\sigma'',E'')$$ 
+% definiert.  Dabei sind $E' \subseteq E''$ Mengen von \emph{Signalen},
+% $\kappa$ und $\kappa' \subseteq \kappa''$ Mengen von
+% \emph{Kontrollregistern} und $\sigma'$ und $\sigma''$
+% \emph{Speicherzust\"{a}nde}.  Die Menge $\kappa$ bezeichnet den
+% Kontrollzustand zu Beginn eines Taktes.  Die Menge der Signale, die
+% emittiert werden, und die Menge der Kontrollzust\"{a}nde, die f\"{u}r
+% den n\"{a}chsten Takt gesetzt werden akkumulieren.  Daher die
+% Forderung, dass $E' \subseteq E''$ und $\kappa' \subseteq \kappa''$.
+% 
+% Im Einzelnen gelte, dass
+% $$(\kappa',\sigma',E)  \ARROW{\kappa}{s\ \Leftarrow\ \phi;} 
+% (\kappa',\sigma',E\cup\{s\})$$ 
+% 
+% $$(\kappa',\sigma',E)  \ARROW{\kappa}{c\ \leftarrow\ \phi;} 
+% (\kappa'\cup\{c\},\sigma',E)$$
+% 
+% $$(\kappa',\sigma',E') \ARROW{\kappa}{if\ (?a)\ \{\ action;\ \};}
+% (\kappa',action(\sigma'),E')$$
+% 
+% $$(\kappa',\sigma',E') \ARROW{\kappa}{s\ \Leftarrow\ cond;}
+% (\kappa',\sigma',E'\cup\{s\})$$
+% Dabei gelte, dass die Bedingung $\phi$, bzw.  $?a$, im Kontrollzustand
+% $\kappa$ und dem Speicherzustand $\sigma'$ bei anliegenden Signalen
+% $E'$ erf\"{u}llt ist.  Wir dr\"{u}cken dies mit der Notation
+% $\kappa,\sigma',E' \models \phi$ aus, ohne die Definition
+% auszuf\"{u}hren.  Entsprechend gelte f\"{u}r die letzte Regel, das die
+% Datenbedingung \emph{cond} im Zustand $\sigma$ erf\"{u}llt und das
+% Signal $s$ pr\"{a}sent ist.  Man beachte , dass der Kontrollzustand
+% $\kappa$ durch einen Mikroschritt nicht ver\"{a}ndert wird.
+% 
+% Wir wollen die Wertzuweisung $s = e;$ auf ein Feld $x$ als eine
+% spezielle Aktion einf\"{u}hren.  Es gelte, dass 
+% $$(\kappa',\sigma',E)
+% \ARROW{\kappa}{if\ (?a)\ \{\ x = e;\ \};}
+% (\kappa',\sigma[s/v_{e}],E)$$ 
+% Der Wert $v_{e}$ des Ausdruckes $e$ im aktuellen Kontext wird dem Feld
+% $x$ zugewiesen, wenn die Bedingung $?a$ erf\"{u}llt ist.  Wir
+% vereinbaren, dass zu jedem Signal $s$ ein Feld $\$s$ zugeh\"{o}rig
+% ist.
+% 
+% Sei $P = p_{1} \ldots p_{n}$ ein synchroner Automat.  In jedem Takt
+% f\"{u}hrt $P$ einen \emph{Makroschritt}
+% $$(\kappa,\sigma)  \ARROW{E/E'}{P}  (\kappa',\sigma')$$
+% aus.  Ein Makroschritt entsteht aus einer Folge von 
+% Mikroschritten
+% $$(\emptyset,\sigma,E \backslash E')
+% \ARROW{\kappa}{p_{1}} (\kappa_{1},\sigma_{1},E_{1})
+% \ARROW{\kappa}{p_{2}} \ldots
+%  \ARROW{\kappa}{p_{n}} (\kappa',\sigma',E')$$ 
+% Dabei ist $E$ die Menge aller Signale und $E'$ die Menge der von $P$
+% emittierten Signale.  Ein Makroschritt ver\"{a}ndert den
+% Kontrollzustand.  In den Mikroschritten werden die Kontrollregister
+% akkumuliert, die f\"{u}r den n\"{a}chsten Makroschritt gesetzt wird.
+%  
+% Makroschritte unterliegen der Einschr\"{a}nkung, dass
+% \begin{itemize}
+%     \item \emph{ein Signal $s$ nur dann emittiert und dem
+%     zugeh\"{o}rigen Feld $s$ nur dann ein Wert zugewiesen werden
+%     darf, wenn zuvor weder dessen Pr\"{a}senz abgefragt noch dessen
+%     Wert benutzt wurde}.
+% \end{itemize}
+% Wir bezeichnen diese Eigenschaft als \emph{Konsistenz}.  Sie
+% gew\"{a}hrleistet, dass, wie im synchronen Auswertungsmodell
+% gefordert, die Pr\"{a}senz und der Wert eines Signals w\"{a}hrend
+% eines Taktes konsistent ist, d.h. jeder Zugriff auf Pr\"{a}senz oder
+% Wert liefert das gleiche Ergebnis.  Alternativ l\"{a}sst sich von
+% einer \emph{write-before-read} Strategie sprechen.
+% 
+% Man beachte das andere Daten in einem Takt durchaus mehrfach 
+% ver\"{a}ndert werden k\"{o}nnen: Sei $x$ ein Feld. Dann bindet die 
+% Sequenz 
+% $$x = 0; x = x + 1;$$
+% zun\"{a}chst den Wert $0$ an das Feld $x$ und dann den Wert $1$. 
+% Dies bedingt die etwas komplexe Definition des Verhaltens.
+% 
+% \subsection{Kausalit\"{a}t}
+% Nicht jeder synchrone Automat gen\"{u}gt der Konsistenz Bedingung, z.B.
+% $$if\ (?s)\ \{ action; \};\ s\ \Leftarrow\ \phi$$
+% Ein solches Programm wird als \emph{kausal inkorrekt} 
+% zur\"{u}ckgewiesen. Ein weiteres Beispiel ist
+% $$if\ (\$s == 5)\ \{\ action;\ \};\ \$s = 5$$
+% 
+% Signal- wie Datenfluss und deren Kombination definieren \emph{kausale}
+% Beziehungen zwischen den Befehlen eines synchronen Automaten.  Wenn
+% diese Beziehungen eine Halbordnung definieren, ist der Automat
+% konsistent.  Bei der \"{U}bersetzung synchroner Sprachen \"{u}bernimmt
+% der Kompiler die Analyse der \emph{Kausalit\"{a}t}.  Er garantiert die
+% Konsistenz des erzeugten synchronen Automaten und damit auch
+% offentsichtlich eine deterministische Auswertung (bei gegebenen
+% Eingangssignalen).
+% 
+% Dass die kausalen Beziehungen nur eine Halbordnung definieren wird an 
+% einem einfachen Beispiel deutlich:
+% $$s\ \Leftarrow\ \phi;\ if\ (?s)\ \{ action; \};\ s'\ \Leftarrow\ \phi';\ if\ (?s')\ \{ action'; \}$$
+% Es gelten die folgenden Ordnungsbeziehungen
+% $$s\ \Leftarrow\ \phi;\quad < \quad if\ (?s)\ \{ action; \}$$
+% $$s'\ \Leftarrow\ \phi';\quad < \quad if\ (?s')\ \{ action'; \}$$
+% Diese ebenso f\"{u}r
+% $$s\ \Leftarrow\ \phi;\ s'\ \Leftarrow\ \phi';\ if\ (?s)\ \{ action; \};\ if\ (?s')\ \{ action'; \}$$
+% Es ist somit m\"{o}glich die Sequenz der Befehle eines synchronen 
+% Automaten zu ver\"{a}ndern, ohne dessen Semantik zu ver\"{a}ndern.
+% Die Bedeutung dieser Beobactung wird im n\"{a}chsten Abschnitt deutlich.
+% 
+% Es gilt nachzutragen, dass Kontrollregister den kausalen Fluss brechen. 
+% Die Sequenz
+% $$if\ (?c)\ \{ action; \};\ c\ \Leftarrow\ \phi$$
+% ist konsistent, wenn $c$ ein Kontrollregister bezeichnet.  Die Abfrage
+% $?c$, ob das Kontrollregister $c$ gesetzt ist, bezihe sich auf den
+% Kontrollzustand zu Beginn des Makroschritts.  Der Befehl $c\
+% \Leftarrow\ \phi$ setzt das Kontrollregister f\"{u}r den nachsten
+% Makroschritt.
+% 
+% \subsection{Zur \"{U}bersetzung von synchroner Sprachstrukturen}
+% Wir wollen als Invariante annehmen, dass jeder durch die \"{U}bersetzung 
+% erzeugte Automat die folgenden sogenannten \emph{Systemsignale} liest oder schreibt:   
+% \begin{itemize}
+%     \item  ein \emph{Startsignal} $\alpha$,
+% 
+%     \item ein \emph{Terminationssignal} $\omega$,
+% 
+%     \item  ein \emph{Triggersignal} $\beta$,
+% 
+%     \item  ein \emph{Abbruchsignal} $\tau$ und
+% 
+%     \item  ein \emph{Kontrollsignal} $\kappa$.
+% \end{itemize}
+% Die Signale $\alpha$, $\beta$ und $\tau$ werden gelesen und die 
+% Signale $\omega$ und $\kappa$ werden geschrieben. Deren Bedeutung 
+% wird nachfolgend sukzessive erk\"{a}rt. 
+% 
+% 
+%  
+% Wir \"{u}bersetzen zun\"{a}chst die Sprachkonstrukte des reaktiven 
+% Kerns in Befehlssequenzen eines synchronen Automaten. Die Notation 
+% \pp{P[x/y]} bedeute, dass das Signal \pp{x} \"{u}berall in \pp{P} durch 
+% das Signal \pp{y} ersetzt wird.  
+% \begin{description}
+%     \item[emit s:]\
+% %     
+%    \BEP
+%        s $\Leftarrow$ $\alpha$;
+% %        if (?$\alpha$) \{ \$s := e; \};
+%        $\omega$ $\Leftarrow$ $\alpha$;
+%        $\kappa$ $\Leftarrow$ false;
+%    \EEP
+% %     
+%     Die Sequenz terminiert in demselben Takt, in dem
+% sie gestartet wird (\pp{$\omega$ $\Leftarrow$ $\alpha$;}) und
+% \"{u}bernimmt niemals die Kontrolle (\pp{$\kappa$ $\Leftarrow$
+% false;}).
+% 
+%    \item[next:]\
+% % 
+%    \BEP
+%       $\rho$ $\Leftarrow$ !$\tau$ \& $\alpha$;
+%       $\kappa$ $\Leftarrow$ $\rho$
+%       $\omega$ $\Leftarrow$ $\beta$ \& !$\rho$;
+%     \EEP
+% % 
+%     Das Register $\rho$ wird bei Start gesetzt, wenn kein
+%     Abbruchsignal anliegt.  Das Register beh\"{a}lt die Kontrolle, bis 
+%     in einem der folgenden Takte das Triggersignal $\beta$ pr\"{a}sent 
+%     ist. In diesem Falle terminiert die Sequenz.
+% 
+%    \item[P Q:]\
+% % 
+%    \BEP
+%       P[$\omega$/$\gamma$,$\kappa$/$\kappa_1$]
+%       Q[$\alpha$/$\gamma$,$\kappa$/$\kappa_2$]
+%       $\kappa$ $\Leftarrow$ $\kappa_1$ | $\kappa_2$;      
+%    \EEP
+% %   
+%    Zun\"{a}chst wird die Sequenz \pp{P} gestartet. Wenn diese 
+%    terminiert, wird in demselben Takt die Sequenz \pp{Q} gestartet.
+%    
+%    \item[if c \{ P \} else \{ Q \}:]\
+% % 
+%    \BEP
+%      $\delta$  $\Leftarrow$ $\alpha$ \& c;
+%      $\alpha_1$ $\Leftarrow$ $\alpha$ \& $\delta$;
+%      $\alpha_2$ $\Leftarrow$ $\alpha$ \& !$\alpha_1$;
+%      P[$\alpha$/$\alpha_1$,$\omega$/$\omega_1$,$\kappa$/$\kappa_1$]
+%      Q[$\alpha$/$\alpha_2$,$\omega$/$\omega_1$,$\kappa$/$\kappa_2$]
+%      $\kappa$ $\Leftarrow$ $\kappa_1$ | $\kappa_2$; 
+%      $\omega$ $\Leftarrow$ $\omega_1$ | $\omega_2$; 
+%    \EEP
+% %   
+%    
+% 
+% 
+%    \item[loop \{ P \}:]\
+% % 
+%    \BEP
+%       $\gamma$ $\Leftarrow$ $\alpha$ | $\omega_1$;
+%       P[$\alpha$/$\gamma$,$\omega$/$\omega_1$]
+%       $\omega$ $\Leftarrow$ false;      
+%    \EEP
+% %   
+% 
+% 
+%    \item[cancel \{ P \} when (c):]\
+% % 
+%    \BEP
+%       $\delta$ $\Leftarrow$ c;
+%       $\tau_1$ $\Leftarrow$ $\tau$ | $\gamma$;
+%       P[$\tau$/$\tau_1$,$\omega$/$\omega_1$]
+%       $\omega$ $\Leftarrow$ $\omega_1$ | $\delta$;
+%    \EEP
+% %   
+% 
+% 
+%    \item[{[[P$\mid\mid$Q]]}:]\
+% % 
+%    \BEP
+%       P[$\omega$/$\omega1$,$\kappa$/$\kappa_1$];
+%       Q[$\omega$/$\omega2$,$\kappa$/$\kappa_2$]
+%       $\kappa$ $\Leftarrow$ $\kappa_1$ | $\kappa_2$;
+%       $\omega$ $\Leftarrow$ $\omega_1$\&$\omega_2$ | $\omega_1$\&$\kappa_1$\&!$\kappa_2$ 
+%                | $\omega_2$\&$\kappa_2$\&!$\kappa_1$ ;
+%    \EEP
+% %   
+% 
+% 
+% \end{description}
+% 
+% steht. Hier sei $c$ ein Kontrollregister
+% 
+% Zum besseren Verst\"{a}ndnis w\"{a}hlen wir eine Kombination
+% textueller und graphischer Darstellung.  
+% Eine entsprechende graphische Darstellung sei
+% \begin{center}
+% {\tt 
+%  \footnotesize  
+%  \setlength{\unitlength}{1.0pt}
+%  \thinlines    
+%     \begin{picture}(110,70)
+%         \put(105,63){$\omega$}
+%         \put(100,55){\vector(0,1){15}}
+%         \put(90,63){$\kappa$}
+%         \put(85,55){\vector(0,1){15}}
+%         \put(75,63){$s$}
+%         \put(70,55){\vector(0,1){15}}
+%         \put(30,63){$\tau$}
+%         \put(40,70){\vector(0,-1){15}}
+%         \put(15,63){$\beta$}
+%         \put(25,70){\vector(0,-1){15}}
+%         \put(0,63){$\alpha$}
+%         \put(10,70){\vector(0,-1){15}}
+%         \put(0,0){\framebox(110,55){}}
+%         \put(5,45){s $\Leftarrow$ $\alpha$;}
+%         \put(5,35){a $\Leftarrow$ $\alpha$;}
+%         \put(5,25){if (?a) \{ \$s := e; \};}
+%         \put(5,15){$\omega$ $\Leftarrow$ $\alpha$ or \#a;}
+%         \put(5,5){$\kappa$ $\Leftarrow$ false;}
+%     \end{picture}
+% }
+% \end{center}
+% 
+% 
+% Die \"{U}bersetzung ist kompositional;  
+% 
+% Sie beruht auf der Annahme einiger Invarianten, die jeder 
+% synchrone Automat erf\"{u}llen muss, der f\"{u}r eine Teilstruktur 
+% erzeugt wurde. Jeder erzeugt 
+% 
+% 
+
+%
+%Semantics of flows
+
+%\paragraph{Sampled data flow, formally.} A formal definition of a sampled flow is somewhat involved (hence a reader sufficiently at ease with the explanations above, may skip the section altogether). As a first observation we note that we have to express the partiality of the table: the flow $d when b$ is not sampled at every instant.
+
+%Let $d^{\$}$ being a function $$d^{\$} : N\!\!I_0 \rightarrow V$$ with $V$ being a domain of values (not caring for typing for convenience), and let $d^?$ being a function $$d^{?} : N\!\!I_0 \rightarrow N\!\!I_0$$. The function $d^{\$}$ specifies the {\em sequence of values}, $d^{\$}(n)$ being the value of the $n$-th sample, and the function $d^?$ specifies the {\em sampling frequency}, the $n$-th sample of the flow $d$ occurs at instant $d^{?}(n)$. 
+
+%In the example, we have for instance that
+%\begin{center}
+%$(d\ when\ b)^{\$}(0) = d_1\quad (d\ when\ b)^?(0) = 1$
+%$(d\ when\ b)^{\$}(1) = d_2\quad (d\ when\ b)^?(1) = 2$
+%$(d\ when\ b)^{\$}(2) = d_4\quad (d\ when\ b)^?(2) = 4$
+%\end{center}
+
+%Unfortunately, the flow $d\ when\ b$ might be down-sampled again
+%\begin{center}
+%  \leavevmode
+%  \begin{tabular}[]{l@{}||@{\quad}cccccccccc}
+%    \hline\hline
+%    \hbox{$n$\quad} &$0$&$1$&$2$&$3$&$4$&$5$&.
+%   \\
+%    \hbox{$d$} &$d_0$&$d_1$&$d_2$&$d_3$&$d_4$&$d_5$&.
+%   \\
+%    \hbox{$b$} &$f$&$t$&$t$&$f$&$t$&$f$&.
+%    \\
+%    \hbox{$d\ when\ b$\quad} &&$d_1$&$d_2$&&$d_4$&&.
+%    \\
+%    \hbox{$b'$\quad} &&$f$&$t$&&$f$&&.
+%    \\
+%    \hbox{$(d\ when\ b)\ when\ b'$\quad} &&$$&$d_2$&&$$&&.
+%    \\
+%    \hline\hline
+%  \end{tabular}
+%\end{center}
+%and, for the final touch, up-sampled again
+%\begin{center}
+%  \leavevmode
+%  \begin{tabular}[]{l@{}||@{\quad}cccccccccc}
+%    \hline\hline
+%    \hbox{$n$\quad} &$0$&$1$&$2$&$3$&$4$&$5$&.
+%   \\
+%    \hbox{$d$} &$d_0$&$d_1$&$d_2$&$d_3$&$d_4$&$d_5$&.
+%   \\
+%    \hbox{$b$} &$f$&$t$&$t$&$f$&$t$&$f$&.
+%    \\
+%    \hbox{$d\ when\ b$\quad} &&$d_1$&$d_2$&&$d_4$&&.
+%    \\
+%    \hbox{$b'$\quad} &&$f$&$t$&&$f$&&.
+%    \\
+%    \hbox{$(d\ when\ b)\ when\ b'$\quad} &&&$d_2$&&&&.
+%    \\
+%    \hbox{$current((d\ when\ b)\ when\ b')$\quad}  
+%       &&$\delta$&$d_2$&&$d_2$&&.
+%    \\
+%    \hline\hline
+%  \end{tabular}
+%\end{center}
+%The difficulty is the the up-sampling of $current((d\ when\ b)\ when\ b')$ should have exactly the same sampling frequency as $d\ when\ b$. This is what the function $((d\ when\ b)\ when\ b')^?$ may memorize, but we still need a function to relate the sampling frequency of $d\ when\ b$ to its ``base'' frequency, namely that of $d$. Further iteration proves the need of even more such functions.
+
+%Hence we will define a {\em sampled data flow} to consists of a sequence of functions $$(d^{\$},d^n,...,d^0)$$ such that $d^{\$} : N\!\!I_0 \rightarrow V$ specifies the sequence of values and such that the functions $d^{\$} : N\!\!I_0 \rightarrow N\!\!I_0$ specify sampling frequencies.
+
+%A data flow of the form $(d^{\$},id)$ with $id$ being the identity function is said to be at ``base frequency'' since it will be sampled at every instant like the flows $d$ or $b$ above. 
+
+%The definition of down-sampling $d\ when\ b$ then is as follows: the idea is that the $B_0 = \{ n \mid b_v(n) = t \}$ specifies sample indexes at which the flow $b$ has value true. The minimum of this set of indexes specifies the smallest index at which the sequence $b_{\$}$ has value true, i.e. the first index at which the flow $d$ should be sampled. Let us use $b^t(0)$ to refer to this index. The next sample is then obtained as the smallest index of the set $B_0$ but minus $b^t(0)$, that is $b^t(1) = min(B_0 \backslash b^t(0))$, etc. . Using the $b^t(n)$'s we can define 
+%\begin{eqnarray*}
+%(d\ when\ b)^{\$}(n) & = & d^{\$}(b^t(n)) \\
+%(d\ when\ b)^?(n) & = & b^?(b^t(n))
+%\end{eqnarray*}
+%The $b_t(n)$'s are formally defined by 
+%\begin{eqnarray*}
+%b_t(n) & = & min\ B_n \\
+%B_0 & = & \{ n \mid b^{\$}(n) = t \} \\
+%B_{n+1} & = & B_n\ \backslash\ b_t(n)
+%\end{eqnarray*}
+%Note that the instant of the $n$-th sample is obtained as $b^?(b^t(n))$, i.e. the instant at which the flow $b$ becomes true for the $n$-th time.
+
+%
+
+%
+
+%Formally, if we have an $m$-ary operator $f(d_0,...,d_{m-1})$ it should be the case that $d_i^? = d_j^?$ for all $i,j$ in $0,\ldots,m-1$.
+
+%Formally, we assume that a function $\chi : N\!\!I_0 \rightarrow N\!\!I_0$ specifies the {\em frequency} of a flow $d$: the $n$-th sample of the flow $d$ occurs at instant $\chi(n)$. 
+
+%Hence, rather than by a sequence $d = (d_0,d_1,d_2,\ldots)$, a flow should be specified by a pair $d = (d^{\$},d^?)$, with $d^{\$}$ being a function $d^{\$} : N\!\!I_0 \rightarrow V$ with $V$ being a domain of values (not caring for typing for convenience), and $d^?$ being a function $d^{?} : N\!\!I_0 \rightarrow N\!\!I_0$. The function $d^{\$}$ specifies the sequence of values, $d^{\$}(n)$ being the value of the $n$-th sample, and the function $d^?$ specifies the {\em frequency}, the $n$-th sample of the flow $d$ occurs at instant $d^{?}(n)$. 
+
+%Thus in the table above, the first sample of the flow $d\ when\ b$ occurs at instant $1$ with value $d_1$, the second at at instant $2$ with value $d_2$, the third at instant $4$ with value $d_4$, etc. . 
+
+%Not that a flow might be sampled every instant, i.e. the frequency function is the identity function. We say that then a flow is {\em on base frequency}. In a table, this just means that we have an entry at each instant, as do $d$ and $b$ in the table above. 
+
+%The formal definition of down-sampling is slightly elaborate. The idea is that the $B_0 = \{ n \mid b_v(n) = t \}$ specifies sample indexes at which the flow $b$ has value true. The minimum of this set of indexes specifies the smallest index at which the sequence $b_{\$}$ has value true, i.e. the first index at which the flow $d$ should be sampled. Let us use $b^t(0)$ to refer to this index. The next sample is then obtained as the smallest index of the set $B_0$ but minus $b^t(0)$, that is $b^t(1) = min(B_0 \backslash b^t(0))$, etc. . Using the $b^t(n)$'s we can define 
+%\begin{eqnarray*}
+%(d\ when\ b)^{\$}(n) & = & d^{\$}(b^t(n)) \\
+%(d\ when\ b)^?(n) & = & b^?(b^t(n))
+%\end{eqnarray*}
+%The $b_t(n)$'s are formally defined by 
+%\begin{eqnarray*}
+%b_t(n) & = & min\ B_n \\
+%B_0 & = & \{ n \mid b^{\$}(n) = t \} \\
+%B_{n+1} & = & B_n\ \backslash\ b_t(n)
+%\end{eqnarray*}
+%Note that the instant of the $n$-th sample is obtained as $b^?(b^t(n))$, i.e. the instant at which the flow $b$ becomes true for the $n$-th time.
+
+%\paragraph{Up-sampling.} There is a second operator to change the sampling frequency of a flow. The operator $current$ latches the value of a flow till the sample.
+%\begin{center}
+%  \leavevmode
+%  \begin{tabular}[]{l@{}||@{\quad}cccccccccc}
+%    \hline\hline
+%    \hbox{$n$\quad} &$0$&$1$&$2$&$3$&$4$&.
+%   \\
+%    \hbox{$d$} &$d_0$&$d_1$&$d_2$&$d_3$&$d_4$&$d_5$&.
+%   \\
+%    \hbox{$b$} &$f$&$t$&$t$&$f$&$t$&$f$&.
+%    \\
+%    \hbox{$d\ when\ b$\quad} &&$d_1$&$d_2$&&$d_4$&&.
+%    \\
+%    \hbox{current($d\ when\ b$)\quad} &&$d_1$&$d_2$&$d_2$&$d_4$&$d_4$&.
+%    \\    \hline\hline
+%  \end{tabular}
+%\end{center}
+%Of course, the operator should only be applied to down-sampled flows (i.e. those not being on base frequency). The frequency of the operator should be that of the flow that has been down-sampled using the $when$ operator, that is the frequency of $d$ in the example. 
+
+%The flow $current(d)$ is formally defined by
+%\begin{eqnarray*}
+%current(d)^{\$}(n) & = & d^{\$}() \\
+%current(d)^?(n) & = & (d^?)^?
+%\end{eqnarray*}
+%   
+
+%
+
+%\paragraph{Well-definedness of operators on flows.} The table (as, of course, does the formal definition) suggests that the flows $d$ and $b$ is substantially different from the down-sampled flow $d\ when\ b$.  A term such as
+%$$d + (d\ when\ b)$$
+%does not appear as being well defined while 
+%$$(d'\ when\ b) + (d\ when\ b)$$
+%should be as indicated by the table
+%\begin{center}
+%  \leavevmode
+%  \begin{tabular}[]{l@{}||@{\quad}cccccccccc}
+%    \hline\hline
+%    \hbox{$n$\quad} &$0$&$1$&$2$&$3$&$4$&.
+%   \\
+%    \hbox{$d$} &$d_0$&$d_1$&$d_2$&$d_3$&$d_4$&.
+%   \\
+%    \hbox{$d'$} &$d'_0$&$d'_1$&$d'_2$&$d'_3$&$d'_4$&.
+%   \\
+%    \hbox{$b$} &$f$&$t$&$t$&$f$&$t$&.
+%    \\
+%    \hbox{$d\ when\ b$\quad} &&$d_1$&$d_2$&&$d_4$&.
+%    \\    
+%    \hbox{$d'\ when\ b$\quad} &&$d'_1$&$d'_2$&&$d'_4$&.
+%    \\
+%    \hbox{$(d\ when\ b) + (d'\ when\ b)$\quad}    		&&$d_1+d'_1$&$d_2+d'_2$&&$d_4+d'_4$&.
+%    \\
+%    \hline\hline
+%  \end{tabular}
+%\end{center} 
+%Roughly, we expect that a $m$-nary operator on flows is well defined only if all its arguments are sampled at the same instant. Formally, if we have an $m$-ary operator $f(d_0,...,d_{m-1})$ it should be the case that $d_i^? = d_j^?$ for all $i,j$ in $0,\ldots,m-1$.
+
+%\paragraph{Clocks for typing.} The previous paragraph suggests that frequencies should be part of a typing discipline for flows. However, it is not reasonable to base 
+
+%
+
+%
+
+%
+
+%
+%In order to deal with this problem we shall revise the semantics of flows expressions and flow signals. 
+
+%Remember that we have defined a data flow $d$ to be a sequence $(d_0, d_1, d_2, \ldots)$. So far, there has been the implicit assumption that the index of a data flow coincides with the notion of an instant, i.e. the value $d(n)$ is exactly the value a flow $d$ has at the $n$-th instant. Obviously, the flow $d\ when\ b = (d_1, d_2, d_4, \ldots)$ does not fit into the scheme since, e.g., $(d\ when\ b)(0) = d(1)$ is only defined at instant $1$, etc. 
+%\begin{center}
+%  \leavevmode
+%  \begin{tabular}[]{l@{}||@{\quad}cccccccccc}
+%    \hline\hline
+%    \hbox{$n$\quad} &$0$&$1$&$2$&$3$&$4$&.
+%   \\    
+%    \hbox{$d$} &$d_0$&$d_1$&$d_2$&$d_3$&$d_4$&.
+%   \\
+%    \hbox{$b$} &$f$&$t$&$t$&$f$&$t$&.
+%    \\
+%       \hbox{\small index (of)} &&$0$&$1$&&$2$&.
+%    \\
+%    \hbox{$d\ when\ b$\quad} &&$d_1$&$d_2$&&$d_4$&.
+%    \\    \hline\hline
+%  \end{tabular}
+%\end{center}
+%The mapping of the index to the instant defines a mapping $c : N\!\!I_0 \rightarrow N\!\!I_0$
+

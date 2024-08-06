@@ -1,0 +1,16 @@
+// test-flags O = None true, E = data true
+class DelayedNoCausality {
+    static final time timing = 100msec;
+				
+// tex_start delayed-no-causality
+DelayedSignal a = new DelayedSignal(new SimOutput());
+       Signal b = new Signal(new SimOutput());
+
+public DelayedNoCausality () {
+   active {
+      if (?a) { emit b; } else { emit a; };
+   };
+};
+// tex_end delayed-no-causality
+
+}

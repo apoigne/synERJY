@@ -1,0 +1,31 @@
+# Makefile.win32
+# THIS MAKEFILE REQUIRES MICROSOFT VIRTUAL C++ nmake
+#                  ====
+# 
+
+RM_R      = rmdir /s /q
+CP_R      = xcopy /s /e
+
+#------------------------------------------------------------------------------
+
+all: libs bins
+
+libs:
+	cd "$(SE_HOME)\target\win32\lib"
+	nmake -f Makefile.win32
+
+bins:
+	if not exist bin\NUL mkdir bin
+	cd "$(SE_HOME)\src"
+	nmake -f Makefile.win32
+
+depend:
+	cd "$(SE_HOME)\src"
+	echo # > .depend
+	nmake -f Makefile.win32 depend
+
+clean:
+	cd "$(SE_HOME)\target\win32\lib"
+	nmake -f Makefile.win32 clean
+	cd "$(SE_HOME)\src"
+	nmake -f Makefile.win32 clean

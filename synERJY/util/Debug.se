@@ -1,0 +1,113 @@
+// to use this class, #include $SE_HOME/target/unix/include/se_dbg.h
+// you can do this with the resource-file command "set hfile += ..." for example
+
+abstract class Debug {
+
+  protected Debug () {};
+
+  public abstract void nl ();
+  public abstract void w  ();
+
+  public abstract void i    (int p);
+  public abstract void inl  (int p);
+  public abstract void wi   (int p);
+
+  public abstract void c    (char p);
+  public abstract void cnl  (char p);
+  public abstract void wc   (char p);
+
+  public abstract void r    (float p);
+  public abstract void rnl  (float p);
+  public abstract void wr   (float p);
+
+  public abstract void d    (double p);
+  public abstract void dnl  (double p);
+  public abstract void wd   (double p);
+
+  public abstract void by   (byte p);
+  public abstract void bynl (byte p);
+  public abstract void wby  (byte p);
+
+  public abstract void b    (boolean p);
+  public abstract void bnl  (boolean p);
+  public abstract void wb   (boolean p);
+
+  public abstract void s    (String p);
+  public abstract void snl  (String p);
+  public abstract void ws   (String p);
+
+}
+
+class DebugOn extends Debug {
+
+  public DebugOn() { super(); };
+
+  native ("dbg_nl")  public void nl () ;
+  native ("dbg_w")   public void w  () ;
+
+  native ("dbg_i")   public void i    (int p) ;
+  native ("dbg_inl") public void inl  (int p) ;
+  native ("dbg_wi")  public void wi   (int p) ;
+
+  native ("dbg_c")   public void c    (char p) ;
+  native ("dbg_cnl") public void cnl  (char p) ;
+  native ("dbg_wc")  public void wc   (char p) ;
+
+  native ("dbg_r")   public void r    (float p) ;
+  native ("dbg_rnl") public void rnl  (float p) ;
+  native ("dbg_wr")  public void wr   (float p) ;
+
+  native ("dbg_d")   public void d    (double p) ;
+  native ("dbg_dnl") public void dnl  (double p) ;
+  native ("dbg_wd")  public void wd   (double p) ;
+
+  native ("dbg_by")  public void by   (byte p) ;
+  native ("dbg_bynl") public void bynl (byte p) ;
+  native ("dbg_wby") public void wby  (byte p) ;
+
+  native ("dbg_b")   public void b    (boolean p) ;
+  native ("dbg_bnl") public void bnl  (boolean p) ;
+  native ("dbg_wb")  public void wb   (boolean p) ;
+
+  native ("dbg_s")   public void s    (String p) ;
+  native ("dbg_snl") public void snl  (String p) ;
+  native ("dbg_ws")  public void ws   (String p) ;
+
+}
+
+class DebugOff extends Debug {
+
+  public DebugOff() { super(); };
+
+  public void nl () {};
+  public void w  () {};
+
+  public void i    (int p) {};
+  public void inl  (int p) {};
+  public void wi   (int p) {};
+
+  public void c    (char p) {};
+  public void cnl  (char p) {};
+  public void wc   (char p) {};
+
+  public void r    (float p) {};
+  public void rnl  (float p) {};
+  public void wr   (float p) {};
+
+  public void d    (double p) {};
+  public void dnl  (double p) {};
+  public void wd   (double p) {};
+
+  public void by   (byte p) {};
+  public void bynl (byte p) {};
+  public void wby  (byte p) {};
+
+  public void b    (boolean p) {};
+  public void bnl  (boolean p) {};
+  public void wb   (boolean p) {};
+
+  public void s    (String p) {};
+  public void snl  (String p) {};
+  public void ws   (String p) {};
+
+}

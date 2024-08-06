@@ -1,0 +1,13 @@
+// tex_start pure-signals
+class PureSignals {
+
+    Sensor   sensor = new Sensor(new SimInput());
+    Signal actuator = new Signal(new SimOutput());
+
+    public PureSignals() { 
+        active {
+            if (?sensor) { emit actuator; };
+        };
+    };
+} 
+// tex_end pure-signals

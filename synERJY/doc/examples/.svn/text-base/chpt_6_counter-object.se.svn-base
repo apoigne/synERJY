@@ -1,0 +1,38 @@
+// tex_start counter-object
+class Counter {
+  
+// constructor
+  public Counter (    int _latch,
+                   Sensor start, 
+                   Sensor clock, 
+                   Signal elapsed )  {
+     latch = _latch;
+     active {
+       loop {
+         await ?start; // wait for signal start being present
+         reset();      // reset the timer count
+         next;         // reaction finished for this instant
+         cancel {      // decrement the counter when ..s
+           loop {      // .. signal clock is present
+             await (?clock);
+             decr();
+             next;
+           };     // decrementing is cancelled, when ..
+         } when (isElapsed()) {}; 
+                 // .. isElapsed() is true ..
+         emit elapsed; 
+                 // .. tell that the timer elapsed
+       };
+     };
+  };
+
+  // data fields and data methods
+  int latch;
+  int counter;
+
+  void       reset()  { counter = latch; };  
+  void         decr() { if (counter > 0) { counter--; }; };  
+  boolean isElapsed() { return (counter == 0); };
+
+}
+// tex_end counter-object

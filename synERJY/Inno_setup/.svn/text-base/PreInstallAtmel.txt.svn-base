@@ -1,0 +1,21 @@
+Requirements for using Atmel Processors:
+----------------------------------------
+
+In order to program an atmel-avr microcontroller you have
+to install the cross compiler  "avr-gcc"
+
+1. Download WinAVR from the following link:
+
+     http://sourceforge.net/projects/winavr
+
+2. Install WinAVR in your local directory, i.e, C:/WinAVR 
+   or any other path you choose. The installer will 
+   automatically set path in the environment variable
+   of your system
+
+3. Check in your system variable if the following paths
+   for WinAVR are set:
+	C:/WinAVR/bin
+	C:/WinAVR/utils/bin
+   If not, edit them manually in your system path.
+

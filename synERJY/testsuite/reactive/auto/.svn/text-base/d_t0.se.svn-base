@@ -1,0 +1,202 @@
+class Rc {
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+
+Signal O1 = new Signal(new SimOutput());
+Signal O2 = new Signal(new SimOutput());
+
+Signal s1Entry = new Signal(new SimOutput());
+Signal s1During = new Signal(new SimOutput());
+Signal s1Exit = new Signal(new SimOutput());
+
+#ifdef T1
+// trace
+// I1   ->
+//      ->
+// I1   -> O1
+//      ->
+// I1   -> O1
+// I1   -> O1
+//      ->
+//      ->
+//
+// trace
+//      ->
+//      ->
+// I1   -> O1
+//      ->
+// I1   -> O1
+// I1   -> O1
+//      ->
+//      ->
+//
+// trace
+//      ->
+// I1   -> O1
+// I1   -> O1
+//      ->
+// I1   -> O1
+// I1   -> O1
+//      ->
+//      ->
+public Rc () {
+    // XXX--XXX
+  active { a1(); 
+  };
+};
+
+private void a1 () {
+    automaton {
+    // XXX--XXX
+     init {
+       next state s1;
+     };
+
+     state s1
+       when (?I1) { emit O1; next state s1; };
+     };
+
+  };
+
+#endif
+
+#ifdef T2
+// trace
+// I1   ->
+//      ->
+// I1   -> O1
+//      ->
+// I1   -> O2
+// I1   -> O1
+//      ->
+//      ->
+//
+// trace
+//      ->
+//      ->
+// I1   -> O2
+//      ->
+// I1   -> O1
+// I1   -> O2
+//      ->
+//      ->
+public Rc () {
+    // XXX--XXX
+  active { a1(); 
+  };
+};
+
+private void a1 () {
+    automaton {
+
+      init {
+        if (?I1) { next state s1; } else { next state s2; };
+      };
+
+      state s1
+        when (?I1) { emit O1; next state s2;
+      };
+
+      state s2
+        when (?I1) { emit O2; next state s1;
+      };
+
+    };
+
+  };
+
+#endif
+
+#ifdef T3
+// trace
+// I1   ->
+//      ->
+// I1   -> O1
+//      ->
+// I1   -> O1
+//      ->
+// I2   ->
+//      ->
+// I2   -> O2
+// I2   -> O2
+// I1   ->
+// I1   -> O1
+//      ->
+//      ->
+//
+public Rc () {
+    // XXX--XXX
+  active { a1(); 
+  };
+};
+
+private void a1 () {
+  automaton {
+
+    init {
+      next state s1;
+    };
+
+    state s1
+       when (?I1) {  emit O1; next state s1;
+       } else when (?I2) { next state s2;
+       };
+
+    state s2
+       when (?I2) { emit O2; next state s2;
+       } else when (?I1) { next state s1;
+       };
+   };
+};
+
+#endif
+
+#ifdef T4
+// trace
+// I1   -> O1 s1Entry
+//      -> s1During
+// I1   -> O1 s1During s1Exit s1Entry
+//      -> s1During
+// I1   -> O1 s1During s1Exit s1Entry
+//      -> s1During
+// I2   -> s1During s1Exit
+//      ->
+// I2   -> O2
+// I1   -> s1Entry
+// I1   -> O1 s1During s1Exit s1Entry
+//      -> s1During
+//      -> s1During
+//
+public Rc () {
+    // entry; during; exit; / signals, 2 states
+  active { a1(); 
+  };
+};
+
+private void a1 () {
+  automaton {
+
+    init {
+      emit O1; next state s1;
+    };
+
+    state s1
+      entry { emit s1Entry; }
+      during { emit s1During; }
+      exit { emit s1Exit; }
+
+      when (?I1) {  emit O1; next state s1;
+      } else when (?I2) { next state s2;
+     };
+
+    state s2
+       when (?I2) { emit O2; next state s2;
+       } else when (?I1) { next state s1;
+     };
+   };
+};
+
+#endif
+
+} //end class Rc

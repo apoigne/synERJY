@@ -1,0 +1,42 @@
+class Rc {
+
+int i1;
+int i2 = 2;
+int i3 = i1 + i2;
+int i4 = i2 + 3;
+
+static final int s1 = 1;
+static int s2 = 2;
+static int s3 = s1 + s2;
+static final int s4 = s1 + 3;
+
+Signal<int> osig = new Signal<int>(new SimOutput());
+
+public Rc ()
+{
+  i1 = 5;
+  s2 = 6;
+  active{ emit osig(i1); next;
+          emit osig(i2); next;
+          emit osig(i3); next;
+          emit osig(i4); next;
+          emit osig(s1); next;
+          emit osig(s2); next;
+          emit osig(s3); next;
+          emit osig(s4); next;
+        };
+};
+
+#ifdef T1
+// trace
+//             -> osig(5)
+//             -> osig(2)
+//             -> osig(2)
+//             -> osig(5)
+//             -> osig(1)
+//             -> osig(6)
+//             -> osig(3)
+//             -> osig(4)
+#endif
+
+}

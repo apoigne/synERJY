@@ -1,0 +1,26 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+#ifdef T1
+// trace
+//             -> a(2)
+//             -> a(3)
+//             -> a(4)
+//             -> a(5)
+Signal<int> a = new Signal<int>(new SimOutput());
+private void c1 () {
+  emit a(2);
+  next;
+  sustain {|
+      a := 1 + pre(a);
+   |};
+};
+#endif
+
+}
+
+

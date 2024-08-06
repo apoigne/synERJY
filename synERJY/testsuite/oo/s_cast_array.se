@@ -1,0 +1,142 @@
+class Csts {
+
+private Csts () {};
+
+public int x = 0;
+
+}
+
+class Rc {
+
+public Rc ()
+{
+   active { };
+};
+
+double[4]   da1;
+double[]    da2;
+double[3,4] db1;
+double[,]   db2;
+
+Csts[4]   ca1;
+Csts[]    ca2;
+Csts[3,4] cb1;
+Csts[,]   cb2;
+
+
+private void react ()
+{
+
+#ifdef E0
+// [[ParseError]]
+   da2 = ((double[3])da2);
+#endif
+
+#ifdef E00
+// [[ParseError]]
+   db2 = ((double[3,4])db2);
+#endif
+
+#ifdef E1
+// [[ParseError]]
+   da1 = ((double[3])da2);
+#endif
+
+#ifdef E2
+// [[ParseError]]
+   da1 = ((double[])da2);
+#endif
+
+#ifdef E3
+// [[ParseError]]
+   da1 = ((double[2,4])da2);
+#endif
+
+#ifdef E4
+// [[ParseError]]
+   da1 = ((double[,])da2);
+#endif
+
+#ifdef E5
+// [[ParseError]]
+   da1 = ((int[])da2);
+#endif
+
+#ifdef E6
+// [[ParseError]]
+   db1 = ((double[3])db2);
+#endif
+
+#ifdef E7
+// [[ParseError]]
+   db1 = ((double[])db2);
+#endif
+
+#ifdef E8
+// [[ParseError]]
+   db1 = ((double[3,4])da2);
+#endif
+
+#ifdef E9
+// [[ParseError]]
+   db1 = ((double[,])db2);
+#endif
+
+#ifdef E10
+// [[ParseError]]
+   db1 = ((int[])db2);
+#endif
+
+#ifdef E11
+// [[ParseError]]
+   ca1 = ((Csts[3])ca2);
+#endif
+
+#ifdef E12
+// [[ParseError]]
+   ca1 = ((Csts[])ca2);
+#endif
+
+#ifdef E13
+// [[ParseError]]
+   ca1 = ((Csts[2,4])ca2);
+#endif
+
+#ifdef E14
+// [[ParseError]]
+   ca1 = ((Csts[,])ca2);
+#endif
+
+#ifdef E15
+// [[ParseError]]
+   ca1 = ((int[])ca2);
+#endif
+
+#ifdef E16
+// [[ParseError]]
+   cb1 = ((Csts[3])cb2);
+#endif
+
+#ifdef E17
+// [[ParseError]]
+   cb1 = ((Csts[])cb2);
+#endif
+
+#ifdef E18
+// [[ParseError]]
+   cb1 = ((Csts[3,4])ca2);
+#endif
+
+#ifdef E19
+// [[ParseError]]
+   cb1 = ((Csts[,])cb2);
+#endif
+
+#ifdef E20
+// [[ParseError]]
+   cb1 = ((int[])db2);
+#endif
+
+};
+
+}

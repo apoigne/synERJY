@@ -1,0 +1,92 @@
+class Rc {
+
+#ifdef T1
+// trace
+//  -> osig(4)
+//  -> osig(8)
+//  -> osig(48)
+//  ->
+//  -> osig(6)
+//  -> osig(12)
+//  -> osig(108)
+//  ->
+//  -> osig(9)
+//  -> osig(18)
+//  -> osig(243)
+
+  UseIt x;
+  UseIt y;
+
+  private void run() {
+    x = new UseIt() { public void incr() { i += 2; };
+                      public int get()   { return (int)2*geti();};
+                    };
+    y = new UseIt() { public void incr() { i = i + get3(); };
+                      public int get()   { return get3()*geti()*i;};
+                    };
+  };
+
+  public Rc() {
+    run();
+    active { react(); };
+  };
+#endif
+
+#ifdef T2
+// trace
+//  -> osig(4)
+//  -> osig(8)
+//  -> osig(48)
+//  ->
+//  -> osig(6)
+//  -> osig(12)
+//  -> osig(108)
+//  ->
+//  -> osig(9)
+//  -> osig(18)
+//  -> osig(243)
+
+  UseIt x = new UseIt() { public void incr() { i += 2; };
+                          public int get()   { return (int)2*geti();};
+                        };
+  UseIt y = new UseIt() { public void incr() { i = i + get3(); };
+                          public int get()   { return get3()*geti()*i;};
+                        };
+
+  public Rc() {
+    // run();
+    active { react(); };
+  };
+#endif
+
+  Signal<int> osig = new Signal<int>(new SimOutput());
+  int i = 4;
+
+  private int geti() {
+    return i;
+  };
+
+  private int get3() {
+    return 3;
+  };
+
+  private void react() {
+    emit osig(i);       next;
+    emit osig(x.get()); next;
+    emit osig(y.get()); next;
+    x.incr();           next;
+    emit osig(i);       next;
+    emit osig(x.get()); next;
+    emit osig(y.get()); next;
+    y.incr();           next;
+    emit osig(i);       next;
+    emit osig(x.get()); next;
+    emit osig(y.get()); next;
+  };
+
+}
+
+interface UseIt {
+  void incr();
+  int  get();
+}

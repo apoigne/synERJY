@@ -1,0 +1,231 @@
+class Rc {
+
+public Rc () {
+    active { c1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+Sensor I3 = new Sensor(new SimInput());
+
+Signal O1 = new Signal(new SimOutput());
+Signal O2 = new Signal(new SimOutput());
+Signal O3 = new Signal(new SimOutput());
+Signal O4 = new Signal(new SimOutput());
+Signal O5 = new Signal(new SimOutput());
+
+// Expr == Inspect (not yet implemented)
+// Expr == Comparison
+// Expr == Assign
+// Expr == Flowdef
+// Expr == Arith
+// Expr == Boolean
+// Expr == at
+// Expr == pre
+// Expr == current
+
+// --------------------------------------------
+// Expr == if
+// --------------------------------------------
+
+// wozu soll das gut sein?
+#ifdef T1
+// trace
+//      -> O1
+//  I1  ->
+//      -> O4
+//      ->
+//
+// trace
+//      -> O1
+//      ->
+//      -> O4
+//
+private void c1 () {
+    emit O1;
+    next;
+    if (?I1) { };
+    next; emit O4;
+  };
+#endif
+
+#ifdef T2
+// trace
+//      -> O1
+//  I1  -> O2
+//      -> O4
+//
+// trace
+//      -> O1
+//      ->
+//      -> O4
+//
+private void c1 () {
+    emit O1;
+    next;
+    if (?I1) { emit O2; };
+    next; emit O4;
+  };
+#endif
+
+#ifdef T3
+// trace
+//      -> O1
+//  I1  -> O4
+//      ->
+//
+// trace
+//      -> O1
+//      -> O3 O4
+//      ->
+//
+private void c1 () {
+    emit O1;
+    next;
+    if (?I1) { } else { emit O3; };
+    emit O4;
+  };
+#endif
+
+#ifdef T4
+// trace
+//      -> O1
+//  I1  -> O2
+//      -> O4
+//
+// trace
+//      -> O1
+//      -> O3
+//      -> O4
+//
+private void c1 () {
+    emit O1;
+    next;
+    if (?I1) { emit O2; } else { emit O3; };
+    next; emit O4;
+  };
+#endif
+
+// wozu soll das gut sein ?
+#ifdef T5
+// trace
+//      -> O1
+// I1   ->
+//      -> O5
+//
+// trace
+//      -> O1
+// I2   ->
+//      -> O5
+//
+// trace
+//      -> O1
+//      ->
+//      -> O5
+//
+private void c1 () {
+    emit O1;
+    next;
+    if (?I1) { } else if (?I2) { };
+    next; emit O5;
+  };
+#endif
+
+#ifdef T6
+// trace        1
+//      -> O1
+// I1   ->
+//      -> O5
+//
+// trace        2
+//      -> O1
+// I2   -> O3
+//      -> O5
+//
+// trace        3
+//      -> O1
+//      ->
+//      -> O5
+//
+// trace        4
+//       -> O1
+// I1 I2 ->
+//       -> O5
+//
+// trace        5
+// I2    -> O1
+// I1    ->
+//       -> O5
+//
+// trace        6
+// I1    -> O1
+// I2    -> O3
+//       -> O5
+//
+private void c1 () {
+    emit O1;
+    next;
+    if (?I1) { } else if (?I2) { emit O3; };
+    next; emit O5;
+  };
+#endif
+
+#ifdef T7
+// trace
+//      -> O1
+// I1   ->
+//      -> O5
+//
+// trace
+//      -> O1
+// I2   -> O3
+//      -> O5
+//
+// trace
+//      -> O1
+//      -> O4
+//      -> O5
+//
+// trace
+//      -> O1
+// I1 I2 ->
+//      -> O5
+//
+private void c1 () {
+    emit O1;
+    next;
+    if (?I1) { } else if (?I2) { emit O3; } else { emit O4; };
+    next; emit O5;
+  };
+#endif
+
+#ifdef T8
+// trace
+//      -> O4
+// I1   -> O5
+//      ->
+//
+// trace
+// I1   -> O1
+// I2   -> O5
+//
+// trace
+// I2   -> O2
+// I2   -> O5
+//      ->
+//
+// trace
+// I3   -> O3
+//      -> O5
+//      ->
+//
+private void c1 () {
+    if (?I1) { emit O1; }
+    else if (?I2) {emit O2; }
+    else if (?I3) {emit O3; }
+    else { emit O4; };
+    next; emit O5;
+  };
+#endif
+
+} //end class Rc

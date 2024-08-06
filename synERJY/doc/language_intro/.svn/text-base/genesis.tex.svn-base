@@ -1,0 +1,113 @@
+\newpage
+\chapter{}\label{genesis}
+
+\section{The genesis of synERJY: a personal recollection}\label{genesis}
+
+The seed of what was to become \se\ was set when Gerard Berry and myself had 
+a drink at a bar in San Gimignano somewhat about 1990. At his usual self, Gerard enthused about a new programming paradigm ``synchronous programming'', and his new programming language - \esterel.
+
+This seed germinated when the then Embedded System Group at the then GMD
+was looking for new themes in 1993 and Michele Pinna and myself
+started to experiment with \esterel\ and more or less immediately
+got convinced that synchronous programming may should have a future.
+
+For whatever reason Michele and Leslek Holenderski started to think of
+a new semantics for \esterel, probably they disliked the hardware semantics
+of \esterel\ \cite{berry}. This was a trigger for myself, and some weeks
+later on a spare afternoon I came up with the idea to use a hardware 
+description like Berry but based on the assumption that every statement
+should yield a sequential circuit which is started if a system signal $\alpha$
+is present and that issues a system signal $\omega$ when it terminates.
+Using this, I sat down and computed roughly 50 examples by hand, and got convinced that the approach was wothwile. Some other ``system variables''
+emerged naturally, and I think it was Leslek who introduced a system variable
+$\tau$ for preemption.
+
+Then Leslek wrote a compiler for pure \esterel\ within weeks in Ocaml (which still is the implementation language of \se). The compiler turned
+to be sound with regard to the original semantics.
+ On the way, I found a very simple splitting
+technique to deal with the reincarnation problem. Thia approach was
+first presented at the C$^2$A autumn meeting in Paris in 1993.
+A formal account has then been given in \cite{PoHo}
+%, of which Klaus 
+%Schneider claims it to be one the first complete proofs of correctness
+% of a translation scheme of \esterel\ (\cite{Schneider})
+ .
+
+This was the starting point of many - sometimes competing - activities,
+in which Reinhard Budde, Leslek Holenderski, Agathe Merceron, Olivier Maffeis, 
+Matthew Morley, Monika M\"ullergburg, Michele Pinna, Axel Poign\'e,
+and Karl-Heinz Sylla took part. Everybody intensively contributed
+to the heated discussions, and it is difficult to give appropriate
+credits to everybody in retrospect.
+
+In these discussions, we tried to improve and optimise the translation
+scheme. For instance, Matthew Morley and myself developed, and Matthew implemented another translation scheme in SML. In retrospect however, whatever came up did not really improve the translation scheme, and it is still - with minor changes - the basis of \se.
+
+Almost immediately, the idea arose to extend the translation scheme to
+the other synchronous formalisms as \argos\ and \lustre. This integration
+was (almost) achieved with the \emph{Synchrony Workbench} \cite{swb}, that 
+included a sophisticated front-end for \argos, also written by Leslek. Unfortunately, the approach had a semantic shortcoming, 
+which was not so easy to fix, in particular since Leslek left the then GMD.
+Nevertheless, the \se\ inherited much of the simulator of the Synchrony
+Workbench then written by myself.
+
+Based on the same translation scheme, Reinhard and Karl-Heinz
+developed a combination of synchronous programming with objected-oriented
+design starting in 1994. The object-oriented part was strongly influenced
+by Eiffel, hence the language was called \emph{synchronousEifel} (Eifel being
+a reference to the Eifel mountains close to Sankt Augustin), or \emph{sE} for 
+short (still syntactically contained \se) \cite{budde}.
+
+All this lead to a vision of a smooth integration of all synchronous
+formalisms which has finally being stated in \cite{swb}. The vision then was 
+even bolder, by far exceeding the given means; formal verification was tackled
+as well testing and the problem dtribution. Agathe, Reinhard,
+and Matthew worked on formal verification, Monika on testing, and Olivier on
+distribution, and but everybody contributed to all subjects. 
+This resulted in several publications (\cite{budde2}, \cite{budde3}, \cite{budde4}, \cite{hol1}, \cite{hol2}, \cite{maffeis}, \cite{merceron}, \cite{mue1}, \cite{mue2}, \cite{mue3}, \cite{multi}, \cite{combination}, \cite{swb2})
+ but did not evolve into
+a programming and verification environment as originally envisaged.
+
+To make our efforts visible, we joined the EUREKA project SYNCRON, and 
+subsequently became partners in the ESPRIT projects SYRF and\\ CRISYS. Further,
+in order to propagate the gospel, Willem-Paul de Roever and myself discussed
+the possibility of having a workshop for synchronous programming when he
+visited GMD in Spring 94. This started the SYNCHRON workshop series, which
+first took place in Dagstuhl in 1994.  Next it was important to get industry
+interested, in particular in Germany. Hence Albert Benveniste and myself started
+the series of the FEMSYS workshops, which was successfully staged in Munich in 1997, 1999, and 2001.
+
+The ESPRIT project SYRF (``Synchronous Reactive Formalisms'') boosted the 
+development of \se\ in that Reinhard, Karl-Heinz, and myself joined forces
+to integrate and redevelop the different branches of development. Reinhard was
+in charge of the object-oriented data part, and he wrote the lexer, parser
+and typechecker as well as the code generator to C. Further he developed a new graphical editor for \se charts. Karl-Heinz programmed the control for the simulator, and took care of the backend compilers to diverse micro controllers, while myself focussed on the translation scheme of reactive part of the 
+compiler, and on the gui aspects of the simulator and the programming environment.
+
+In CRISYS (``CRitical Instrumentation and control SYStem'') we extended \se\ to support distribution using a blackboard like architecture (\cite{budde5}, 
+\cite{budde6}), but this extension has remained experimental up to today. 
+
+Development of the language itself had many interations always aiming for simplifying the concepts and for improving usability.
+ A major change was the shift
+to Java, or rather Java-like language) for the object-oriented data language, 
+which was accomplished by Reinhard by implementing more or less a compiler
+from Java to C. Motivation was not to deter users by a combination of two
+relatively unknown languages, but to built on top of a fairly widely known
+language such as Jave. Since then \se\ is a syntacically stable language though
+minor changes at the fringes may still happen. A general overview over the
+present language is to be found in \cite{synERJY}.
+ 
+Within the Fraunhofer internal project FASPAS on adaptronics bwe have extended
+the language by components dealing with vectors and arrays so that it becomes simple to program typical signal processing applications such as, e.g., filters.
+Further, \se\ has been linked to MATLAB and scicos to support model-based design, and new backends for TI DSPs and Xilinx FPGAs have been added. Shakil
+Ahmed linked \se\ to TI's DSP family and Motorola's MPC555. Further we developed
+a proprietary DSP board based on TI's TMS329c6713 with four analogue inputs and four analogue outputs with AD/DA converters and anti-aliasing filters, and with
+\se\ as input language.
+
+
+
+
+
+
+\ \newline
+Axel Poign\'e

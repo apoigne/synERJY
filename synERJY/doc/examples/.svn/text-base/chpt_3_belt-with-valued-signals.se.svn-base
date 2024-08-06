@@ -1,0 +1,45 @@
+// test-flags O = None true, E = data true, confclass Rct
+class Rct { 
+    static final time timing = 1sec;
+				
+    public Rct () { 
+        active {           
+        };
+    };
+
+    BeltWithValuedSignals counter = new BeltWithValuedSignals();
+}
+
+// tex_start belt-with-valued-signals
+class BeltWithValuedSignals {
+
+  Sensor<boolean>  belt 
+    = new Sensor<boolean>(new SimInput());
+  Sensor<boolean>  key
+    = new Sensor<boolean>(new SimInput());
+
+  Signal<boolean>  alarmLight
+    = new Signal<boolean>(new SimOutput());
+  Signal<boolean>  beeper
+    = new Signal<boolean>(new SimOutput());
+
+  public BeltWithValuedSignals () {
+    active {
+        loop {
+            await $key;
+            cancel {
+                emit alarmLight(true);
+                await 5sec;
+                emit beeper(true);
+                await 10sec;
+                emit beeper(false);
+                halt;
+            } when ( $belt || ! $key) {
+                emit alarmLight(false);
+            };
+            next;
+        };
+    };
+  };
+}
+// tex_end belt belt-with-valued-signals

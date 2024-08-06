@@ -1,0 +1,43 @@
+// test-flags O = None true, E = data true, confclass Rct
+class Rct { 
+    static final time timing = 100msec;
+				
+public Rct () { active { }; };
+
+BouncingBall x = new BouncingBall();
+}
+
+class BouncingBall {
+
+  Signal<double> x1 = new Signal<double>(new SimOutput());
+  Signal<double> x2 = new Signal<double>(new SimOutput());
+
+  double height  = 5.0;
+  double g       = 9.81;
+  double c       = 0.01;
+  double epsilon = 0.001;
+  
+  public  BouncingBall() {
+     active {
+
+#ifdef E1
+// [[ParseError]]
+
+// tex_start bouncing-ball-state-model-1
+automaton {
+   init { x1 := height;
+          x2 := 0.0;
+          next state move; };
+   
+   state move 
+      during {| x1' := x2;
+                x2' := -c*pre(x2) -> -g;
+      |}
+   when ($x1 <= epsilon) { next state change; }; 
+};
+// tex_end
+#endif
+};
+};
+}
+

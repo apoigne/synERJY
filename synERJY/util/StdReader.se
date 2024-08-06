@@ -1,0 +1,43 @@
+public class StdReader {
+
+    private StdReader () { };
+
+    /**
+     * @pre the setting asynchronous modes of tramission must be
+     *      set, for example the baud rate, parity and stop bits.
+     *      use StdSerial.initialize() for this purpose.
+     *
+     * reveive interrupts are not enabled.
+     */
+    native ("stdreader_initialize")
+    public static void initialize ();
+
+    /**
+     * @return a character is available.
+     */
+    native ("stdreader_ready")
+    public static boolean ready ();
+
+    /**
+     * @return the current error status.
+     */
+    native("stdreader_error")
+    public static boolean error ();
+
+    /**
+     * Try to reset an error status.
+     * @return the error status after trying to reset it.
+     */
+    native("stdreader_check_error")
+    public static boolean check_error ();
+
+    /**
+     * read a character.
+     * If not available, wait until ready() holds, then read the character.
+     * @return the received character.
+     */
+    native ("stdreader_read") public static char read ();
+
+} // end class StdReader
+
+

@@ -1,0 +1,39 @@
+#include "../../target/examples/Blink0/blink0.se"
+
+#ifdef T1
+// trace nothing
+//
+//       -> red_led_on
+//       -> red_led_on
+//       -> red_led_on
+//       -> red_led_on
+//
+// trace toggle
+//
+//         -> red_led_on
+// toggle  -> green_led_on
+//         -> green_led_on
+//         -> green_led_on
+//         -> green_led_on
+//
+// trace toggle-on-off
+//
+//         -> red_led_on
+// toggle  -> green_led_on
+//         -> green_led_on
+// toggle  -> red_led_on
+//         -> red_led_on
+// toggle  -> green_led_on
+//         -> green_led_on
+//
+// trace toggle-permanent
+//
+//         -> red_led_on
+// toggle  -> green_led_on
+// toggle  -> red_led_on
+// toggle  -> green_led_on
+// toggle  -> red_led_on
+// toggle  -> green_led_on
+// toggle  -> red_led_on
+#endif
+

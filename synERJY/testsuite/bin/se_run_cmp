@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# purpose:	called to produce compiler output
+
+SE_FILE="$1"
+SE_HOME="$2"
+SE_DBGL="$3"
+SE_SIML="$4"
+SE_COMP="$5"
+SE_CONF="$6"
+
+export SE_HOME
+
+case "$SE_DBGL" in
+ ""|"None" ) SE_DBGL='None' ;;
+ *         ) SE_DBGL="Some \"$SE_DBGL\"" ;;
+esac
+
+case "$SE_SIML" in
+ ""        ) SE_SIML='false' ;;
+ true|false) : ;;
+ *         ) SE_SIML='true' ;;
+esac
+
+# code generator options are: "expr-word" "expr-bit" "jmp-bit"
+CG='-cg jmp-bit'
+DL="set debug level = $SE_DBGL;"
+CCL="set configuration class = $SE_CONF;"
+case "$SE_SIML" in
+  true) MK="make binary;" ;;
+  *   ) MK='check configuration;' ;;
+esac
+case "$SE_CONF" in
+ "") $SE_HOME/bin/$SE_COMP $CG -b "%$DL load file = $SE_FILE; $MK quit;";;
+ * ) $SE_HOME/bin/$SE_COMP $CG -b "%$DL load file = $SE_FILE; $CCL $MK quit;";;
+esac

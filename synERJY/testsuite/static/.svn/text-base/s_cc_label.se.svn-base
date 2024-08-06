@@ -1,0 +1,335 @@
+// test-flags O = None true, E = None true
+
+class Rc {
+
+
+  Sensor I1 = new Sensor(new SimInput());
+  Sensor I2 = new Sensor(new SimInput());
+
+  Signal<int> o1 = new Signal<int>(new SimOutput());
+
+  Signal z = new Signal(new SimOutput());
+
+  private int v;
+
+  private void incr () { v = v + 1; };
+  private void decr () { v = v - 1; };
+  private bool is_zero () { return (v == 0);};
+
+  public Rc () {
+    active {
+      next;
+
+#ifdef O1
+    };
+  };
+#endif
+
+#ifdef E0
+// [[CausalityCycle]]
+      l3:: emit o1(v);
+      emit o1(1);
+      l1:: decr();
+     };
+};
+
+precedence {
+ l1:: < l3:: ;
+};
+
+#endif
+
+#ifdef E1
+// [[CausalityCycle]]
+      l3:: emit o1(v); l1:: decr();
+     };
+   };
+
+precedence {
+    l1:: < l3:: ;
+};
+#endif
+
+#ifdef E2
+// [[CausalityCycle]]
+      l2:: incr(); l3:: emit o1(v);
+     };
+};
+
+precedence {
+ l3:: < l2:: ;
+};
+
+#endif
+
+#ifdef E3
+// [[CausalityCycle]]
+      l2:: incr(); l1:: decr();
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E4
+// [[CausalityCycle]]
+      [[ l3:: emit o1(v); || emit z; ]]; l1:: decr();
+     };
+};
+
+precedence {
+ l1:: < l3:: ;
+};
+
+#endif
+
+#ifdef E5
+// [[CausalityCycle]]
+      [[ l2:: incr(); || emit z; ]]; l1:: decr();
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E6
+// [[CausalityCycle]]
+      l3:: emit o1(v) ; [[ l1:: decr(); || emit z; ]];
+     };
+};
+
+precedence {
+ l1:: < l3:: ;
+};
+
+#endif
+
+#ifdef E7
+// [[CausalityCycle]]
+      l2:: incr(); [[ l1:: decr(); || emit z; ]];
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E8
+// [[CausalityCycle]]
+      if (v == 0) { l1:: decr(); };
+     };
+};
+
+precedence {
+ l1:: < v ;
+};
+
+#endif
+
+#ifdef E9
+// [[CausalityCycle]]
+      l2:: incr(); if (v == 0) { incr(); };
+     };
+};
+
+precedence {
+ v < l2:: ;
+};
+
+#endif
+
+#ifdef E10
+// [[CausalityCycle]]
+      if (?I1) { decr();} else {l2:: incr();}; l1:: decr();
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E11
+// [[CausalityCycle]]
+      loop { l1:: decr(); next; l2:: incr(); };
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E12
+// [[CausalityCycle]]
+      l2:: incr(); loop { l1:: decr(); next; };
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+ };
+ 
+#endif
+
+#ifdef E13
+// [[CausalityCycle]]
+      loop {
+          if (?I1) {
+              next;l2:: incr();
+          } else {
+              l1:: decr();next;
+          };
+       };
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E16
+// [[CausalityCycle]]
+      cancel { l2:: incr(); } when (?I1) { l1:: decr();};
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E17
+// [[CausalityCycle]]
+      cancel { l2:: incr(); } when (v == 0) { emit z; };
+     };
+};
+
+precedence {
+ v < l2:: ;
+};
+
+#endif
+
+#ifdef E18
+// [[CausalityCycle]]
+    cancel { l2:: incr(); } when (v == 0) {};
+     };
+};
+
+precedence {
+ v < l2:: ;
+};
+
+#endif
+
+#ifdef E19
+// [[CausalityCycle]]
+      l2:: incr(); cancel strongly { l1:: decr(); } when (?I1) { emit z; };
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E20
+// [[CausalityCycle]]
+      l2:: incr(); cancel strongly { l1:: decr(); } when (?I1) { emit z; };
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E21
+// [[CausalityCycle]]
+      l2:: incr(); cancel { emit z; } when (?I1) { l1:: decr(); };
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E22
+// [[CausalityCycle]]
+    l2:: incr(); cancel strongly { emit z; } when (?I1) { l1:: decr(); };
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+ };
+ 
+#endif
+
+#ifdef E23
+// [[CausalityCycle]]
+      cancel strongly { l2:: incr(); } when (?I1) { emit z; };  l1:: decr();
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E24
+// [[CausalityCycle]]
+      cancel strongly { l2:: incr();} when (?I1) { emit z; }; l1:: decr();
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E25
+// [[CausalityCycle]]
+      cancel { emit z; } when (?I1){ l2:: incr(); }; l1:: decr();
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+#ifdef E26
+// [[CausalityCycle]]
+      cancel strongly { emit z; } when (?I1) { l2:: incr(); }; l1:: decr();
+     };
+};
+
+precedence {
+ l1:: < l2:: ;
+};
+
+#endif
+
+} //end class Rc

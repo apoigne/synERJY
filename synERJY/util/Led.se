@@ -1,0 +1,37 @@
+public class LedToggle implements Output
+{
+    native int _led;
+    protected LedToggle (int led) {
+          _led = led;
+    };
+
+    public void put_val () {
+        led_toggle(_led);
+        return;
+    };
+
+    native void led_toggle(int led);
+
+}
+
+public class Led implements Output
+{
+    int _led;
+    	
+    protected Led (int led) {
+          _led = led;
+    };
+
+    public void put_val (boolean val) {
+       if (val) {
+          led_switchon(_led);
+       } else {
+          led_switchoff(_led);
+       };
+       return;
+    };
+
+    native void led_switchoff(int led);
+    native void led_switchon(int led);
+
+}

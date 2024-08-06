@@ -1,0 +1,94 @@
+class Rc {
+
+Signal<int> x = new Signal<int>(new SimOutput());
+Signal<int> y = new Signal<int>(new SimOutput());
+
+#ifdef O1
+public Rc () { active {}; };
+#endif
+
+
+
+#ifdef E1
+// [[RecursiveCallOfReactiveMethod]]
+public Rc ()
+{
+  active { 
+    f();
+  };
+};
+
+void f () {
+  emit x(1);
+  g();
+};
+
+void g () {
+  emit y(1);
+  f();
+};
+
+#endif
+
+#ifdef E2
+// [[RecursiveCallOfReactiveMethod]]
+public Rc ()
+{
+  active { 
+    f();
+  };
+};
+
+void f () {
+  emit x(1);
+  f();
+};
+#endif
+
+
+#ifdef E3
+// [[RecursiveCallOfNode]]
+public Rc ()
+{
+  active {
+     sustain {| f(x); |};
+  };
+};
+
+node f (Signal<int> z)
+{|
+  z := 1;
+  g(z);
+|};
+
+node g (Signal<int> z)
+{|
+  z := 1;
+  f(z);
+|};
+
+#endif
+
+#ifdef E4
+// [[RecursiveCallOfNode]]
+public Rc ()
+{
+  active {
+     sustain {| f(x); |};
+  };
+};
+
+node f (Signal<int> z)
+{|
+  z := 1;
+  f(z);
+|};
+
+#endif
+
+
+
+
+}
+
+

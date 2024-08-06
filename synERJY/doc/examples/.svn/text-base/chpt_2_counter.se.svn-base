@@ -1,0 +1,50 @@
+// test-flags O = None true, E = data true
+class Rct {
+    static final time timing = 100msec;
+				
+    public Rct () {
+        active {
+        };
+    };
+
+    Counter counter = new Counter(5);
+}
+
+// tex_start counter
+class Counter {
+
+  // signals
+  Sensor   start = new Sensor(new SimInput());
+  Sensor    incr = new Sensor(new SimInput());
+  Signal elapsed = new Signal(new SimOutput());
+
+  public Counter (int d) {
+      latch = d;
+      active {
+          loop {
+            await ?start; // wait for start being present
+            reset();      // reset the counter
+            cancel {      // increment the counter when ..
+              loop {      // .. signal incr is present
+                await (?incr);
+                increment();
+                next;
+              };          // incrementing is cancelled, when ..
+            } when (isElapsed());
+                         // .. isElapsed() is true ..
+            emit elapsed;
+                        // .. until the counter is elapsed
+            next;
+          };
+      };
+  };
+
+// data fields and data methods
+  int latch;
+  int counter;
+
+  void        reset() { counter = 0; };
+  void    increment() { counter++; };
+  boolean isElapsed() { return (counter >= latch); };
+}
+// tex_end counter

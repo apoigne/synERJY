@@ -1,0 +1,168 @@
+class MoreFragments {
+
+    public MoreFragments () { 
+        active { r(); };
+    };
+
+#ifdef O1
+void r() {
+// tex_start parallel
+[[ next;
+   emit a;
+|| next;
+   emit b;
+]];
+emit c;
+// tex_end parallel
+};
+#endif
+
+#ifdef O2
+void r() {
+// tex_start parallel-next
+[[ emit a;
+|| next;
+   emit b;
+]];
+emit c;
+// tex_end parallel-next
+};
+#endif
+
+#ifdef E1
+// [[UnusedCode]]
+void r() {
+cancel {
+// tex_start parallel-loop
+[[ emit a;
+|| loop {
+     emit b;
+     next;
+   };
+]];
+emit c;
+// tex_end parallel-loop
+} when (true);
+};
+#endif
+
+#ifdef E2
+// [[CausalityCycle]]
+void r() {
+// tex_start emit-a-causal-if
+emit a; 
+if (?a) { emit b; } else { emit a; };
+// tex_end causal-if
+};
+#endif
+
+#ifdef E3
+// [[CausalityCycle]]
+void r() {
+// tex_start causal-if
+if (?a) { emit b; } else { emit a; }; 
+// tex_end causal-if
+};
+#endif
+
+#ifdef O4
+void r() {
+// tex_start cancel
+cancel {
+     emit a;
+} when (?b);
+emit c;
+// tex_end cancel
+};
+#endif
+
+#ifdef O5
+void r() {
+// tex_start cancel-strongly
+cancel strongly {
+     emit a;
+} when (?b);
+emit c;
+// tex_end cancel-strongly
+};
+#endif
+
+#ifdef O6
+void r() {
+// tex_start cancel-loop
+cancel {
+    loop {
+        emit a;
+        next;
+    };
+} when (?a);
+// tex_end cancel-loop
+};
+#endif
+
+#ifdef O7
+void r() {
+cancel {
+// tex_start state-loop
+loop {
+    next;      //  state 1
+    await (?a);
+    emit b;
+    next;      //  state 2
+    await (?c);
+    emit d;
+};
+// tex_end state-loop
+} when (true);
+};
+#endif
+
+#ifdef O8
+void r() {
+cancel {
+// tex_start activate
+activate {
+  loop {
+    emit a;
+    next;
+  };
+} when (?b);
+// tex_end activate
+} when (true);
+};
+#endif
+
+#ifdef O9
+void r() {
+cancel {
+// tex_start await-next
+loop {
+    await next ?a;
+    emit b;
+    await next ?c;
+    emit d;
+};
+// tex_end await-next
+} when (true);
+};
+#endif
+
+#ifdef O10
+void r() {
+// tex_start delayed-strong-cancel
+cancel strongly next {
+    loop {
+       emit a;
+       next;
+    };
+} when (?b);
+emit c;
+// tex_end delayed-strong-cancel
+};
+#endif
+
+    Signal a = new Signal(new SimOutput());
+    Signal b = new Signal(new SimOutput());
+    Signal c = new Signal(new SimOutput());
+    Signal d = new Signal(new SimOutput());
+}

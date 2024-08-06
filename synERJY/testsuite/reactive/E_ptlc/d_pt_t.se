@@ -1,0 +1,48 @@
+class Rc {
+
+public Rc () {
+  active { c1 (); }; 
+};
+
+Sensor<int> START = new Sensor<int>(new SimInput());
+Signal TO = new Signal(new SimOutput());
+
+Signal<int> TI = new Signal<int>();
+
+#ifdef T1
+// trace
+//              ->
+//              ->
+// START(2)     ->
+//              ->
+//              -> TO
+//              ->
+//              ->
+// START(3)     ->
+//              ->
+//              ->
+//              -> TO
+//
+#endif
+
+private void c1 () {
+  automaton {
+
+    init { next state s1;
+    };
+
+    state s1
+    do { next; sustain {| TI := 0; |}; }
+    when (?START) { next state s2;
+    };
+
+    state s2
+    do { next; sustain   {| TI := pre(TI) + 1; |}; }
+    when ($TI == $START) { emit TO; next state s1;
+    };
+
+  };
+};
+
+} //end class Rc
+

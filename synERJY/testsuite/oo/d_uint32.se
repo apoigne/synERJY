@@ -1,0 +1,16 @@
+class Rc {
+
+public Rc ()
+{
+   active { react(); };
+};
+
+Signal<uint32> out  = new Signal<uint32>(new SimOutput());
+Signal<uint16> outh = new Signal<uint16>(new SimOutput());
+
+private uint32 x = 0x00000000;
+
+private void set (uint32 v) { x = v; };
+
+/* ------------------------------------------------------------------------ */
+} // end class Rc

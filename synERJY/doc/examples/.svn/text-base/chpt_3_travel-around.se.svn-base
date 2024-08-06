@@ -1,0 +1,75 @@
+// test-flags O = None true, E = data true
+#ifdef e1
+// [[MissingClass]]
+#endif
+
+
+// tex_start travel-around
+class TravelAround {
+
+static final time timing = 500msec;
+
+// constants for servo motor control
+static final uint8 forward  = 1;   
+static final uint8 backward = 0;
+static final uint8 slow     = 10;
+static final uint8 medium   = 100;
+static final uint8 fast     = 200;
+
+Sensor sensorA = new Sensor(new SimInput()); // bumper
+Sensor sensorC = new Sensor(new SimInput());
+
+Signal<uint8> ldir   = 
+          new Signal<uint8>(new SimOutput()); // servo motors ...
+Signal<uint8> rdir   = 
+          new Signal<uint8>(new SimOutput()); // ... directions
+Signal<uint8> lspeed = 
+          new Signal<uint8>(new SimOutput()); // servo motors ...
+Signal<uint8> rspeed = 
+          new Signal<uint8>(new SimOutput()); // ... speed
+
+public TravelAround () {
+   active {
+      loop {
+         cancel {
+            emit ldir(forward); // move straight forward ...
+            emit lspeed(medium);
+            emit rdir(forward);
+            emit rspeed(medium);
+            halt;                // ... until ...
+         } when (?sensorA) {     // ... hit at bumper A
+            emit ldir(backward); // backward with left turn
+            emit rdir(backward);
+            emit lspeed(fast);
+            emit rspeed(slow);
+
+         } else when (?sensorC) {// ... hit at bumper C
+            emit ldir(backward); // backward with right turn
+            emit rdir(backward);
+            emit lspeed(slow);
+            emit rspeed(medium);
+         };
+
+         upd_moveback_time (); 
+              // compute time to move backward
+         await moveback_time;  
+             // move backward for 1,2,3,4 sec ...
+             // ... to avoid to be stuck in a corner ...
+             // ... then return to forward move
+      };
+   };
+};
+
+static void upd_moveback_time() {
+  if (moveback_time < 4sec) {
+     moveback_time += 1sec;
+  } else {
+     moveback_time = 0sec;
+  };
+};
+
+static time moveback_time = 0sec;
+
+}
+// tex_end travel-around
+

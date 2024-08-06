@@ -1,0 +1,41 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+#ifdef T1
+// trace
+//             -> x(1)
+//             -> x(2)
+//             -> x(3)
+//             -> x(4)
+Signal<int> x = new Signal<int>(new SimOutput());
+private void c1 () {
+  sustain {|
+      Signal<int> a = new Signal<int>();
+      a := 1 + pre(a);
+      x := a;
+   |};
+};
+#endif
+
+
+#ifdef T2
+// trace
+//             -> x(1)
+//             -> x(2)
+//             -> x(3)
+//             -> x(4)
+Signal<int> x = new Signal<int>(new SimOutput());
+private void c1 () {
+  sustain {|
+      Signal<int> a;
+      a := 1 + pre(a);
+      x := a;
+   |};
+};
+#endif
+
+}

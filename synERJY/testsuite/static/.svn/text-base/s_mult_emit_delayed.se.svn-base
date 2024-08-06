@@ -1,0 +1,92 @@
+// test-flags O = None true, E = data true
+
+class Rc {
+
+Delayed<int>  o1 = new Delayed<int>();
+Delayed<bool> o2 = new Delayed<bool>();
+
+public Rc() {
+active {
+
+#ifdef O1
+  emit o1(1); next; emit o1(2);
+#endif
+
+#ifdef O2
+  emit o1(1); emit o1(2);
+#endif
+
+#ifdef O3
+  [[ next; emit o1(1); || emit o1(2); ]];
+#endif
+
+#ifdef O4
+  loop {
+    [[ next; emit o1(1); || emit o1(2); ]];
+    next;
+  };
+#endif
+
+#ifdef O5
+  loop {
+    [[ next; emit o1(1); || emit o1(2); ]];
+  };
+#endif
+
+#ifdef E1
+// [[MultEmitInClass]] 
+  [[ next; emit o1(1); || next; emit o1(2); ]];
+#endif
+
+#ifdef E2
+// [[MultEmitInClass]] 
+  [[ emit o1(1); || emit o1(2); ]];
+#endif
+
+#ifdef O6
+  emit o2(true); next; emit o2(false);
+#endif
+
+#ifdef O7
+  emit o2(true); emit o2(false);
+#endif
+
+#ifdef O8
+  [[ next; emit o2(true); || emit o2(false); ]];
+#endif
+
+#ifdef O9
+  loop {
+    [[ next; emit o2(true); || emit o2(false); ]];
+    next;
+  };
+#endif
+
+#ifdef O10
+  loop {
+    [[ next; emit o2(true); || emit o2(false); ]];
+  };
+#endif
+
+#ifdef O11
+  if (true) {
+     emit o2(true);
+  } else {
+     emit o2(true);
+  };
+#endif
+
+#ifdef E3
+// [[MultEmitInClass]] 
+  [[ next; emit o2(true); || next; emit o2(false); ]];
+#endif
+
+#ifdef E4
+// [[MultEmitInClass]] 
+  [[ emit o2(true); || emit o2(false); ]];
+#endif
+
+};
+};
+
+}

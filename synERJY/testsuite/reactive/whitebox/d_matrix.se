@@ -1,0 +1,373 @@
+class Rc {
+
+static final time timing = 1sec;
+
+#ifdef T1
+// trace
+//  -> y0(1.000000) y1(2.000000) y2(3.000000) y3(4.000000) y4(5.000000) 
+
+double [5,5] a = {{1.0,2.0,3.0,4.0,5.0},
+                  {1.0,2.0,1.0,1.0,1.0},
+                  {1.0,1.0,3.0,1.0,1.0},
+                  {1.0,1.0,1.0,4.0,1.0},
+                  {1.0,1.0,1.0,1.0,5.0}};
+
+double [5] b = {1.0,2.0,3.0,4.0,7.0};
+
+Signal<double[5,5]> y  = new Signal<double[5,5]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := a;
+         y0 := y[0,0];
+         y1 := y[0,1];
+         y2 := y[0,2];
+         y3 := y[0,3];
+         y4 := y[0,4];
+     |};
+  };
+};
+#endif
+
+
+#ifdef T2
+// trace
+//  -> y0(15.000000) y1(6.000000) y2(7.000000) y3(8.000000) y4(9.000000) 
+
+double [5,5] a = {{1.0,2.0,3.0,4.0,5.0},
+                  {1.0,2.0,1.0,1.0,1.0},
+                  {1.0,1.0,3.0,1.0,1.0},
+                  {1.0,1.0,1.0,4.0,1.0},
+                  {1.0,1.0,1.0,1.0,5.0}};
+
+double [5] b = {1.0,1.0,1.0,1.0,1.0};
+
+Signal<double[5,1]> y  = new Signal<double[5,1]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := a * b^t;
+         y0 := y[0,0];
+         y1 := y[1,0];
+         y2 := y[2,0];
+         y3 := y[3,0];
+         y4 := y[4,0];
+     |};
+  };
+};
+#endif
+
+#ifdef T3
+// trace
+//  -> y0(15.000000) y1(16.000000) y2(17.000000) y3(18.000000) 
+
+double [5,4] a = {{1.0,2.0,3.0,4.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0}};
+
+double [2,5] b = {{1.0,2.0,3.0,4.0,5.0},
+                  {1.0,1.0,1.0,1.0,1.0}};
+
+
+Signal<double[2,4]> y  = new Signal<double[2,4]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := b * a;
+         y0 := y[0,0];
+         y1 := y[0,1];
+         y2 := y[0,2];
+         y3 := y[0,3];
+     |};
+  };
+};
+#endif
+
+#ifdef T4
+// trace
+//  -> y0(10.000000) y1(20.000000) y2(4.000000) y3(8.000000) 
+
+double [5,4] a = {{1.0,2.0,3.0,4.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0}};
+
+double [4,2] b = {{1.0,2.0},{1.0,2.0},{1.0,2.0},{1.0,2.0}};
+
+
+Signal<double[5,2]> y  = new Signal<double[5,2]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := a * b;
+         y0 := y[0,0];
+         y1 := y[0,1];
+         y2 := y[1,0];
+         y3 := y[1,1];
+     |};
+  };
+};
+#endif
+
+#ifdef T5
+// trace
+//  -> y0(10.000000) y1(4.000000) y2(4.000000) y3(4.000000) 
+
+double [5,4] a = {{1.0,2.0,3.0,4.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0}};
+
+double [4] b = {1.0,1.0,1.0,1.0};
+
+
+Signal<double[5,1]> y  = new Signal<double[5,1]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := a * b^t;
+         y0 := y[0,0];
+         y1 := y[1,0];
+         y2 := y[2,0];
+         y3 := y[3,0];
+     |};
+  };
+};
+#endif
+
+#ifdef T6
+// trace
+//  -> y0(5.000000) y1(6.000000) y2(7.000000) y3(8.000000) 
+
+double [5,4] a = {{1.0,2.0,3.0,4.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0}};
+
+double [5] b = {1.0,1.0,1.0,1.0,1.0};
+
+
+Signal<double[4]> y  = new Signal<double[4]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := b * a;
+         y0 := y[0];
+         y1 := y[1];
+         y2 := y[2];
+         y3 := y[3];
+     |};
+  };
+};
+#endif
+
+#ifdef T7
+// trace
+//  -> y0(2.000000) y1(4.000000) y2(6.000000) y3(8.000000) 
+
+double [5,4] a = {{1.0,2.0,3.0,4.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0}};
+
+Signal<double[5,4]> y  = new Signal<double[5,4]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := a * 2.0;
+         y0 := y[0,0];
+         y1 := y[0,1];
+         y2 := y[0,2];
+         y3 := y[0,3];
+     |};
+  };
+};
+#endif
+
+#ifdef T8
+// trace
+//  -> y0(2.000000) y1(4.000000) y2(6.000000) y3(8.000000) 
+
+double [5,4] a = {{1.0,2.0,3.0,4.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0}};
+
+Signal<double[5,4]> y  = new Signal<double[5,4]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := 2.0 * a;
+         y0 := y[0,0];
+         y1 := y[0,1];
+         y2 := y[0,2];
+         y3 := y[0,3];
+     |};
+  };
+};
+#endif
+
+#ifdef T9
+// trace
+//  -> y0(1.000000) y1(2.000000) y2(3.000000) y3(4.000000) 
+
+double [5,4] a = {{1.0,2.0,3.0,4.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0}};
+double [5,4] b = {{1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0}};
+
+
+
+Signal<double[5,4]> y  = new Signal<double[5,4]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := a .* b;
+         y0 := y[0,0];
+         y1 := y[0,1];
+         y2 := y[0,2];
+         y3 := y[0,3];
+     |};
+  };
+};
+#endif
+
+#ifdef T10
+// trace
+//  -> y0(2.000000) y1(4.000000) y2(6.000000) y3(8.000000) 
+
+double [5,4] a = {{1.0,2.0,3.0,4.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0}};
+
+Signal<double[5,4]> y  = new Signal<double[5,4]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := a .* 2.0;
+         y0 := y[0,0];
+         y1 := y[0,1];
+         y2 := y[0,2];
+         y3 := y[0,3];
+     |};
+  };
+};
+#endif
+
+#ifdef T11
+// trace
+//  -> y0(2.000000) y1(4.000000) y2(6.000000) y3(8.000000) 
+
+double [5,4] a = {{1.0,2.0,3.0,4.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0},
+                  {1.0,1.0,1.0,1.0}};
+
+Signal<double[5,4]> y  = new Signal<double[5,4]>(); 
+
+Signal<double> y0  = new Signal<double>(new SimOutput()); 
+Signal<double> y1  = new Signal<double>(new SimOutput()); 
+Signal<double> y2  = new Signal<double>(new SimOutput()); 
+Signal<double> y3  = new Signal<double>(new SimOutput()); 
+Signal<double> y4  = new Signal<double>(new SimOutput()); 
+
+public Rc() {
+  active {
+     sustain {|
+         y  := 2.0 .* a;
+         y0 := y[0,0];
+         y1 := y[0,1];
+         y2 := y[0,2];
+         y3 := y[0,3];
+     |};
+  };
+};
+#endif
+
+}

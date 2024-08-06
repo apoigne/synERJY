@@ -1,0 +1,36 @@
+class ValuedFragments {
+
+    public ValuedFragments () { 
+        active { r(); };
+    };
+
+#ifdef O1
+void r() {
+// tex_start emit-a-value
+emit a(0);
+emit a(1);
+// tex_end emit-a-value
+};
+#endif
+
+#ifdef E1
+// [[CausalityCycle]]
+void r() {
+// tex_start causal-data
+emit a($a + 1);  
+// tex_end causal-data
+};
+#endif
+
+#ifdef E2
+// [[CausalityCycle]]
+void r() {
+// tex_start causal-data-direct
+emit a($a); 
+// tex_end causal-data-direct
+};
+#endif
+
+    Signal<int> a = new Signal<int>(new SimOutput());
+
+}

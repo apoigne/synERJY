@@ -1,0 +1,39 @@
+// test-flags O = None true, E = data true
+class Aaa {
+
+   Signal z = new Signal(new SimOutput());
+
+   int a;
+   
+   public Aaa(Sensor x, Signal<int> y) {
+     active {
+       if ( ?x )
+       { nothing; 
+       };
+       emit y(3);
+     };  
+   };
+}
+
+class Bbb {
+   public static final time timing=1sec;
+
+   Signal x      = new Signal(new SimOutput());
+   Signal<int> y = new Signal<int>(new SimOutput());
+
+   Aaa cell=new Aaa(x,y);
+
+   public Bbb() {
+      active {
+#ifdef E1
+// [[CausalityCycle]]
+         await(?y);
+         if ( $y < 5 )
+         {
+            emit x;
+         };
+#endif
+      };
+   };
+
+}

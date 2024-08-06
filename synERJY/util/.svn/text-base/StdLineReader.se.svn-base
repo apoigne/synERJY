@@ -1,0 +1,62 @@
+/**
+ * This class defines only static methods.
+ */
+public class StdLineReader {
+
+    private StdLineReader () { };
+
+    native ("stdlinereader_initialize")
+    public static void initialize ();
+
+
+    native ("linebuf_line_available")
+    public static boolean available ();
+
+    native ("linebuf_line_at_end")
+    public static boolean at_end ();
+
+    native ("linebuf_line_release")
+    public static void release ();
+
+    native ("linebuf_line_overrun")
+    public static boolean overrun ();
+
+    native ("linebuf_line_mark")
+    public static void line_mark();
+
+    native ("linebuf_line_reset")
+    public static void line_reset();
+
+
+    native ("linebuf_get_char")
+    public static char get_char ();
+
+    native ("linebuf_line_clear")
+    public static void line_clear();
+
+
+    native ("linebuf_scan_space")
+    public static boolean scan_space(char cnt);
+
+    public static void skip_space() { boolean tmp = scan_space(0); };
+
+    native ("linebuf_scan_char")
+    public static boolean scan_char(char expected);
+
+    native ("linebuf_scan_string")
+    public static boolean scan_string(String expected);
+
+    native ("linebuf_scan_short")
+    public static boolean scan_short();
+
+    native ("linebuf_last_short")
+    public static short last_short();
+
+    native ("linebuf_last_uint16")
+    public static uint16 last_uint16();
+
+    native ("linebuf_scan_endline")
+    public static boolean scan_endline();
+
+} // end class StdLineReader
+

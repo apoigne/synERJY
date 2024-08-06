@@ -1,0 +1,123 @@
+class Rc {
+
+Sensor inp = new Sensor(new SimInput());
+Signal out = new Signal(new SimOutput());
+
+static final time timing = 1sec;
+
+public Rc () {
+    active {
+        loop {
+          await ?inp;
+          await 4sec; // equivalent to: next;next;next;next if timing = 1sec
+          emit out;
+          next;
+        };
+    };
+};
+
+#ifdef T1
+// trace 1
+//             ->
+//             ->
+//             ->
+// inp         ->
+//             ->
+//             ->
+//             ->
+//             -> out
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+// trace 2
+// inp         ->
+//             ->
+//             ->
+//             ->
+//             -> out
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+// trace 3
+//             ->
+// inp         ->
+// inp         ->
+//             ->
+//             ->
+//             -> out
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+// trace 4
+// inp         ->
+//             ->
+//             ->
+//             ->
+// inp         -> out
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+// trace 5
+// inp         ->
+//             ->
+//             ->
+//             ->
+//             -> out
+// inp         ->
+//             ->
+//             ->
+//             ->
+//             -> out
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+#endif
+
+}
+

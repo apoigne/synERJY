@@ -1,0 +1,42 @@
+class Rc {
+
+public Rc () {
+  active { 
+#ifdef T1
+// trace
+//  -> a(1)
+//  -> a(2)
+    if (true) { 
+     fff($b.x + 1);
+   } else { 
+     fff($b.x);
+   };
+   next;
+   $b.set(2);
+   fff($b.x);
+#endif
+  };
+};
+
+Data data      = new Data();
+Signal<int>  a = new Signal<int>(new SimOutput());
+Signal<Data> b = new Signal<Data>();
+
+private void fff (int x) {
+   emit a(x);
+};
+
+}
+
+final class Data {
+
+public Data () {};
+
+public int x = 0;
+
+public void set(int y) { x = y; };
+
+public int  get() { return x; };
+
+}
+

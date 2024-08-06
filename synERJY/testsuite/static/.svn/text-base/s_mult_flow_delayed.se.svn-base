@@ -1,0 +1,57 @@
+// test-flags O = None true, E = data true
+
+class Rc {
+
+Sensor i1            = new Sensor(new SimInput());
+Delayed<int> o1     = new Delayed<int>();
+Delayed<boolean> o2 = new Delayed<boolean>();
+
+public Rc() {
+active {
+
+#ifdef O1
+  cancel { sustain {| o1 := 1; |}; } when (?i1); next;
+  cancel { sustain {| o1 := 2; |}; } when (?i1); next;
+#endif
+
+#ifdef E1
+// [[MultEmitInClass]] 
+  [[ sustain {| o1 := 1; |};
+  || sustain {| o1 := 2; |};
+  ]];
+#endif
+
+//#ifdef O10
+//  cancel { sustain {| o1 := 1; |}; } when (?i1);
+//  cancel { sustain {| o1 := 2; |}; } when (?i1);
+//#endif
+
+#ifdef O2
+  cancel { sustain {| o2 := false; |}; } when (?i1); next;
+  cancel { sustain {| o2 := true; |}; } when (?i1); next;
+#endif
+
+#ifdef E4
+// [[MultEmitInClass]] 
+  [[ sustain {| o2 := false; |};
+  || sustain {| o2 := true; |};
+  ]];
+#endif
+
+//#ifdef O20
+//  cancel { sustain {| o2 := false; |}; } when (?i1);
+//  cancel { sustain {| o2 := true; |}; } when (?i1);
+//#endif
+
+//#ifdef O21
+//  loop {
+//    cancel { sustain {| o2 := false; |}; } when (?i1);
+//    next;
+//    cancel { sustain {| o2 := true; |}; } when (?i1);
+//  };
+//#endif
+
+};
+};
+
+}

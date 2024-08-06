@@ -1,0 +1,270 @@
+class Xc
+}
+class Yc
+}
+
+class Rc
+any a;
+Xc x1,x2;
+Yc y;
+int i,i1,i2;
+float f,f1,f2;
+double d,d1,d2;
+bool bo,bo1,bo2;
+char ch,ch1,ch2;
+string st,st1,st2;
+// sb : string_buffer NOT YET IMPLEMENTED;
+// ac         : array[char];
+// ab         : array[byte];
+// ai         : array[int];
+byte by,by1,by2;
+
+tc1 () {
+
+// any --
+    bo  = a = x1;
+    bo  = y != x1;
+    bo  = x1 = x2;
+
+// int --
+    bo = 3 = 4;
+    bo = 3 != 4;
+    bo = 3 < 4;
+    bo = 3 <= 4;
+    bo = 3 > 4;
+    bo = 3 >= 4;
+
+    i = 6 + 7;
+    i = 6 + 7;
+    i = 6 - 7;
+    i = 6 * 7;
+    i = 6 // 7;
+
+    i1 = +7;
+    i2 = -7;
+    bo = i1 != 4;
+    bo = i1 < i2;
+    i  = i2 * 7;
+    i  = i1 // i2;
+
+    i  = i1.mod(i2);
+    bo = 4.to_bool;
+    by = 4.to_byte;
+    ch = 4.to_char;
+    d  = 4.to_double;
+    f  = 4.to_float;
+
+    i  = 0;
+    i  = -0;
+    i  = +0;
+    i  = 0 + +0;
+    i  = 0 + -0;
+    i  = 0 - +0;
+    i  = 0 - -0;
+
+// float --
+    bo = 3.5 = 4.8;
+    bo = 3.5 != 4.8;
+    bo = 3.5 < 4.8;
+    bo = 3.5 <= 4.8;
+    bo = 3.5 > 4.8;
+    bo = 3.5 >= 4.8;
+
+    f = 6.4 + 7.9;
+    f = 6.4 - 7.9;
+    f = 6.4 * 7.9;
+    f = 6.4 / 7.9;
+    i = 6.4 // 7.9;
+
+    f  = +7.8;
+    f  = -7.7;
+    f  = +7.8e8;
+    f  = -7.7e8;
+    f  = +7.8e-8;
+    f  = -7.7e-8;
+    f  = +7.8E8;
+    f  = -7.7E8;
+    bo = f1 <= 4.8;
+    bo = f1 > f2;
+    f = f2 + 7.9;
+    f = f1 - f2;
+
+    i = 4.5.to_int;
+    d = 4.5.to_double;
+    f = -0.0;
+    f = +0.0;
+    f = 0.0 + +0.0;
+    f = 0.0 + -0.0;
+    f = 0.0 - +0.0;
+    f = 0.0 - -0.0;
+
+// double --
+    bo = d1 = d2;
+    bo = d1 != d2;
+    bo = d1 < d2;
+    bo = d1 <= d2;
+    bo = d1 > d2;
+    bo = d1 >= d2;
+
+    d = 1.0d4;
+    d = -1.0d4;
+    d = 1.0d-4;
+    d = -1.0d-4;
+
+    d = 1.0d4 + d2;
+    d = d1 + 1.0d4;
+    d = 1.0d4 + 1.0d4;
+    d = d1 + d2;
+    d = d1 - d2;
+    d = d1 * d2;
+    d = d1 / d2;
+    i = d1 // d2;
+
+    i = d.to_int;
+    f = d.to_float;
+
+// bool --
+    bo = bo & true;
+    bo = bo | true;
+    bo = !bo;
+
+    ch = true.to_char;
+    i  = bo.to_int;
+
+// char --
+    bo = 'r' = 'e';
+    bo = 'r' != 'e';
+    bo = 'a' < 'b';
+    bo = 'a' <= 'b';
+    bo = 'a' > 'b';
+    bo = 'a' >= 'b';
+
+    bo = ch1 != 'e';
+    bo = ch2 < ch1;
+
+    bo = 'b'.to_bool;
+    by = 'b'.to_byte;
+    i  = 'b'.to_int;
+
+    bo = 'b'.is_digit;
+    bo = 'b'.is_lower;
+    bo = 'b'.is_upper;
+
+// string --
+    st = "se";
+// st = New[string].make(20); ERROR
+// bo = "se" = "AB"; ERROR
+// bo = "se" != "AB"; ERROR
+    bo = "se" < "AB";
+    bo = "se" <= "AB";
+    bo = "se" > "AB";
+    bo = "se" >= "AB";
+
+    bo = st < "AB";
+    bo = st1 <= st2;
+
+    bo = "AB".to_bool;
+    by = "AB".to_byte;
+    ch = "AB".to_char;
+    d  = "AB".to_double;
+    f  = "AB".to_float;
+    i  = st.to_int;
+
+// ac = st.to_char_array; ERROR
+// ab = "RT".to_byte_array; ERROR
+
+    ch = "AB".char_at(1);
+    i  = "AB".length;
+    st = "ABCDEFGHIJK".substring(3,5);
+
+// string_buffer --
+
+// array --
+
+// ai = New[array[int]].make(100); ERROR
+// i = ai[4];
+// ai[0] = 5;
+// ai.set(0,5);
+// i = ai.get(5);
+// i = ai.size;
+
+// byte --
+    by  = 00010011B;
+    by1 = 16X;
+
+    by.set(26);
+    by.clear(26);
+    by.toggle(26);
+    by.put(26,true);
+    bo = by.get(26);
+
+    by.complement;
+
+    by.set_mask(0fX);
+    by.clear_mask(0fX);
+    by.toggle_mask(0fX);
+    by.put_mask(0fX,eeX);
+
+    by = by1.get_mask(0fX);
+    by = by1.low_align_mask(0fX);
+    by = by1.high_align_mask(0fX);
+    bo = by.is_clear_mask(0fX);
+    bo = by.is_set_mask(0fX);
+
+    bo = by.decr_mask(0fX);
+    bo = by.incr_mask(0fX);
+
+    bo = by.even_parity;
+    bo = by.odd_parity;
+    by = by.high_half_byte;
+    by = by.low_half_byte;
+    bo = by.least_sig_bit;
+    bo = by.most_sig_bit;
+    bo = by.rotate_left(true);
+    bo = by.rotate_right(true);
+
+    bo = by.to_bool;
+    ch = by.to_char;
+    i  = by.to_int;
+
+    bo = 00010110B = 16X;
+};
+}
+
+  i1   = 3;
+  i2   = 123456;
+  i3   = 0;
+  i4   = -3;
+  i5   = -123456;
+  i6   = -0;
+  a1   = 0123456X;
+  a2   = 012abc6X;
+  a3   = ffffffe0X;
+  b1   = true;
+  b2   = false;
+  c1   = '1';
+  c1   = '\'';
+  r1   = 12.34;
+  r3   = -12.34;
+  r4   = 12.34E23;
+  r5   = 12.34E+23;
+  r6   = 12.34E-23;
+  r7   = -12.34E-23;
+  r8   = 0.123456E5;
+  d1   = 12.34D23;
+  d2   = 12.34D+23;
+  d3   = 12.34D-23;
+  d4   = -12.34D-23;
+  d5   = 0.123456D5;
+
+  st  = "";
+  st  = "this is ' in a string";
+  st  = "this is \" in a string";
+  st  = "line1\nline2";
+  st  = "line1\"line2\t\nline3";
+
+  ar1  = [<1,2,3,4,5>];
+  ar2  = [<1>];
+  ar3  = [<i1,i2,i3>][int];
+  ar3  = [<4,i2,6>][int];
+  ar4  = [<"s1","string2","s3">];

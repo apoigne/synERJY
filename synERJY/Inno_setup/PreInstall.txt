@@ -1,0 +1,14 @@
+Requirements for the installation of synERJY:
+---------------------------------------------
+
+One of
+  - Microsoft Visual C++ 6.0
+  - Microsoft VisualStudio .NET (Version 7,1 or 8.0 )
+must be installed
+
+Happy synERJYing !
+
+synERJY:
+    Reinhard Budde    reinhard.budde@iais.fraunhofer.de
+    Axel Poigne       axel.poigne@iais.fraunhofer.de
+    Karl-Heinz Sylla  harl-heinz.sylla@iais.fraunhofer.de

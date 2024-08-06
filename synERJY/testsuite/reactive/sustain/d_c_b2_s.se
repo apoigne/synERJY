@@ -1,0 +1,57 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+Sensor<int> II1 = new Sensor<int>(new SimInput());
+
+Signal<bool> OB1 = new Signal<bool>(new SimOutput());
+Signal<bool> OB2 = new Signal<bool>(new SimOutput());
+
+Signal{?II1}<bool> FB1 = new Signal<bool>(new SimOutput());
+Signal{?II1}<bool> FB2 = new Signal<bool>(new SimOutput());
+
+
+#ifdef T1
+// trace
+//
+//        ->                      OB1(false) OB2(false)
+// II1(2) -> FB1(true) FB2(false) OB1(true) OB2(false)
+// II1(3) -> FB1(true) FB2(true)  OB1(true) OB2(true)
+//        ->                      OB1(true) OB2(true)
+// II1(5) -> FB1(true) FB2(true)  OB1(true) OB2(true)
+//        ->                      OB1(true) OB2(true)
+//
+private void c1 () {
+   [[
+      sustain {|  FB1 := (true when ?II1) -> (?II1 when ?II1);
+                  FB2 := (false when ?II1) -> (?II1 when ?II1);
+      |};
+   ||
+      loop { emit OB1($FB1); emit OB2($FB2); next; };
+   ]];
+  };
+#endif
+
+#ifdef T2
+// trace
+//        ->           OB1(false)
+// II1(2) -> FB1(true) FB2(true) OB1(true)
+// II1(3) -> FB1(true) FB2(true) OB1(true)
+//        ->           OB1(true)
+// II1(5) -> FB1(true) FB2(true) OB1(true)
+//        ->           OB1(true)
+//
+private void c1 () {
+   [[ sustain {|
+        FB1 := (true when ?II1) -> pre(FB1);
+        FB2 := (true when ?II1) -> (?II1 when ?II1);
+      |};
+   || loop { emit OB1($FB1); next; };
+   ]];
+  };
+#endif
+
+} //end class Rc

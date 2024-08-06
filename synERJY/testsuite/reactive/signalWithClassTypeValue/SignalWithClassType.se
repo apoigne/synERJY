@@ -1,0 +1,39 @@
+#ifdef T1
+// trace
+// button -> point(12,23)
+#endif
+
+final class Point {
+    public Point() {
+        _x=-1;
+        _y=-2;
+    };
+    public Point(int x, int y) {
+        _x = x;
+        _y = y;
+    };
+    public int _x;
+    public int _y;
+}
+
+class SignalWithClassTypeValue {
+static final time timing = 250msec;
+
+Sensor button  = new Sensor(new SimInput());
+Signal<Point> point = new Signal<Point>(new SimOutput());
+Signal<List<int>> listInt = new Signal<List<int>>(new SimOutput());
+
+public SignalWithClassTypeValue () {
+    active {
+      loop {
+          await ?button;
+          emit  point(p);
+          next;
+      };
+    };
+};
+
+private Point p = new Point(12,23);
+private List<int> l = new List<int>();
+
+}

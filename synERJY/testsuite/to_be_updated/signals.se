@@ -1,0 +1,68 @@
+class Ac
+int ai;
+}
+
+reactive class Xc
+output SIG_AC_VOID;
+output SIG_AC_INT (saip : Ac);
+#ifdef E1
+output SIG__U_INT (suip : _U);
+#endif
+}
+
+reactive class Tc
+
+Ac ac;
+Xc xc is reactive;
+int ti;
+bool tb;
+
+set_ti( int i ) is
+  do
+     ti = i;
+  };
+
+set_tb( bool i ) is
+  do
+     tb = i;
+  };
+
+output MY_SIG_AC_VOID = xc.SIG_AC_VOID;
+output MY_SIG_AC_INT  = xc.SIG_AC_INT (saip : Ac);
+#ifdef E2
+output MY_SIG__U_INT   = xc.SIG__U_INT (suip : _U);
+#endif
+#ifdef E3
+output MY_SIG__U_INT   = xc.SIG__U_INT (suip : _X);
+#endif
+
+eas is reactive
+    emit MY_SIG_AC_VOID;
+    emit MY_SIG_AC_INT (ac);
+    await MY_SIG_AC_VOID;
+    await MY_SIG_AC_INT;
+    set_ti( MY_SIG_AC_INT.saip.ai );
+#ifdef E4
+    emit xc.SIG_AC_INT (ac);
+#endif
+#ifdef E5
+    await xc.SIG_AC_VOID;
+#endif
+#ifdef E6
+    emit UNKNOWN_SIGNAL (3,4,5 );
+#endif
+#ifdef E7
+    set_ti( xc.SIG_AC_INT.saip.ai );
+#endif
+#ifdef E8
+    set_tb( MY_SIG_AC_INT.saip.ai );
+#endif
+#ifdef E9
+    set_tb( xc.SIG_AC_INT.saip.ai );
+#endif
+};
+
+precedence {
+  s1: ac* < set_ti*;
+};
+}

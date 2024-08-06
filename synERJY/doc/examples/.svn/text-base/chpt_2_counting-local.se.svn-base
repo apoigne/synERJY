@@ -1,0 +1,23 @@
+class Counter {
+
+  public Counter () {
+      active {
+        a(5);
+      };
+  };
+
+void a(int latch) {
+// tex_start counting-local
+loop {
+   int counter = 0;
+   cancel {
+       loop {
+          next;
+          counter = counter + 1;
+       };
+   } when (counter >= latch);
+   next;
+};
+// tex_end counting-local
+};
+}

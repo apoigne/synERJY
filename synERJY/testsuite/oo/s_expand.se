@@ -1,0 +1,164 @@
+// test-flags O = None true, E = data true, confclass Uses
+
+class Cls1 {
+public Cls1 (int i) { i1 = i; };
+public void fn (int p) {};
+private int i1;
+}
+
+class Cls2 extends Cls1 {
+public Cls2 (int i) {super(i+1); i2 = i; };
+public void fn (int p) {};
+private int i2;
+}
+
+class Cls3 extends Cls1 {
+public Cls3 (int i) {super(i+1); i3 = i;};
+private int i3;
+}
+
+class Uses {
+
+public Uses ()
+{
+   active { };
+};
+
+Uses1 a = new Uses1();
+Uses1 b = new Uses1();
+
+}
+
+class Uses1 {
+
+public Uses1 ()
+{
+   ac = new Cls1 (32);  // expanded, dynamically bound
+   bc = new Cls2 (34);  // expanded, dynamically bound
+   cc = new Cls3 (36);  // expanded, dynamically bound
+   ib = new int[5];     // expanded
+   active { };
+};
+
+Cls1 a = new Cls1 (2);  // expanded, dynamically bound
+Cls1 b = new Cls2 (4);  // expanded, dynamically bound
+Cls1 c = new Cls3 (6);  // expanded, dynamically bound
+
+Cls1 ac;
+Cls1 bc;
+Cls1 cc;
+
+Cls1 d;                 // not expanded, dynamically bound
+Cls1 e;                 // not expanded, dynamically bound
+Cls1 f;                 // not expanded, dynamically bound
+
+private void prohibit_expansion ()
+{
+   d = new Cls1 (8);
+   e = new Cls2 (10);
+   f = new Cls3 (12);
+   g = new Cls2 (18);
+   h = new Cls3 (20);
+};
+
+Cls2 g = new Cls2 (14); // not expanded, statically bound
+Cls3 h = new Cls3 (16); // not expanded, statically bound
+
+Cls2 i = new Cls2 (22); // expanded, statically bound
+Cls3 j = new Cls3 (24); // expanded, statically bound
+
+int[] ia = new int[5];  // expanded
+int[] ib;               // expanded
+
+#ifdef E0
+// [[FieldReference-d]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E1
+// [[FieldReference-e]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E2
+// [[FieldReference-f]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E20
+// [[FieldExpanded-a]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E21
+// [[FieldExpanded-b]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E22
+// [[FieldExpanded-c]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E23
+// [[FieldExpanded-ac]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E24
+// [[FieldExpanded-bc]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E25
+// [[FieldExpanded-cc]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E26
+// [[FieldExpanded-ia]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E27
+// [[FieldExpanded-ib]]
+private void react (int p) { nothing; };
+#endif
+
+#ifdef E3
+// [[StaticallyBound-NeedsNullTest-Cls2-fn-1]]
+private void react (int p)
+{
+   nothing;
+   g.fn(1);
+};
+#endif
+
+#ifdef E4
+// [[StaticallyBound-NoNullTest-Cls2-fn-1]]
+private void react (int p)
+{
+   nothing;
+   i.fn(1);
+};
+#endif
+
+#ifdef E5
+// [[DynamicallyBound-NeedsNullTest-Cls1-fn-1]]
+private void react (int p)
+{
+   nothing;
+   d.fn(1);
+};
+#endif
+
+#ifdef E6
+// [[StaticallyBound-NoNullTest-Cls2-fn-1]]
+private void react (int p)
+{
+   nothing;
+   b.fn(1);
+};
+#endif
+
+}

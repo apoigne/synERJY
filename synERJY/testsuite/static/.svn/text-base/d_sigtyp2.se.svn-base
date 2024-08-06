@@ -1,0 +1,66 @@
+class Rc {
+  public Rc () {
+    rc = new RctCl(s1,s2,s3,o1,o2);
+    active { };
+  };
+  
+  private RctCl rc;
+
+  Sensor       s1 = new Sensor(new SimInput());
+  Sensor<int>  s2 = new Sensor<int>(new SimInput());
+  Sensor<bool> s3 = new Sensor<bool>(new SimInput());
+
+  Signal<int>   o1 = new Signal<int>(new SimOutput());
+  Signal<float> o2 = new Signal<float>(new SimOutput());
+
+}
+
+class RctCl {
+
+  public RctCl (Sensor p1,Sensor<int> p2,Sensor<bool> p3,
+                Signal<int> p4,Signal<float> p5) {
+    s1 = p1;
+    s2 = p2;
+    s3 = p3;
+    orc1 = p4;
+    orc2 = p5;
+    active { react (); };
+  };
+  
+  Sensor       s1;
+  Sensor<int>  s2;
+  Sensor<bool> s3;
+
+  Signal<int>   orc1;
+  Signal<float> orc2;
+
+  private void react () {
+    loop {
+      await $s3;
+      await ($s2 == 3);
+      await $s3 && ?s3;
+      emit orc1($s2 + 3);
+      emit orc2(1.2F);
+      next;
+    };
+  };
+
+#ifdef T1
+// trace
+//             ->
+//             ->
+//             ->
+//             ->
+// trace
+//                ->
+// s3(true) s2(3) -> o1(6) o2(1.200000)
+//                ->
+// trace
+// s3(false)      ->
+// s2(3)          ->
+// s3(false)      ->
+// s3(true)       -> o1(6) o2(1.200000)
+//                ->
+#endif
+
+}

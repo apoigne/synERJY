@@ -1,0 +1,71 @@
+class Rc {
+  public Rc () {
+    active {
+      await ?s1 || $s3;
+      await s1.present();
+      await ?s1 || s3.value();
+      await ($s2 == 3 && ?s2);
+      await $s3 && ?s3;
+      await @s1;
+      await @s1 > timing;
+      await @s1 + timing;
+      next;
+#ifdef E1
+// [[Typing]]
+      await s1;
+#endif
+#ifdef E2
+// [[UnknownId]]
+      await ?s1 + $s3;
+#endif
+#ifdef E3
+// [[UnknownId]]
+      await s1.f();
+#endif
+#ifdef E4
+// [[UnknownId]]
+      await s1.value;
+#endif
+#ifdef E5
+// [[SuperType]]
+      await @s1 || ?s1;
+#endif
+    };
+  };
+  
+  private RctCl rc = new RctCl();
+
+  Sensor s1 = new Sensor(new SimInput()) ; // TODO Mapto(rc.s1);
+  Sensor<int> s2 = new Sensor<int>(new SimInput()) ; // TODO Mapto(rc.s2);
+  Sensor<bool> s3 = new Sensor<bool>(new SimInput()) ; // TODO Mapto(rc.s3);
+
+  Signal<int> o1 = new Signal<int>(new SimOutput()) ; // TODO Mapto(rc.orc1);
+  Signal<float> o2 = new Signal<float>(new SimOutput()) ; // TODO Mapto(rc.orc2);
+
+}
+
+class RctCl {
+
+  public RctCl () {
+    active { react (); };
+  };
+  
+  Sensor       s1 = new Sensor(new SimInput());
+  Sensor<int>  s2 = new Sensor<int>(new SimInput());
+  Sensor<bool> s3 = new Sensor<bool>(new SimInput());
+
+  Signal<int>   orc1 = new Signal<int>(new SimOutput());
+  Signal<float> orc2 = new Signal<float>(new SimOutput());
+
+  private void react () {
+    loop {
+      await $s3;
+      await ($s2 == 3);
+      await $s3 && ?s3;
+      emit orc1($s2 + 3);
+      emit orc2(1.2F);
+      next;
+    };
+  };
+
+}

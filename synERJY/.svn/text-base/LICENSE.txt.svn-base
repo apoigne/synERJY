@@ -1,0 +1,69 @@
+Copyright Notice
+
+SynERJY Copyright 2001-2007, Fraunhofer AiS,
+
+1. The SynERJY programming environment [both binary and 
+source, if released] (hereafter, Software) is copyrighted
+by Fraunhofer AiS in all countries in the world, and ownership remains 
+with the Fraunhofer AiS.
+
+The Fraunhofer AiS grants you (hereafter, Licensee) a non-transferable, 
+non-exclusive, royalty-free worldwide license to use, copy, 
+and modify the Software, subject to Licensee's agreement to 
+the following terms and conditions:
+
+2. The Licensee may 
+
+-    distribute the binary and source code (if released) of 
+     the Software to third parties provided that the copyright
+     notice and this statement appears on all copies and that 
+     no charge is associated with such copies.  
+-    use the Software or Software derivatives to generate 
+     software program(s) or other code ("Licensee Program").  
+     Fraunhofer AiS claims no rights in or to the Licensee Program.
+        
+Notwithstanding the preceding, if the Licensee distributes 
+any derivative work based on or derived from the Software, 
+then Licensee will
+
+-    notify Fraunhofer AiS regarding its distribution of the 
+     derivative work, 
+-    clearly notify users that such derivative work is a 
+     modified version and not the original Software 
+     as distributed by the Fraunhofer AiS, and 
+
+The Software license agreement does not cover those portions of 
+the Software that are covered by the GNU general license agreement.
+
+3. Any Licensee wishing to make commercial use of the Software
+should contact the Fraunhofer AiS to negotiate an appropriate
+license for commercial use as detailed subsequently:
+
+-    integration of all or part of the source code of the Software 
+     into a product for sale or license by or on behalf of Licensee
+     to third parties;
+-    any distribution of the binary code or source code of the
+     Software to third parties for a licence fee;
+-    any distribution of the binary code or source code  of the 
+     Software through such formats as floppy disk or CD-ROM.
+
+4. The Licensee acknowledges and agrees that the Software is
+delivered 'as is' without warranty and without any support services.
+Fraunhofer AiS makes no warranties, either expressed or implied, as
+to the software and its derivatives.
+
+It is understood by the Licensee that Fraunhofer AiS shall not be
+liable for any loss or damage that may arise, including any indirect
+special or consequential loss or damage in connection with or
+arising from the performance or use of the software, including
+fitness for any particular purpose.
+
+5. By using or copying this Software, Licensee agrees to abide by
+the copyright law and all other applicable laws of Germany
+including, but not limited to, export control laws, and the terms of
+this license.  Fraunhofer AiS shall have the right to terminate this
+license immediately by written notice upon Licensee's breach of, or
+non-compliance with, any of its terms.  Licensee may be held legally
+responsible for any copyright infringement that is caused or
+encouraged by Licensee's failure to abide by the terms of this
+license.

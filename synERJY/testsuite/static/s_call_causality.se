@@ -1,0 +1,68 @@
+class Rc {
+
+Signal<int> o1 = new Signal<int>(new SimOutput());
+Signal<int> o2 = new Signal<int>(new SimOutput());
+
+int c = 1;
+int d = 1;
+
+void f() { c = 2; };
+void g() { d = 3; };
+
+#ifdef O1
+public Rc () { active { [[ a1:: c1(); || a2:: c2(); ]]; }; };
+
+private void c1 () { l1:: emit o1(8); };
+private void c2 () { l2:: f(); await ?o1; emit o2(8); };
+
+precedence { a2::l2:: < a1::l1::; };
+#endif
+
+#ifdef E1
+// [[CausalityCycle]]
+public Rc () { active { [[ a1:: c1(); || a2:: c2(); ]]; }; };
+
+private reactive void c1 () { l1:: emit o1(8); };
+private reactive void c2 () { await ?o1; l2:: f(); emit o2(8); };
+
+precedence { a2::l2:: < a1::l1::; };
+#endif
+
+#ifdef O2
+public Rc () { active { [[ a1:: c1(); || a2:: c2(); ]]; }; };
+
+private void c1 () { l1:: f(); };
+private void c2 () { l2:: g(); };
+
+precedence { a2::l2:: < a1::l1::; };
+#endif
+
+#ifdef O3
+public Rc () { active { [[ a1:: c1(); || a2:: c2(); ]]; }; };
+
+private void c1 () { l1:: c = 1; };
+private void c2 () { l2:: g(); };
+
+precedence { a2::l2:: < a1::l1::; };
+#endif
+
+#ifdef E2
+// [[TimeRaceInClass]]
+public Rc () { active { [[ c1(); || c2(); ]]; }; };
+
+private reactive void c1 () { c = 1; };
+private reactive void c2 () { g(); };
+
+precedence { c < g(); };
+#endif
+
+#ifdef O4
+public Rc () { active { [[ c1(); || c2(); ]]; }; };
+
+private reactive void c1 () { c = 1; };
+private reactive void c2 () { g(); };
+
+precedence { (c=) < g(); };
+#endif
+
+} //end class Rc

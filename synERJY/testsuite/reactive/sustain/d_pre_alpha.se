@@ -1,0 +1,42 @@
+// test-flags O = None true, E = data true
+class Watchdog {
+  static final time timing = 100msec;
+				
+  Signal<bool> y = new Signal<bool>(new SimOutput());
+
+#ifdef T1
+// trace
+//  -> y(true)
+//  -> y(true)
+//  -> y(true)
+  public Watchdog () {
+    active { 
+      sustain {|
+         Signal<bool> x;
+         x := true -> pre(x);
+         y := x;
+      |};
+    };
+  };
+#endif
+
+
+#ifdef T2
+// trace
+//  -> y(true)
+//  -> y(true)
+//  -> y(true)
+   public Watchdog () {
+    active { 
+      sustain {|
+         watchdog1(y);
+      |};
+    };
+  };
+
+node watchdog1 (Signal<bool> x) {|
+     x := true -> pre(x);
+|};
+#endif
+}
+

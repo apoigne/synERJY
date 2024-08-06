@@ -1,0 +1,300 @@
+class Rc {
+
+  public Rc() {
+      active {
+      };
+  };
+
+  Sensor s1 = new Sensor(new SimInput());
+       Signal a1 = new Signal(new SimOutput());
+       Signal x1 = new Signal();
+
+  Sensor<int> s2 = new Sensor<int>(new SimInput());
+       Signal<int> a2 = new Signal<int>(new SimOutput());
+       Signal<int> x2 = new Signal<int> ();
+   
+  Sensor<int> s3 = new Sensor<int>(new SimInput());
+       Signal<int> a3 = new Signal<int>(new SimOutput());
+       Signal<int> x3 = new Signal<int> ();
+ 
+#ifdef O1
+   Rc1 o1 = new Rc1(a1);
+   Rc1 o2 = new Rc1(x1);   
+#endif
+
+#ifdef O2
+   Rc1 o1 = new Rc1(a1);
+   Rc1 o2 = new Rc1(x1);   
+   Rc1 o2 = new Rc1(s1);  
+#endif
+
+#ifdef E1
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(s1);   
+#endif
+
+#ifdef E2
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(x1);   
+#endif
+
+#ifdef E3
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(a1);   
+#endif
+
+#ifdef E4
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(s1);   
+#endif
+
+#ifdef O3
+   Rc1 o1 = new Rc1(a2);
+   Rc1 o2 = new Rc1(x2);   
+#endif
+
+#ifdef O4
+   Rc1 o1 = new Rc1(a2);
+   Rc1 o2 = new Rc1(x2);   
+   Rc1 o2 = new Rc1(s2);  
+#endif
+
+#ifdef E5
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(x2);   
+#endif
+
+#ifdef E6
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(x2);   
+#endif
+
+#ifdef E7
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(a2);   
+#endif
+
+#ifdef E8
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(s2);   
+#endif
+
+#ifdef O5
+   Rc1 o1 = new Rc1(a3);
+   Rc1 o2 = new Rc1(x3);   
+#endif
+
+#ifdef O6
+   Rc1 o1 = new Rc1(a3);
+   Rc1 o2 = new Rc1(x3);   
+   Rc1 o3 = new Rc1(s3);  
+#endif
+
+#ifdef E9
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(x3);   
+#endif
+
+#ifdef E10
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(x3);   
+#endif
+
+#ifdef E11
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(a3);   
+#endif
+
+#ifdef E12
+// [[ xxx ]]
+   Rc1 o2 = new Rc1(s3);   
+#endif
+
+
+} //end class Rc
+
+class Rc1 {
+ 
+  Sensor ss1;
+       Signal xx1;
+
+  Sensor<int> ss2;
+       Signal<int> xx2;
+   
+  Sensor<int> ss3;
+       Signal<int> xx3;
+ 
+#ifdef O1
+// test case continuation
+  public Rc1(Signal x) {
+    ss1 = x;
+    xx1 = x;
+    ss2 = x;
+    active {
+       emit xx1;
+    };
+  };
+#endif
+
+#ifdef O2
+// test case continuation
+  public Rc1(Sensor x) {
+    ss1 = x;
+    active {
+    };
+  };
+#endif
+
+#ifdef E1
+// test case continuation
+  public Rc1(Signal x) {
+    x = xx1;
+    active {
+    };
+  };
+#endif
+
+#ifdef E2
+// test case continuation
+  public Rc1(Sensor x) {
+    x = ss1;
+    active {
+    };
+  };
+#endif
+
+#ifdef E3
+// test case continuation
+  public Rc1(Sensor x) {
+    xx1 = x;
+    active {
+    };
+  };
+#endif
+
+#ifdef E4
+// test case continuation
+  public Rc1(Sensor x) {
+    xx1 = x;
+    active {
+    };
+  };
+#endif
+
+#ifdef O3
+// test case continuation
+  public Rc1(Signal<int> x) {
+    ss2 = x;
+    xx2 = x;
+    active {
+       emit xx2($ss2);
+    };
+  };
+#endif
+
+// test case continuation
+#ifdef O4
+  public Rc1(Sensor<int> x) {
+    ss2 = x;
+    active {
+    };
+  };
+#endif
+
+#ifdef E5
+// test case continuation
+  public Rc1(Signal<int> x) {
+    x = xx2;
+    active {
+    };
+  };
+#endif
+
+#ifdef E6
+// test case continuation
+  public Rc1(Sensor<int> x) {
+    x = ss2;
+    active {
+    };
+  };
+#endif
+
+
+#ifdef E7
+// test case continuation
+  public Rc1(Sensor<int> x) {
+    xx2 = x;
+    active {
+    };
+  };
+#endif
+
+#ifdef E8
+// test case continuation
+  public Rc1(Sensor<int> x) {
+    xx2 = x;
+    active {
+    };
+  };
+#endif
+
+#ifdef O5
+// test case continuation
+  public Rc1(Signal<int> x) {
+    ss3 = x;
+    xx3 = x;
+    active {
+      sustain {|
+          xx3 := ss3;
+      |};
+    };
+  };
+#endif
+
+#ifdef O6
+// test case continuation
+  public Rc1(Sensor<int> x) {
+    ss3 = x;
+    active {
+    };
+  };
+#endif
+
+#ifdef E9
+// test case continuation
+  public Rc1(Signal<int> x) {
+    x = xx3;
+    active {
+    };
+  };
+#endif
+
+#ifdef E10
+// test case continuation
+  public Rc1(Sensor<int> x) {
+    x = ss3;
+    active {
+    };
+  };
+#endif
+
+
+#ifdef E11
+// test case continuation
+  public Rc1(Sensor<int> x) {
+    xx3 = x;
+    active {
+    };
+  };
+#endif
+
+#ifdef E12
+// test case continuation
+  public Rc1(Sensor<int> x) {
+    xx3 = x;
+    active {
+    };
+  };
+#endif
+
+} //end class Rc

@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/repos/synerjy/!svn/ver/39/synERJY/Inno_setup
+END
+extract.bat
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/synerjy/!svn/ver/17/synERJY/Inno_setup/extract.bat
+END
+PostInstall.txt
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/synerjy/!svn/ver/17/synERJY/Inno_setup/PostInstall.txt
+END
+extract.exe
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/synerjy/!svn/ver/39/synERJY/Inno_setup/extract.exe
+END
+PreInstall.txt
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/synerjy/!svn/ver/17/synERJY/Inno_setup/PreInstall.txt
+END
+cleanup.bat
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/synerjy/!svn/ver/17/synERJY/Inno_setup/cleanup.bat
+END
+installer_win32.iss
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/synerjy/!svn/ver/17/synERJY/Inno_setup/installer_win32.iss
+END
+PostInstallatmel.txt
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/repos/synerjy/!svn/ver/17/synERJY/Inno_setup/PostInstallatmel.txt
+END
+PreInstallAtmel.txt
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/synerjy/!svn/ver/17/synERJY/Inno_setup/PreInstallAtmel.txt
+END

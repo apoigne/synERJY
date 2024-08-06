@@ -1,0 +1,82 @@
+class CausalFragments {
+
+    public CausalFragments () { 
+        active { r(); };
+    };
+
+#ifdef O1
+void r() {
+// tex_start causal-decrement-reset
+increment();
+reset();
+// tex_end causal-decrement-reset
+};
+#endif
+
+#ifdef O2
+void r() {
+// tex_start causal-decrement-isElapsed
+[[ increment(); 
+|| if (isElapsed()) { emit a; } else { emit b; }; 
+]];
+// tex_end  causal-decrement-isElapsed
+};
+#endif
+
+#ifdef O3
+void r() {
+// tex_start causal-decrement-isElapsed-assign
+[[ counter = counter + 1; 
+|| if (counter >= latch) { emit a; } else { emit b; }; 
+]];
+// tex_end  causal-decrement-isElapsed-assign
+};
+#endif
+
+#ifdef O4
+void r() {
+// tex_start counter-fragment
+cancel {
+    loop {
+       await (?incr);
+       increment();
+       next;
+    };
+} when (isElapsed()); 
+// tex_end  counter-fragment
+};
+#endif
+
+#ifdef O5
+void r() {
+// tex_start potential-timerace
+[[ increment();
+   emit incr;
+|| if (?incr) { };
+   decrement();
+]];   
+// tex_end  potential-timerace
+};
+#endif
+
+    Signal incr = new Signal(new SimOutput());
+    Signal a = new Signal(new SimOutput());
+    Signal b = new Signal(new SimOutput());
+
+void    increment() { nothing; };
+void    decrement() { nothing; };
+void    reset()     { nothing; };
+int     add(int x,int y)     { return x + y; };
+boolean isElapsed() { return true; };
+int     counter;
+int     latch;
+
+// tex_start precedence-increment-isElapsed
+    precedence {
+        increment() < isElapsed();
+        (counter =) < counter;
+        increment() < add(int,int);
+    };
+// tex_end precedence-increment-isElapsed
+
+}

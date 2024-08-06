@@ -1,0 +1,2 @@
+genlib('libIdentity2',pwd());
+exec('loader.sce');

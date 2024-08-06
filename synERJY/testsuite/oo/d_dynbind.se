@@ -1,0 +1,130 @@
+abstract class High {
+    public High () {};
+
+    public int  f () { return 1; };
+    public int  g () { return 4; };
+    public abstract int  h ();
+
+    public High t () { return this; };
+
+    public abstract void v ();
+    public int store = 0;
+    protected void s(int _s) { store =_s; };
+}
+
+class Low1 extends High {
+    public Low1 () { super(); };
+    public int  f () { return 2; };
+    public int  h () { return 5; };
+    public High t () { return this; };
+    public void v () { s(10); };
+}
+
+class Low2 extends High {
+    public Low2 () { super(); };
+    public int  f () { return 3; };
+    public int  h () { return 6; };
+    public High t () { return this; };
+    public void v () { s(11); };
+}
+
+class Low3 extends High {
+    public Low3 () { super(); };
+    public int  h () { return 7; };
+    public High t () { return this; };
+    public void v () { s(12); };
+}
+
+class Client {
+    public Client () {};
+    public static int sf (High h) {
+        return h.f();
+    };
+    public int cf (High h) {
+        h.v();
+        return h.f();
+    };
+    public int cg (High h) {
+        return h.g();
+    };
+    public int ch (High h) {
+        return h.h();
+    };
+}
+
+class Rc {
+    Signal<int>  valbind = new Signal<int>(new SimOutput());
+    Signal<int> voidbind = new Signal<int>(new SimOutput());
+
+    public Rc () {
+        active {
+          next; emit valbind(Client.sf(l0));
+          next; emit valbind(Client.sf(l1));
+          next; emit valbind(Client.sf(l2));
+          next; emit valbind(Client.sf(l3));
+          next; emit valbind(cl.sf(l0));
+          next; emit valbind(cl.sf(l1));
+          next; emit valbind(cl.sf(l2));
+          next; emit valbind(cl.sf(l3));
+          next; emit valbind(cl.cf(l0)); emit voidbind(l0.store);
+          next; emit valbind(cl.cf(l1)); emit voidbind(l1.store);
+          next; emit valbind(cl.cf(l2)); emit voidbind(l2.store);
+          next; emit valbind(cl.cf(l3)); emit voidbind(l3.store);
+          next; emit valbind(cl.ch(l0));
+          next; emit valbind(cl.ch(l1));
+          next; emit valbind(cl.ch(l2));
+          next; emit valbind(cl.ch(l3));
+          next; emit valbind(cl.cg(l0));
+          next; emit valbind(cl.cg(l1));
+          next; emit valbind(cl.cg(l2));
+          next; emit valbind(cl.cg(l3));
+          next; emit valbind(cl.ch(l0.t()));
+          next; emit valbind(cl.ch(l1.t().t()));
+          next; emit valbind(cl.ch(l2.t().t().t()));
+          next; emit valbind(cl.ch(l3.t().t().t().t()));
+          next; emit valbind(cl.cg(l0.t()));
+          next; emit valbind(cl.cg(l1.t()));
+          next; emit valbind(cl.cg(l2.t()));
+          next; emit valbind(cl.cg(l3.t()));
+        };
+    };
+
+    private Client cl = new Client();
+    private High l0 = new Low1();
+    private Low1 l1 = new Low1();
+    private Low2 l2 = new Low2();
+    private Low3 l3 = new Low3();
+}
+
+#ifdef T1
+// trace
+// ->
+// -> valbind(2)
+// -> valbind(2)
+// -> valbind(3)
+// -> valbind(1)
+// -> valbind(2)
+// -> valbind(2)
+// -> valbind(3)
+// -> valbind(1)
+// -> valbind(2) voidbind(10)
+// -> valbind(2) voidbind(10)
+// -> valbind(3) voidbind(11)
+// -> valbind(1) voidbind(12)
+// -> valbind(5)
+// -> valbind(5)
+// -> valbind(6)
+// -> valbind(7)
+// -> valbind(4)
+// -> valbind(4)
+// -> valbind(4)
+// -> valbind(4)
+// -> valbind(5)
+// -> valbind(5)
+// -> valbind(6)
+// -> valbind(7)
+// -> valbind(4)
+// -> valbind(4)
+// -> valbind(4)
+// -> valbind(4)
+#endif

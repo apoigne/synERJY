@@ -1,0 +1,89 @@
+class Super {
+   public Super () {};
+   public int f_super;
+}
+
+class Sub extends Super {
+   public Sub () {super();};
+   public int f_sub;
+}
+
+#ifdef O1
+class Store {
+   public Store() {};
+   public int x;
+   public void put(int p) { x = p; };
+   public int get () { return x; };
+}
+#endif
+#ifdef O2
+class Store<T implements Sub> {
+   public Store() {};
+   public T x;
+   public void put(T p) { x = p; };
+   public T get () { return x; };
+}
+#endif
+#ifdef O3
+class Store {
+   public Store() {};
+   public int x;
+   public void put(int p) { x = p; };
+   public int get () { return ((int) x); };
+}
+#endif
+#ifdef O4
+class Store<T implements Sub> {
+   public Store() {};
+   public T x;
+   public void put(T p) { x = p; };
+   public T get () { return x; };
+}
+#endif
+#ifdef O5
+class Store<T implements Sub> {
+   public Store() {};
+   public T x;
+   public void put(T p) { x = p; };
+   public T get () { return ((T) x); };
+}
+#endif
+#ifdef O6
+class Store<T implements Sub> {
+   public Store() {};
+   public T x;
+   public void put(T p) { x = p; };
+   public Object get () { return x; };
+}
+#endif
+#ifdef O7
+class Store<T implements Sub> {
+   public Store() {};
+   public T x;
+   public void put(T p) { x = p; };
+   public Object get () { return ((Object) x); };
+}
+#endif
+#ifdef O8
+class Store<T implements Sub, R implements Super> {
+   public Store() {};
+   public T x;
+   public void put(T p) { x = p; };
+   public R get () { return x; };
+}
+#endif
+#ifdef O9
+class Store<T implements Sub, R implements Super> {
+   public Store() {};
+   public T x;
+   public void put(T p) { x = p; };
+   public R get () { return ((R) x); };
+}
+#endif
+
+class Rc {
+   public Rc() {
+      active {};
+   };
+}
+

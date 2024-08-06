@@ -1,0 +1,139 @@
+/**
+ * This class defines static methods to do serial output.
+ */
+public class StdWriter {
+
+    private StdWriter () { };
+
+    /**
+     * @pre the setting asynchronous modes of tramission must be
+     *      set, for example the baud rate, parity and stop bits.
+     *      use StdSerial.initialize() for this purpose.
+     *
+     * transmit interrupts are not enabled.
+     */
+    native ("stdwriter_initialize")
+    public static void initialize ();
+
+    /**
+     * Ready to transmit a new character.
+     */
+    native ("stdwriter_ready")
+    public static boolean ready ();
+
+    /**
+     * Write a character.
+     * If ready() holds, then this method does not block.
+     *
+     * The method is synonym to write_char(char).
+     */
+    native ("stdwriter_write_char")
+    public static void write (char a_char);
+
+
+    public static void write_bool (bool a_bool) {
+        write((a_bool)?'T':'F');
+    };
+
+    /**
+     * see write(char).
+     */
+    native ("stdwriter_write_char")
+    public static void write_char (char a_char);
+
+    native ("stdwriter_write_short")
+    public static void write_short (short a_short);
+
+    native ("stdwriter_write_string")
+    public static void write_string (String a_string);
+
+    native ("stdwriter_write_time")
+    public static void write_time (time a_time);
+
+    /**
+     * Write an exception information.
+     * @param exn the exception code
+     */
+    public static void write_exception (int exn) {
+        // XXX use int instead of short, if write_int(int) is available
+        short e = (short)exn;
+        write_newline();
+        write_string("--exception(");
+        write_short(e);
+        write_string(")");
+        write_newline();
+    };
+
+    /**
+     * Write a space character.
+     */
+    native ("stdwriter_write_space")
+    public static void write_space ();
+
+    /**
+     * Write a line separator.
+     */
+    native ("stdwriter_write_newline")
+    public static void write_newline ();
+
+
+    public static void writeln_bool (bool a_bool) {
+        write_bool(a_bool);
+        write_newline();
+    };
+
+    public static void writeln_char (char a_char) {
+        write_char(a_char);
+        write_newline();
+    };
+
+    public static void writeln_short (short a_short) {
+        write_short(a_short);
+        write_newline();
+    };
+
+    public static void writeln_string (String a_string) {
+        write_string(a_string);
+        write_newline();
+    };
+
+    public static void writeln_time (time a_time) {
+        write_time(a_time);
+        write_newline();
+    };
+
+    //------------------------------------------------------------------------
+    /**
+     * Write a failure information.
+     * @param a_modid identification number of the module (the file)
+     * @param a_line  line number within the file of the module
+     */
+    native ("stdwriter_write_failure")
+    public static void write_failure (short a_modid, short a_line);
+
+    //------------------------------------------------------------------------
+    /**
+     * write a byte value as a two digit hexadecimal number.
+     */
+    native ("stdwriter_write_hex_char")
+    public static void write_hex_byte (byte a_byte);
+
+    /**
+     * write a character value as a two digit hexadecimal number.
+     */
+    native ("stdwriter_write_hex_char")
+    public static void write_hex_char (char a_char);
+
+    /**
+     * Write a short value as a four digit hexadecimal number.
+     */
+    native ("stdwriter_write_hex_uint16")
+    public static void write_hex_short (short a_short);
+
+    /**
+     * Write an uint16 value as a four digit hexadecimal number.
+     */
+    native ("stdwriter_write_hex_uint16")
+    public static void write_hex_uint16 (uint16 an_uint16);
+
+} // end class StdWriter

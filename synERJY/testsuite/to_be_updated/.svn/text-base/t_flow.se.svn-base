@@ -1,0 +1,65 @@
+class Rc
+
+run (e: exception_enum) is creation
+	do reactive loop; };
+
+signal I1	is public const;
+signal I2	is public const;
+signal I3	is public const;
+
+Ib1 : signal(value:bool)	is public const;	-- input
+Ib2 : signal(value:bool)	is public const;
+
+Ii1 : signal(value:int)	is public const;
+Ii2 : signal(value:int)	is public const;
+
+OFF : signal	is public const;
+
+O1 : signal	is public;		-- output
+O2 : signal	is public;
+O3 : signal	is public;
+
+Ob1 : signal(value:bool)	is public;
+Ob2 : signal(value:bool)	is public;
+Oi1 : signal(value:int)		is public;
+Oi2 : signal(value:int)		is public;
+
+Fi1  : signal(value:int) is public at true;
+Fi2  : signal(value:int) is public at true;
+Fb1  : signal(value:bool) is public at true;
+Fb2  : signal(value:bool) is public at true;
+
+
+#ifdef T1
+// trace
+//      ->
+// 	-> Ob1(true) Oi1(0)
+//	-> Ob1(false) Oi1(1)
+//      -> Ob1(true) Oi1(2)
+//	-> Ob1(false) Oi1(3)
+// 	-> Ob1(true) Oi1(4)
+//      -> Ob1(false) Oi1(5)
+//  OFF ->
+//  	->
+//      ->
+//
+c1 is reactive
+  do
+     next;
+     cancel strongly
+       loop
+         sustain {|
+           $Fb1 <- true >> ! pre($Fb1);
+//        $Fi1 <- 0 >> pre($Fi1) + 1;
+         |};
+         emit Ob1($Fb1);
+//        emit Oi1($Fi1);
+         next;
+       };
+      when OFF };
+   };
+
+#endif
+
+}
+

@@ -1,0 +1,14 @@
+/**
+ * @class
+ */
+public class StdSerial {
+
+    protected StdSerial () {};
+
+    /**
+     * Initialization of the serial-unit for standard reader and writer.
+     */
+    native ("stdserial_initialize")
+    public static final void initialize ();
+ 
+} // end class StdSerial

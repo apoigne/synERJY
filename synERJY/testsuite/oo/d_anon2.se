@@ -1,0 +1,82 @@
+interface UseIt {
+  void incr();
+  int  getIt();
+}
+
+class HasFx {
+  public HasFx() {};
+  private int afx;
+  public void gfx() { afx++; };
+}
+
+class HasFxSub extends HasFx {
+  public HasFxSub() { super(); };
+}
+
+class DefAn<T <= HasFx> {
+
+  UseIt x;
+  UseIt y;
+
+  private void run() {
+    x = new UseIt() { public void incr() { i += 2; };
+                      public int getIt() { return 2*geti();};
+                    };
+    y = new UseIt() { public void incr() { i = i + get3(); };
+                      public int getIt() { return get3()*geti()*i;};
+                    };
+  };
+
+  public DefAn() {
+    run();
+  };
+
+  int i = 4;
+
+  public int get() {
+    return i;
+  };
+
+  private int geti() {
+    return i;
+  };
+
+  private int get3() {
+    return 3;
+  };
+
+}
+
+class Rc {
+
+  DefAn<HasFx>    x;
+  DefAn<HasFxSub> y;
+
+  private void run() {
+    x = new DefAn<HasFx>();
+    y = new DefAn<HasFxSub>();
+  };
+
+  public Rc() {
+    run();
+    active { react(); };
+  };
+
+  Signal<int> osig = new Signal<int>(new SimOutput());
+  int i = 4;
+
+  private int geti() {
+    return i;
+  };
+
+  private int get3() {
+    return 3;
+  };
+
+  private void react() {
+    emit osig(i);       next;
+    emit osig(x.get()); next;
+    emit osig(y.get()); next;
+  };
+
+}

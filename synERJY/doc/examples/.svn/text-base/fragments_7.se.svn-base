@@ -1,0 +1,40 @@
+class LabelledEmit {
+
+
+Signal<int> x = new Signal<int>();    
+public LabelledEmit () {
+        active {
+
+// tex_start labelled-emits-1
+[[ l1:: emit x(1); || l2:: emit x(2); ]];
+// tex_end labelled-emits-1
+        };
+    };
+
+// tex_start labelled-emits-2
+precedence {
+    l1:: < l2:: ; 
+};
+// tex_end labelled-emits-2
+}
+class LabelledAbsurd {
+
+void    increment() { nothing; };
+void    decrement() { nothing; };
+void    reset()     { nothing; };
+boolean isElapsed() { return true; };
+
+    public LabelledAbsurd () {
+        active {
+// tex_start labelled-absurd-1
+[[ l1:: reset(); || l2:: decrement(); || l3:: reset(); ]];
+// tex_end labelled-absurd-1
+        };
+    };
+
+// tex_start labelled-absurd-2
+precedence {
+    l1:: < l2:: < l3:: ; 
+};
+// tex_end labelled-absurd-2
+}

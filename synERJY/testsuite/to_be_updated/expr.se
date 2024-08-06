@@ -1,0 +1,153 @@
+class Cc
+m1( int i )            is public creation () {};
+m2( bool b )           is public creation () {};
+int c_ai               is public;
+bool c_ab              is public;
+Dc c_d                 is public;
+Ec c_e                 is public;
+Sc c_s                 is public;
+c_fii( int pi )  : int is public () {};
+c_fbi( bool pb ) : int is public () {};
+}
+
+class Sc
+int s_ai               is public;
+bool s_ab              is public;
+Dc s_d                 is public;
+Ec s_e                 is public;
+Sc s_s                 is public;
+s_fii( int pi ) : int  {};
+}
+
+class Dc
+int d_ai               is public;
+bool d_ab              is public;
+Dc d_d                 is public;
+Ec d_e                 is public;
+Sc d_s                 is public;
+}
+
+class Ec
+int e_ai               is public;
+bool e_ab              is public;
+Dc e_d                 is public;
+Ec e_e                 is public;
+Sc e_s                 is public;
+e_fid( int pi ) : Dc   {};
+}
+
+reactive class Xc
+inherit Sc;
+
+int ai;
+bool ab;
+Dc d1, d2;
+Ec e1, e2;
+
+signal SIG_NONE                                  is public;
+SIG_INT  : signal(v1:int;v2:int)                   is public;
+SIG_MIX  : signal(v1: expanded Dc;v3: expanded Ec) is public;
+
+fid( int pi ) : Dc  () {};
+did( int pi ) : Ec  () {};
+dii( int pi ) : int deferred;
+
+checkit : int do
+    ai = 3;
+    ai = ai;
+    ai = d1.d_ai;
+    ai = d1.d_e.e_s.s_d.d_d.d_ai;
+    ai = fid(5).d_e.e_s.s_d.d_d.d_ai;
+    ai = d1.d_e.e_fid(5).d_e.e_fid(5).d_s.s_ai;
+    ai = -3;
+    ai = -ai;
+    ai = - ai;
+    ai = 3+4;
+    ai = 3+ai+ai;
+    ai = 3*ai+ai;
+    ai = 3+ai*ai;
+    ai = -3+ai*ai;
+    ai = -3+ai*(-ai);
+    ai = 3+ai*-ai;
+    ai = 3+ai+-ai;
+    ai = 3+ai+ -ai;
+    ai = ai*ai + fii(4)*dii(5) + d1.d_ai*d1.d_e.e_fid(5).d_e.e_fid(5).d_ai;
+    ai = (ai);
+    ai = (3+ai+ai);
+    ai = fii(4);
+    ai = fii(ai);
+    ai = fii(d1.d_ai);
+    ai = fii(d1.d_e.e_fid(5).d_ai);
+// ai = [Cc].c_fii(3)+ai;
+// ai = [Cc].c_fbi(true)+d1.d_ai;
+// ai = New[Cc].m1(3).c_ai + New[Cc].m2(false).c_ai;
+    ai = self.ai;
+    ai = self.fii(self.ai);
+    ai = result + ai;
+    d1 = void;
+    ai = d1.d_ai;
+    ai = d1.d_ai;
+
+    ai = 3+4;
+    ai = 3+ ai;
+    ai = 3+SIG_INT.v2;
+    if 3>0 then ai = 1 else ai = 4 };
+    ai =  4 * (if 3>0 then checkit; 1 else 4 });
+    ai =  (if 3>0 then if ab then 1 else 2 } else 4 });
+#ifdef E100
+    di = true;
+#endif
+#ifdef E101
+    ai = true;
+#endif
+#ifdef E102
+    ai = ab;
+#endif
+#ifdef E103
+    di = if ab then 1 else ab };
+#endif
+#ifdef E104
+    di = if ab then 1 };
+#endif
+#ifdef E105
+    di = void;
+#endif
+};
+
+react is reactive
+  do
+    emit SIG_NONE;
+    emit SIG_INT(2,2);
+    emit SIG_INT(2+ai,d1.d_ai);
+    emit SIG_INT(d1.d_e.e_d.d_s.s_fii(3),if ab then 1 else 2 });
+#ifdef E1
+// [[LengthParamL]] SIG_NONE
+    emit SIG_NONE(4,5);
+#endif
+#ifdef E2
+// [[LengthParamL]] SIG_INT
+    emit SIG_INT(5);
+#endif
+#ifdef E3
+// [[LengthParamL]] SIG_INT
+    emit SIG_INT(5,6,7);
+#endif
+#ifdef E4
+// [[LengthParamL]] SIG_INT
+    emit SIG_INT;
+#endif
+#ifdef E5
+    emit SIG_INT(5,ab);
+#endif
+#ifdef E6
+    emit SIG_INT(ab,5);
+#endif
+#ifdef E7
+    emit SIG_INT(fid(9),5);
+#endif
+#ifdef E8
+    emit SIG_INT(5,fid(9));
+#endif
+  };
+
+}

@@ -1,0 +1,19 @@
+// test-flags O = None true, E = data true
+
+class Rc {
+
+public Rc() {
+active {
+
+#ifdef O1
+  [[ nothing; || next; ]];
+#endif
+
+#ifdef O2
+  [[ if (true) { nothing; } else { next; }; || next; ]];
+#endif
+
+};
+};
+
+}

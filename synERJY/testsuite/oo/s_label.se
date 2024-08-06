@@ -1,0 +1,132 @@
+class Rc {
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+
+Signal osig1 = new Signal(new SimOutput());
+Signal osig2 = new Signal(new SimOutput());
+
+Signal<int> osig3 = new Signal<int>(new SimOutput());
+
+public Rc () {
+  active { a1:: a1(); 
+  };
+};
+
+#ifdef O1
+private void a1 () {
+  l0:: [[ automaton {
+           init {
+             next state s1;
+           };
+           state s1
+             when (?I1) { emit osig1; next state s2; };
+
+           state s2
+             when (?I1) { emit osig1; next state s1; };
+         };
+      || l1:: await ?osig1;
+         l2:: emit osig2;
+         next;
+         l3:: if (?osig2) { l4:: next; } else { l5:: await ?osig2; };
+         l6:: next;
+      ]];
+};
+#endif
+
+#ifdef O2
+private void a1 () {
+  l1:: emit osig3(0);
+  l2:: emit osig2;
+};
+
+void i(int p) { };
+
+precedence {
+  a1::l1:: < i(int);
+};
+#endif
+
+#ifdef E1
+// [[FsmState]]
+private void a1 () {
+  automaton {
+    init {
+      next state s1;
+    };
+    state s1
+      when (?I1) { emit osig1; next state s1; };
+
+    state s1
+      when (?I1) { emit osig1; next state s1; };
+  };
+};
+#endif
+
+#ifdef E2
+// [[ParseError]]
+// Overloading of identifier "l1" is illegal
+private void a1 () {
+  l1:: await ?osig1;
+  l2:: emit osig2;
+  next;
+  l1:: if (?osig2) { l4:: next; } else { l5:: await ?osig2; };
+  l6:: next;
+};
+#endif
+
+#ifdef E3
+// [[ParseError]]
+// Overloading of identifier "l6"
+int l6;
+
+private void a1 () {
+  l1:: await ?osig1;
+  l2:: emit osig2;
+  next;
+  l3:: if (?osig2) { l4:: next; } else { l5:: await ?osig2; };
+  l6:: next;
+};
+#endif
+
+#ifdef E4
+// [[InvalidPrec]] invalid precedence declaration
+private void a1 () {
+  l1:: await ?osig1;
+  l2:: emit osig2;
+};
+
+precedence {
+  l1:: < l2::;
+};
+#endif
+
+#ifdef E5
+// [[InvalidPrec]] invalid precedence declaration
+private void a1 () {
+  l1:: await ?osig1;
+  l2:: emit osig2;
+};
+
+int i(int p) { return 0; };
+
+precedence {
+  l1:: < i(int);
+};
+#endif
+
+#ifdef E6
+// [[InvalidPrec]] invalid precedence declaration
+private void a1 () {
+  l1:: emit osig3(0);
+  l2:: emit osig2;
+};
+
+void i(int p) { };
+
+precedence {
+  l2:: < i(int);
+};
+#endif
+
+}

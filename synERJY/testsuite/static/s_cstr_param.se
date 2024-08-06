@@ -1,0 +1,226 @@
+// test-flags O = None true, E = None true
+
+class Rc {
+
+ public Rc () {
+     active {
+     };
+  };
+
+   Signal             a  = new Signal();
+   Signal<int>        b  = new Signal<int>();
+   Signal<int>      c  = new Signal<int>();
+   Signal{true}<int>  d  = new Signal<int>();
+   Signal{true}<bool> e  = new Signal<bool>();
+   Signal{e}<int>     f  = new Signal<int>();
+
+#ifdef O1
+   Rc1 rc1 = new Rc1(a);
+}
+
+class Rc1 {
+   Signal y1 = new Signal(new SimOutput());
+
+   public Rc1 (Sensor x1) {
+       active {
+           if (?x1) { emit y1; };
+       };
+    };
+}
+#endif
+
+#ifdef O11
+   Rc1 rc1 = new Rc1(a);
+}
+
+class Rc1 {
+   Signal y1;
+
+   public Rc1 (Signal x1) {
+       y1 = x1;
+       active {
+         emit y1; if (?x1) { nothing; };
+       };
+    };
+}
+#endif
+
+#ifdef E1
+// [[Typing]]
+  Rc1 rc1 = new Rc1(a);
+}
+
+class Rc1 {
+   Signal y1;
+   public Rc1 (Sensor x1) {
+     active {
+       if (?x1) { emit y1; };
+     };
+  };
+}
+#endif
+
+#ifdef E2
+// [[Typing]]
+  Rc1 rc1 = new Rc1(a);
+}
+
+class Rc1 {
+   Sensor y1 = new Sensor(new SimInput());
+
+   public Rc1 (Sensor x1) {
+     y1 = x1;
+     active {
+       if (?x1) { emit y1; };
+     };
+  };
+}
+#endif
+
+#ifdef O2
+   Rc1 rc1 = new Rc1(b);
+}
+
+class Rc1 {
+   Signal<int> y1 = new Signal<int>(new SimOutput());
+
+   public Rc1 (Sensor<int> x1) {
+    active {
+       emit y1($x1);
+    };
+  };
+}
+#endif
+
+#ifdef O3
+   Rc1 rc1 = new Rc1(a);
+}
+
+class Rc1 {
+   
+  public Rc1 (Signal x1) {
+     active {
+       emit x1;
+     };
+  };
+}
+#endif
+
+#ifdef O4
+   Rc1 rc1 = new Rc1(b);
+}
+
+class Rc1 {
+   public Rc1 (Signal<int> x1) {
+     active {
+       emit x1(3);
+     };
+  };
+}
+#endif
+
+
+// Flows
+
+#ifdef O5
+   Rc1 rc1 = new Rc1(c);
+}
+
+class Rc1 {
+   Signal<int> y1 = new Signal<int>(new SimOutput());
+   public Rc1 (Sensor<int> x1) {
+    active {
+       sustain {|
+          y1 := x1;
+       |};
+    };
+  };
+}
+#endif
+
+#ifdef O6
+   Rc1 rc1 = new Rc1(c);
+}
+
+class Rc1 {
+  Signal y1 = new Signal(new SimOutput());
+
+  public Rc1 (Signal<int> x1) {
+    active {
+       sustain {|
+          x1 := 3;
+       |};
+    };
+  };
+}
+#endif
+
+#ifdef O7
+   Rc1 rc1 = new Rc1(d);
+}
+
+class Rc1 {
+   Signal{true}<int> y1 = new Signal<int>(new SimOutput());
+   public Rc1 (Sensor{true}<int> x1) {
+    active {
+       sustain {|
+          y1 := x1;
+       |};
+    };
+  };
+}
+#endif
+
+#ifdef O8
+   Rc1 rc1 = new Rc1(d);
+}
+
+class Rc1 {
+ 
+   public Rc1 (Signal{true}<int> x1) {
+    active {
+       sustain {|
+          x1 := 3 when (true);
+       |};
+    };
+  };
+
+}
+#endif
+
+#ifdef O9
+   Rc1 rc1 = new Rc1(e,d);
+}
+
+class Rc1 {
+   Signal{true}<int> y2 = new Signal<int>(new SimOutput());
+   public Rc1 (Sensor{true}<bool> x1,
+               Sensor{true}<int>  x2) {
+    active {
+       sustain {|
+          y2 := x2;
+       |};
+    };
+  };
+}
+#endif
+
+#ifdef O10
+   Rc1 rc1 = new Rc1(e,f);
+}
+
+class Rc1 {
+   Sensor{true}<bool> y1;
+   Signal{y1}<int>    y2 = new Signal<int>(new SimOutput());
+   public Rc1 (Sensor{true}<bool> x1,
+               Sensor{x1}<int>    x2) {
+    y1 = x1;
+    active {
+       sustain {|
+          y2 := x2;
+       |};
+    };
+  };
+}
+#endif
+

@@ -1,0 +1,151 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+Sensor<bool> FIB1 = new Sensor<bool>(new SimInput());
+Sensor<bool> FIB2 = new Sensor<bool>(new SimInput());
+Sensor<bool> FIB3 = new Sensor<bool>(new SimInput());
+
+Signal<bool> FOB1 = new Signal<bool>(new SimOutput());
+Signal<bool> FOB2 = new Signal<bool>(new SimOutput());
+Signal<bool> FOB3 = new Signal<bool>(new SimOutput());
+
+#ifdef T1
+// trace
+//
+//  FIB1(true)    -> FOB1(true) 
+//  FIB1(false)   -> FOB1(false) 
+//  FIB1(true)    -> FOB1(true) 
+//  FIB1(false)   -> FOB1(false) 
+//  FIB1(true)    -> FOB1(true) 
+//  FIB1(true)    -> FOB1(true) 
+//
+private void c1 () {
+    sustain {| FOB1 := FIB1; |};
+  };
+#endif
+
+#ifdef T2
+// trace
+//
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//  FIB1(false) FIB2(true)  -> FOB1(false) 
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//  FIB1(false) FIB2(true)  -> FOB1(false) 
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//  FIB1(true) FIB2(false)   -> FOB1(false) 
+//
+private void c1 () {
+    sustain {| FOB1 := true -> FIB1 && FIB2; |};
+  };
+#endif
+
+#ifdef T3
+// trace
+//
+//  FIB1(true)   -> FOB1(true) 
+//  FIB1(false)  -> FOB1(true) 
+//  FIB1(true)   -> FOB1(false) 
+//  FIB1(false)  -> FOB1(true) 
+//  FIB1(true)   -> FOB1(false) 
+//  FIB1(false)  -> FOB1(true) 
+//  FIB1(true)   -> FOB1(false) 
+//  FIB1(false)  -> FOB1(true) 
+//  FIB1(true)   -> FOB1(false) 
+//
+private void c1 () {
+    sustain {| FOB1 := true -> pre(FIB1); |};
+  };
+#endif
+
+#ifdef T4
+// trace
+//
+//  FIB1(false) FIB2(true)   -> FOB1(true) 
+//  FIB1(false) FIB2(true)  -> FOB1(false) 
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//  FIB1(false) FIB2(true)  -> FOB1(false) 
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//  FIB1(false) FIB2(true)  -> FOB1(false) 
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//  FIB1(false) FIB2(true)  -> FOB1(false) 
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//
+private void c1 () {
+    sustain {| FOB1 := true -> FIB1 && pre(FIB2); |};
+  };
+#endif
+
+#ifdef T5
+// trace
+//
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//  FIB1(false) FIB2(true)  -> FOB1(false) 
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//  FIB1(false) FIB2(true)  -> FOB1(false) 
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//  FIB1(true) FIB2(true)   -> FOB1(true) 
+//
+private void c1 () {
+    sustain {| FOB1 := true -> FIB1 || ! pre(FIB2); |};
+  };
+#endif
+
+#ifdef T6
+// trace
+//
+//  FIB1(true) FIB2(true) FIB3(true)    -> FOB1(true) FOB2(true) FOB3(true)
+//  FIB1(false) FIB2(false) FIB3(true)  -> FOB1(false) FOB2(false) FOB3(true)
+//  FIB1(true) FIB2(true) FIB3(false)   -> FOB1(true) FOB2(true) FOB3(false)
+//  FIB1(false) FIB2(false) FIB3(true)  -> FOB1(false) FOB2(false) FOB3(true)
+//  FIB1(true) FIB2(true) FIB3(true)    -> FOB1(true) FOB2(true) FOB3(true)
+//  FIB1(false) FIB2(false) FIB3(false) -> FOB1(false) FOB2(false) FOB3(false)
+//
+private void c1 () {
+    sustain {|
+      FOB1 := FIB1;
+      FOB2 := FIB2;
+      FOB3 := FIB3;
+    |};
+  };
+#endif
+
+#ifdef T7
+// trace
+//
+//  FIB1(true) FIB2(true) FIB3(true)    -> FOB1(true) FOB2(true) FOB3(false)
+//  FIB1(true) FIB2(false) FIB3(true)   -> FOB1(true) FOB2(false) FOB3(false)
+//  FIB1(true) FIB2(true) FIB3(false)   -> FOB1(true) FOB2(true) FOB3(false)
+//  FIB1(false) FIB2(false) FIB3(true)  -> FOB1(false) FOB2(false) FOB3(false)
+//  FIB1(true) FIB2(true) FIB3(true)    -> FOB1(false) FOB2(false) FOB3(true)
+//  FIB1(false) FIB2(false) FIB3(false) -> FOB1(false) FOB2(false) FOB3(false)
+//
+private void c1 () {
+    sustain {|
+      FOB1 := true  -> FIB1 && pre(FOB1);
+      FOB2 := true  -> FIB2 && pre(FOB1);
+      FOB3 := false -> FIB3 && ! ( pre(FOB1) || pre(FOB2) );
+    |};
+  };
+#endif
+
+#ifdef T8
+// trace
+//
+//  FIB1(true)    -> FOB1(true) 
+//  FIB1(false)   -> FOB1(false) 
+//  FIB1(true)    -> FOB1(true) 
+//  FIB1(false)   -> FOB1(false) 
+//  FIB1(true)    -> FOB1(true) 
+//  FIB1(true)    -> FOB1(false) 
+//
+private void c1 () {
+    sustain {| FOB1 := true -> ! pre(FIB1); |};
+  };
+#endif
+
+} //end class Rc
+

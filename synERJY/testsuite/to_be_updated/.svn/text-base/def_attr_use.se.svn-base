@@ -1,0 +1,65 @@
+class Xc
+int ai             is public;
+fi( int pi ) : int is public deferred;
+int samei          is public;
+}
+
+class Yc
+inherit Xc;
+int bi             is public;
+gi( int pi ) : int is public deferred;
+}
+
+class Tc
+int di;
+int samei;
+Xc xc;
+Yc yc;
+
+h( int pi ) : int is deferred;
+
+tc1 () {
+    di = xc.ai;
+    di = yc.ai;
+    di = yc.bi;
+
+    di = xc.fi(di);
+    di = xc.fi(xc.ai);
+    di = xc.fi(yc.ai);
+    di = xc.fi(yc.bi);
+    di = xc.fi(xc.fi(di));
+
+    di = yc.fi(di);
+    di = yc.fi(xc.ai);
+    di = yc.fi(yc.ai);
+    di = yc.fi(yc.bi);
+    di = yc.fi(xc.fi(di));
+
+    di = yc.fi(di);
+    di = yc.gi(xc.ai);
+    di = yc.gi(yc.ai);
+    di = yc.gi(yc.bi);
+    di = yc.gi(xc.fi(di));
+#ifdef E1
+// [[ParseError]]
+    xc.ai = 4;
+#endif
+#ifdef E2
+// [[UnknownId]] missing
+    di = yc.missing;
+#endif
+#ifdef E3
+// [[ParseError]]
+    h(4) = 4;
+#endif
+#ifdef E4
+// [[Subtyping]]
+    di = yc.fi(true);
+#endif
+#ifdef E5
+// [[Subtyping]]
+    di = true;
+#endif
+};
+
+}

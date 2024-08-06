@@ -1,0 +1,81 @@
+class Rc {
+
+  public Rc() {
+      active {
+      };
+  };
+
+  Sensor s1 = new Sensor(new SimInput());
+       Signal a1 = new Signal(new SimOutput());
+       Signal x1 = new Signal();
+  Signal<int> v1 = new Signal<int>();
+
+#ifdef O1
+   Rc1 o2 = new Rc1(a1);
+   Rc1 o3 = new Rc1(x1);   
+#endif
+
+#ifdef O2
+   Rc1 o2 = new Rc1(a1);
+   Rc1 o3 = new Rc1(x1);   
+#endif
+
+#ifdef E1
+// [[Subtyping]]
+   Rc1 o1 = new Rc1(s1);   
+#endif
+
+#ifdef E2
+// [[Subtyping]]
+   Rc1 o1 = new Rc1(v1);   
+#endif
+
+} //end class Rc
+
+class Rc1 {
+ 
+  Sensor ss1;
+       Signal xx1;
+ 
+#ifdef O1
+// test case continuation
+  public Rc1(Signal x) {
+    ss1 = x;
+    xx1 = x;
+    active {
+       emit xx1;
+    };
+  };
+#endif
+
+#ifdef O2
+// test case continuation
+  public Rc1(Sensor x) {
+    ss1 = x;
+    xx1 = new Signal();
+    active {
+    };
+  };
+#endif
+
+#ifdef E1
+// test case continuation
+  public Rc1(Signal x) {
+    ss1 = x;
+    xx1 = x;
+    active {
+    };
+  };
+#endif
+
+#ifdef E2
+// test case continuation
+  public Rc1(Signal x) {
+    ss1 = x;
+    xx1 = x;
+    active {
+    };
+  };
+#endif
+
+} //end class Rc

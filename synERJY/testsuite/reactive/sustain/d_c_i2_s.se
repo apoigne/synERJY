@@ -1,0 +1,51 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+Sensor<int> II1 = new Sensor<int>(new SimInput());
+Signal<int> OI1 = new Signal<int>(new SimOutput());
+
+Signal<int>     FI1 = new Signal<int>(new SimOutput());
+Signal{?II1}<int> FI2 = new Signal<int>(new SimOutput());
+
+//
+// int output flows, clock: presence of integer input Signal
+//
+
+#ifdef T1 
+// trace
+//              ->  OI1(0)
+//              ->  OI1(0)
+// II1(2)       ->  FI2(1) OI1(1)
+// II1(3)       ->  FI2(3) OI1(3)
+//              ->  OI1(3)
+// II1(5)       ->  FI2(5) OI1(5)
+//              ->  OI1(5)
+//
+private void c1 () {
+   [[ sustain {| FI2 := (1 when ?II1) -> ($II1 when ?II1); |};
+   || loop { emit OI1($FI2); next; };
+   ]];
+  };
+#endif
+
+#ifdef T2
+// trace
+//              -> 
+//              -> 
+// II1(0)       ->  FI2(1)
+// II1(1)       ->  FI2(1)
+// II1(2)       ->  FI2(2)
+//              -> 
+// II1(3)       ->  FI2(3)
+//              -> 
+//
+private void c1 () {
+       sustain {| FI2 := (1 when ?II1) -> ($II1 when ?II1); |};
+  };
+#endif
+
+} //end class Rc

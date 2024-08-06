@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/atmel
+END
+Avr_at90s8515_Test.se
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/atmel/Avr_at90s8515_Test.se
+END
+AvrCore_Test.se
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/atmel/AvrCore_Test.se
+END
+AvrUart_Test.se
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/atmel/AvrUart_Test.se
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/atmel/Makefile
+END

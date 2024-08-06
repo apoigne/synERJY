@@ -1,0 +1,69 @@
+#include "../../target/examples/IncDec/inc_dec.se"
+
+#ifdef T1
+// trace inc
+//
+// inc ->
+//     -> intval(0)
+// inc -> intval(1)
+// inc -> intval(2)
+// inc -> intval(3)
+// inc -> intval(4)
+// inc -> intval(5)
+// inc -> intval(6)
+// inc -> intval(7)
+// inc -> intval(8)
+// inc -> intval(9)
+// inc -> intval(10)
+//
+// trace dec
+//
+// dec ->
+//     -> intval(0)
+// dec -> intval(-1)
+// dec -> intval(-2)
+// dec -> intval(-3)
+// dec -> intval(-4)
+// dec -> intval(-5)
+// dec -> intval(-6)
+// dec -> intval(-7)
+// dec -> intval(-8)
+// dec -> intval(-9)
+// dec -> intval(-10)
+// dec -> intval(-11)
+//
+// trace reset-inc
+//
+// reset ->
+//       -> intval(0)
+// inc   -> intval(1)
+// inc   -> intval(2)
+// inc   -> intval(3)
+// reset -> intval(0)
+// inc   -> intval(1)
+// inc   -> intval(2)
+// inc   -> intval(3)
+// inc   -> intval(4)
+// inc   -> intval(5)
+// inc   -> intval(6)
+// inc   -> intval(7)
+// reset -> intval(0)
+//
+// trace inc-dec-reset
+//
+// inc     ->
+// inc     -> intval(1)
+// inc     -> intval(2)
+// inc dec -> intval(2)
+// inc     -> intval(3)
+// inc     -> intval(4)
+// dec     -> intval(3)
+// dec     -> intval(2)
+// dec     -> intval(1)
+// inc     -> intval(2)
+// dec     -> intval(1)
+// dec     -> intval(0)
+// dec     -> intval(-1)
+// reset   -> intval(0)
+#endif
+

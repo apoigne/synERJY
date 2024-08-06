@@ -1,0 +1,46 @@
+#include "../../target/examples/Blink1/blink1.se"
+
+#ifdef T1
+// trace select
+//
+// select   -> red_led_off
+//          ->
+// select   -> green_led_off
+//          ->
+// select   -> red_led_off
+//          ->
+// select   -> green_led_off
+//          ->
+// select   -> red_led_off
+//
+// trace toggle
+//
+// toggle   -> red_led_on
+//          ->
+// toggle   -> red_led_off
+//          ->
+// toggle   -> red_led_on
+//          ->
+// toggle   -> red_led_off
+//          ->
+// toggle   -> red_led_on
+//          ->
+// toggle   -> red_led_off
+//          ->
+// toggle   -> red_led_on
+//
+// trace toggle & select
+//
+// select -> red_led_off
+// toggle -> green_led_on
+// select -> green_led_off
+// toggle -> red_led_on
+// toggle -> red_led_off
+// select -> red_led_off
+//        ->
+//        ->
+// select -> green_led_off
+// toggle -> red_led_on
+//        ->
+// toggle -> red_led_off
+#endif

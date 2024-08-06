@@ -1,0 +1,79 @@
+class Pair<T,U> {
+
+public Pair() {};
+
+public  T x;
+private U y;
+
+public void putx(T p) { x = p; };
+public void puty(U p) { y = p; };
+
+public T getx() { return x; };
+public U gety() { return y; };
+
+}
+
+class UsePair {
+
+public UsePair() {};
+
+Pair<int,int>   iip;
+Pair<int,float> ifp;
+Pair<char,bool> cbp;
+
+int i;
+float f;
+char c;
+bool b;
+
+public void test() {
+  iip.putx(i);
+  iip.puty(i);
+  i = iip.getx();
+  i = iip.gety();
+  iip.putx(iip.getx());
+  iip.puty(iip.gety());
+  iip.putx(iip.gety());
+  iip.puty(iip.getx());
+
+  ifp.putx(i);
+  ifp.puty(f);
+  i = ifp.getx();
+  f = ifp.gety();
+  ifp.putx(ifp.getx());
+  ifp.puty(ifp.gety());
+
+  cbp.putx(c);
+  cbp.puty(b);
+  c = cbp.getx();
+  b = cbp.gety();
+
+#ifdef E1
+// [[Subtyping]]
+  ifp.putx(f);
+#endif
+#ifdef E2
+// [[Subtyping]]
+  ifp.puty(i);
+#endif
+#ifdef E3
+// [[Subtyping]]
+  ifp.putx(ifp.gety());
+#endif
+#ifdef E4
+// [[Subtyping]]
+  ifp.putx(cbp.getx());
+#endif
+#ifdef E5
+// [[Subtyping]]
+  ifp.puty(cbp.gety());
+#endif
+};
+
+}
+
+class Rc {
+   public Rc() {
+      active {};
+   };
+}

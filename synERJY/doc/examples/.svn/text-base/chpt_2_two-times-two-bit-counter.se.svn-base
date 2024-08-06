@@ -1,0 +1,34 @@
+// tex_start two-times-two-bit-counter
+class FourBitCounter { 
+
+    Sensor start = new Sensor(new SimInput());
+    Sensor  incr = new Sensor(new SimInput());
+    Signal      carry = new Signal();
+    Signal    elapsed = new Signal(new SimOutput());
+    
+    public FourBitCounter () { 
+        active {
+            loop {
+                await ?start;
+                cancel {
+                    [[ two_bit(incr,carry);
+                    || two_bit(carry,elapsed);              
+                    ]];
+                } when (?elapsed);
+                next;
+            };
+        };
+    };
+
+    void two_bit (Sensor x,Signal y) {
+        loop {
+            await (?x);
+            next;
+            await (?x);
+            emit y;
+            next;           
+        };
+    };
+
+}
+// tex_end two-times-two-bit-counter

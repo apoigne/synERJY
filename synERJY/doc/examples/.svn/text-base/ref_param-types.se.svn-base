@@ -1,0 +1,27 @@
+// tex_start param-types
+class List<T> {
+
+   public List() {
+       tail = null;
+       length = 0;
+   };
+
+   private List(T elem, List<T> list) {
+       head = elem;
+       tail = list;
+       length++;
+   };
+
+   List<T> tail;
+   T head;
+   int length;
+
+   public T       head() { return head; };
+   public List<T> tail() { return tail; };
+   public void append(T elem) { 
+       tail = new List<T>(head,tail);
+      head = elem;
+   };
+}
+// tex_end param-types
+

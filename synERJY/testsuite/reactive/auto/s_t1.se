@@ -1,0 +1,77 @@
+public class Rc {
+
+  Signal<int> led  = new Signal<int>( new SimOutput() );
+
+  public Rc () {
+    active {
+
+#ifdef O1
+      automaton {
+        init { next state ledOFF; };
+      state ledOFF
+        entry { emit led(0); }
+        when (true) { next state ledON; };
+      state ledON
+        entry { emit led(1); }
+        when (true) { next state ledON; } else
+        when (true) { next state ledOFF; };
+      };
+#endif
+
+#ifdef O2
+      automaton {
+        init { next state ledOFF; };
+      state ledOFF
+        entry { f(); }
+        when (true) { next state ledON; };
+      state ledON
+        entry { f(); }
+        when (true) { next state ledON; } else
+        when (true) { next state ledOFF; };
+      };
+#endif
+
+#ifdef O3
+      automaton {
+        init { next state ledOFF; };
+      state ledOFF
+        during { f(); }
+        when (true) { next state ledON; };
+      state ledON
+        during { f(); }
+        when (true) { next state ledON; } else
+        when (true) { next state ledOFF; };
+      };
+#endif
+
+#ifdef O4
+      automaton {
+        init { next state ledOFF; };
+      state ledOFF
+        entry { f(); }
+        when (true) { next state ledON; };
+      state ledON
+        entry { f(); }
+        when (true) { next state ledON; } else
+        when (true) { next state ledON; };
+      };
+#endif
+
+#ifdef O5
+      automaton {
+        init { next state ledOFF; };
+      state ledOFF
+        entry { f(); }
+        when (true) { next state ledON; };
+      state ledON
+        entry { f(); }
+        when (true) { next state ledOFF; } else
+        when (true) { next state ledOFF; };
+      };
+#endif
+    };
+  };
+
+  void f() {};
+
+} // end class AutomatOut

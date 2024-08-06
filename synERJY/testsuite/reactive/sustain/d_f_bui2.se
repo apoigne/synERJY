@@ -1,0 +1,42 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+Sensor OFF = new Sensor(new SimInput());
+
+Signal<bool> OB1 = new Signal<bool>(new SimOutput());
+Signal<int> OI1  = new Signal<int>(new SimOutput());
+
+Signal<bool> FB1 = new Signal<bool>(new SimOutput());
+Signal<int> FI1  = new Signal<int>(new SimOutput());
+
+#ifdef T1
+// trace                mixed bool and integer flows
+//
+//      -> FB1(true)  FI1(0) OB1(true)  OI1(0)
+//      -> FB1(false) FI1(1) OB1(false) OI1(1)
+//      -> FB1(true)  FI1(2) OB1(true)  OI1(2)
+//      -> FB1(false) FI1(3) OB1(false) OI1(3)
+//      -> FB1(true)  FI1(4) OB1(true)  OI1(4)
+//      -> FB1(false) FI1(5) OB1(false) OI1(5)
+//  OFF -> 
+//      -> 
+//      -> 
+//
+private void c1 () {
+    cancel strongly {
+    [[
+      sustain {| FB1 := true -> ! pre(FB1);
+                 FI1 := 0 -> pre(FI1) + 1;
+      |};
+    ||
+      loop { emit OB1($FB1); emit OI1($FI1); next; };
+    ]];
+    } when (?OFF) {};
+  };
+#endif
+
+} //end class Rc

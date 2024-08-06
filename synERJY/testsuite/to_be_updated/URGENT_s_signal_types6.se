@@ -1,0 +1,41 @@
+class Rc {
+
+  public Rc() {
+    active {
+    };
+  };
+
+  Rc1 o1 = new Rc1();
+
+} //end class Rc
+
+class Rc1 {
+ 
+  Sensor ss1;
+        Signal aa1;
+        Signal xx1;
+
+  Sensor<int> ss2;
+        Signal<int> aa2;
+        Signal<int> xx2;
+   
+  Sensor<int> ss3;
+        Signal<int> aa3;
+        Signal<int> xx3;
+ 
+  public Rc1() {
+      ss1 = new Signal(new SimInput());
+      aa1 = new Signal(new SimOutput());
+      xx1 = new Signal();
+      ss2 = new Signal<int>(new SimInput());
+      aa2 = new Signal<int>(new SimOutput());
+      xx2 = new Signal<int>();
+      ss3 = new Signal<int>(new SimInput());
+      aa3 = new Signal<int>(new SimOutput());
+      xx3 = new Signal<int>();
+      active {
+      };
+  };
+#endif
+
+} //end class Rc1

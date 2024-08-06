@@ -1,0 +1,53 @@
+// test-flags O = None true, E = data true
+class Rct { 
+    static final time timing = 100msec;
+				
+  Signal<int>      xx = new Signal<int>(new SimOutput());
+  Signal{?xx}<int> yy = new Signal<int>(new SimOutput());
+
+  public Rct () {
+     active {
+       sustain {|
+#ifdef O1
+        aaaa(xx,yy);
+#endif
+#ifdef E1 
+// [[ClocksInconsistent]]
+        bbbb(yy);
+#endif
+#ifdef O2 
+        cccc(xx);
+#endif
+       |};
+   };
+};
+
+#ifdef O1
+// tex_start node-call-aaaa
+node aaaa (Sensor<int> x, Signal{?x}<int> y) {|
+   y := x when ?x;
+|};
+// tex_end
+#endif
+
+#ifdef E1
+// tex_start node-call-bbbb
+Signal<int> z = new Signal<int>();
+node bbbb (Signal<int> y) {|
+   y := 0 -> pre(y) + z;
+|};
+// tex_end
+#endif
+
+#ifdef O2
+// tex_start node-call-cccc
+node cccc (Signal<int> y) {|
+   y := 0 -> pre(y) + v;
+|};
+// tex_end
+#endif
+
+int v;
+
+}
+

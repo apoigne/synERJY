@@ -1,0 +1,48 @@
+4.0
+- Extension of data-flow by a vector/matrix calculus
+
+4.1 
+- several bug fixes, e.g.compiler: causality problem with regard to pre eliminated
+- simulator extended to handle vectors/matrices/objects in input/output signals
+
+4.2
+- compiler: copy loops for vectors and matrices replaced by memcpy
+- graphic editor: move with B1
+- environment variables for Matlab/Scilab/AVR directories can be set
+- improved translation scheme for vectors/matrices
+- Generation of Scicos blocks
+
+4.3
+- state equations added
+- improved memory management
+- several bug fixes
+- support for FASPAS DSP platform
+- exception handling for Simulink
+- Parameters for Sfunction blocks in Simulink supported
+- Exception handling for simulator added
+- Parameters for new blocks added
+- Exception handling for Scicos added
+
+4.4
+- Localisation for Mac OS X Aqua
+- Improvements of the GUI
+
+5.0
+- New concept of realtime. Time becomes relative in that only 
+  the delta of time needed to execute an instant is computed.
+  (accessible using the built-in sensor dt)
+- NuSMV supported for verification of pure control programs
+
+5.1
+- synERJYcharts editor improved
+
+5.2 Bug fixes / Improvements
+- ide: projects did not open properly
+- compiler: new implementation of the arrow operator
+- compiler: bug for the pre operator with regard to Booleran signals fixed
+- Efficient handling of singleton classes and classes with no fields
+
+6.0
+- GUI moved to Tk8.5
+- major rewritings of the GUI
+- simplication and uniformisation of the GUI base functions

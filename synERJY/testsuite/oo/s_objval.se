@@ -1,0 +1,76 @@
+final class Xc {
+
+public Xc (int inc)
+{
+  xc_ar = inc+1;
+};
+
+public Xc ()
+{
+  xc_ar = 301;
+};
+
+protected int xc_ar;
+
+public Xc set_and_return (int r)
+{
+   xc_ar = r;
+   return this;
+};
+
+public void set (int r)
+{
+   xc_ar = r;
+};
+
+private bool frozen = false;
+
+public void freeze ()
+{
+   frozen = true;
+};
+
+}
+
+class Rc {
+
+public Rc () {
+active { 
+
+#ifdef O1
+   emit out(x1);
+   next;
+   emit out(x2);
+   next;
+   emit out(x1.set_and_return(5));
+#endif
+
+#ifdef E1
+// [[Typing]]
+   emit out(8);
+#endif
+
+#ifdef E2
+// [[Typing]]
+   emit out(x1.set(8));
+#endif
+
+#ifdef E3
+// [[Typing]]
+   emit out(this);
+#endif
+
+#ifdef E4
+// [[Typing]]
+   emit out(null);
+#endif
+
+};
+};
+
+Signal<Xc> out = new Signal<Xc>(new SimOutput());
+
+Xc x1 = new Xc(100);
+Xc x2 = new Xc(200);
+
+}

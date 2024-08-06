@@ -1,0 +1,24 @@
+# << installation dependant directories === linux =============================
+#TCLA    := /mingw/lib/libtcl84.a
+#TKA     := /mingw/lib/libtk84.a
+TCLA    := C:\Tcl\lib\tcl84.lib
+TKA     := C:\Tcl\lib\tk84.lib
+X11A    := 
+
+TCLH    := /mingw/include
+TKH     := /mingw/include
+X11H    := /mingw/include/X11
+
+MLD     := /Programme/ObjectiveCaml/lib
+MLA     := $(MLD)/libcamlrun.a
+ILibs   := -I $(SE_HOME)/src -I $(SE_HOME)/builtin -I $(MLD)
+
+LL      := -lm -lstr -lunix -lthreads
+
+THREAD  := -thread
+THREAD  := 
+CMA     := unix.cma threads.cma
+CMA     := unix.cma
+CMX     := unix.cmxa
+
+TARGET  := msys

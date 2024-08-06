@@ -1,0 +1,67 @@
+final class Point {
+    public Point() {
+        _x=0;
+        _y=1;
+        _z=2;
+    };
+
+    public int _x;
+    public int _y;
+    public int _z;
+}
+
+
+class Values {
+static final time timing = 250msec;
+
+Sensor             i_pure = new Sensor(new SimInput());
+Sensor<bool>       i_bool = new Sensor<bool>(new SimInput());
+Sensor<byte>       i_byte = new Sensor<byte>(new SimInput());
+Sensor<char>       i_char = new Sensor<char>(new SimInput());
+Sensor<short>     i_short = new Sensor<short>(new SimInput());
+Sensor<int>         i_int = new Sensor<int>(new SimInput());
+Sensor<long>       i_long = new Sensor<long>(new SimInput());
+Sensor<float>     i_float = new Sensor<float>(new SimInput());
+Sensor<double>   i_double = new Sensor<double>(new SimInput());
+Sensor<time>       i_time = new Sensor<time>(new SimInput());
+
+Sensor<Point>       i_object = new Sensor<Point>(new SimInput());
+Sensor<double[3]>   i_vector = new Sensor<double[3]>(new SimInput());
+Sensor<double[3,2]> i_matrix = new Sensor<double[3,2]>(new SimInput());
+
+Signal             o_pure = new Signal(new SimOutput());
+Signal<bool>       o_bool = new Signal<bool>(new SimOutput());
+Signal<byte>       o_byte = new Signal<byte>(new SimOutput());
+Signal<char>       o_char = new Signal<char>(new SimOutput());
+Signal<short>     o_short = new Signal<short>(new SimOutput());
+Signal<int>         o_int = new Signal<int>(new SimOutput());
+Signal<long>       o_long = new Signal<long>(new SimOutput());
+Signal<float>     o_float = new Signal<float>(new SimOutput());
+Signal<double>   o_double = new Signal<double>(new SimOutput());
+Signal<time>       o_time = new Signal<time>(new SimOutput());
+
+Signal<Point>       o_object = new Signal<Point>(new SimOutput());
+Signal<double[3]>   o_vector = new Signal<double[3]>(new SimOutput());
+Signal<double[3,2]> o_matrix = new Signal<double[3,2]>(new SimOutput());
+
+public Values () {
+    active {
+      emit o_pure;
+      emit o_bool(false);
+      emit o_byte(0);
+      emit o_char(' ');
+      emit o_short((short)0);
+      emit o_int((int)0);
+      emit o_long((long)0);
+      emit o_float(0.0f);
+      emit o_double(0.0);
+      emit o_time(0_sec);
+      emit o_object(x);
+      emit o_vector({0.0,1.0,2.0});
+      emit o_matrix({{0.0,1.0},{2.0,3.0},{4.0,6.0}});
+    };
+};
+
+Point x = new Point();
+
+}

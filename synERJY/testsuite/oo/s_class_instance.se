@@ -1,0 +1,205 @@
+class Fields {
+
+public Fields (int inc)
+{
+   cls1  = 1;
+   ins2  = inc+2;
+   cls5  = 5;
+   ins6  = inc+6;
+   ins11 = inc+11;
+   ins12 = inc+12;
+#ifdef E01
+// [[Typing]]
+   cls9  = 6;
+#endif
+#ifdef E02
+// [[Typing]]
+   ins16 = 6;
+#endif
+   ins18 = ins11 + ins16;
+   ins8  = sum(cls1,ins2) + 4;
+};
+
+private int sum(int a, int b) { return a+b; };
+
+public static int cls1;
+public        int ins2;
+public static int cls3 = 3;
+public        int ins4 = 4;
+private static int cls5;
+private        int ins6;
+private static int cls7 = 7;
+private        int ins8 = 8;
+public  static final int cls9  = 9;
+private static final int cls10 = 10;
+public  final int ins11;
+private final int ins12;
+private final int ins16 = 11;
+private final int ins17 = ins11 + ins16;
+private final int ins18;
+
+#ifdef E03
+// [[UnknownId]]
+private int ins19 = sum(6,7) + 8;
+#endif
+
+#ifdef E1
+// [[Typing]]
+public final int ins13;
+#endif
+
+#ifdef E2
+// [[Typing]]
+private final int ins14;
+#endif
+
+#ifdef E3
+// [[ParseError]] initializer
+private static final int cls15;
+#endif
+
+public int get_private () { return cls5+ins6+cls7+ins8+cls10; };
+
+public void access_fields ()
+{
+   cls1 = 1;
+   ins2 = 2;
+   cls3 = 3;
+   ins4 = 4;
+   cls5 = 5;
+   ins6 = 6;
+   cls7 = 7;
+   ins8 = 8;
+
+#ifdef E18
+// [[Lhs3Err]]
+   cls9 = 9;
+#endif
+
+#ifdef E19
+// [[Lhs3Err]]
+   cls10 = 10;
+#endif
+
+#ifdef E20
+// [[Lhs3Err]]
+   ins11 = 11;
+#endif
+
+#ifdef E21
+// [[Lhs3Err]]
+   ins12 = 12;
+#endif
+};
+}
+
+class Rc {
+
+public Rc ()
+{
+   active {};
+};
+
+Fields a = new Fields (100);
+Fields b = new Fields (200);
+
+Fields d;
+Fields e;
+
+int i;
+
+private void create_fields ()
+{
+   d = new Fields(300);
+   e = new Fields(400);
+};
+
+private void access_fields ()
+{
+   i = Fields.cls1;
+   i = a.cls1;
+   i = d.cls1;
+   i = a.ins2;
+   i = d.ins2;
+   i = Fields.cls3;
+   i = a.cls3;
+   i = d.cls3;
+   i = a.ins4;
+   i = d.ins4;
+   i = Fields.cls9;
+   i = a.cls9;
+   i = d.cls9;
+
+#ifdef E4
+// [[Typing]]
+   i = Fields.ins2;
+#endif
+
+#ifdef E5
+// [[Typing]]
+   i = Fields.ins4;
+#endif
+
+#ifdef E6
+// [[Access]]
+   i = Fields.cls5;
+#endif
+
+#ifdef E7
+// [[Access]]
+   i = a.cls5;
+#endif
+
+#ifdef E8
+// [[Access]]
+   i = Fields.ins6;
+#endif
+
+#ifdef E9
+// [[Access]]
+   i = a.ins6;
+#endif
+
+#ifdef E10
+// [[Access]]
+   i = Fields.cls7;
+#endif
+
+#ifdef E11
+// [[Access]]
+   i = a.cls7;
+#endif
+
+#ifdef E12
+// [[Access]]
+   i = Fields.ins8;
+#endif
+
+#ifdef E13
+// [[Access]]
+   i = a.ins8;
+#endif
+
+#ifdef E14
+// [[Access]]
+   i = d.ins8;
+#endif
+
+#ifdef E15
+// [[Access]]
+   i = Fields.cls10;
+#endif
+
+#ifdef E16
+// [[Access]]
+   i = a.cls10;
+#endif
+
+#ifdef E17
+// [[Access]]
+   i = d.cls10;
+#endif
+
+};
+
+}

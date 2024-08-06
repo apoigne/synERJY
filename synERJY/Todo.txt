@@ -1,0 +1,104 @@
+Fehler
+
+Toolbuttons highlight
+
+
+==========================
+
+Sprachdesign
+
+-- GALS Konzept / mehrere reaktive Maschinen in einer Anwendung
+    Idee:
+	- Erweiterung der Stand-alone Code Generierung
+	- Für jedes Input Signal muss ein Input Guard mit entsprechenden
+          Semaphor Operationen (Interrupt ?) entwickelt werden
+    - Für Output Objekte ebenfalls schwächer ?
+    
+-- Blackboard revitalisieren 
+
+-- Indizierte Signale
+   vermutlich
+
+    Signal<...>[n] s = new Signal<...>[n](...)
+    Frage: Was passiert mit input/output Objecten
+
+-- Klasse StringBuffer (->Java) zum modifizieren als builtin hinzufuegen.
+
+==========================
+
+Compiler
+
+-- Singletons methoden ohne this
+
+-- Simulation for applications with interface
+
+-- private/protected methods: kein pre/post, kein invariant check
+
+-- inlining pruefen (Kostenfunktion), aber mindestens folgendes:
+    static mit 1stmt, das - return, - mthd call - assign ist inline-nen
+
+-- if-Bloecke VERSUS Variablen wiederbenutzen [wire re-use]
+
+-- + bei String unterstuetzen [garbage-collector!]
+
+-- dataflow Analyse
+  - Objekte/Arrays auf Signalbus (const methods, dynamisches Binden)
+  - Markierung benutzter Operationen (um entsprechende Deklarationen in C-code
+    wegzudrücken
+  - This pointer eliminieren wenn möglich
+
+==========================
+synERJYcharts
+
+-- externe Darstellung eines ge-files als ASCII-file kompatibel zur
+   textuellen Spezifikation eines Automaten mit zusaetzlichen
+   Positionsattributen (macht die Grafik als Text editierbar)
+   
+-- scrollbars verschwinden lassen
+
+-- lokale Signale
+
+-- Flussdiagramme
+
+==========================
+synERJYsim
+
+Example Chpt_4_Visual_In_Dec does not work
+
+==========================
+Targets
+
+- zwischen Boards and CPUs unterscheiden
+
+-------------------------
+MSP430 anbinden
+
+-------------------------
+LegOS
+
+-- legOS: Ueberarbeitung der legOS Anbindung
+   - config.h
+   - library
+   - script
+-- legOS: sensor:   contactA contactB
+
+-- legOS: actuator: motorA motorC text beep tone [(int,int) array]
+
+-- legOS: Umgang mit der timing clause: nutzen? 10KHz?
+
+==========================
+
+Qualitätssicherung
+
+-- DSP
+   - DSP.  file um alle Library Funktionen auzurufen.
+   - Cleaning der Objekte
+
+-- Alle Anbindungen von Zielarchitekturen überprüfen
+
+==========================
+Verilog 
+
+-- funktioniert nicht
+
+

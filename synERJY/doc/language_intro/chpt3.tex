@@ -1,0 +1,493 @@
+\chapter{Examples}\label{examples}
+
+
+\section{A Car Belt Controller}
+
+The task is to define a controller for a car belt with the subsequent 
+behaviour:
+\begin{itemize}
+    \item If ignition is started then an alarm beeper should be
+    started after 5 seconds and keep on beeping for 10 seconds if the
+    safety belt is not fastened.
+
+    \item Additionally an alarm light should immediately start and 
+    keep on blinking as long as the safety belt is not fastened.
+\end{itemize}
+
+We assume that starting ignition is indicated by the presence of the
+sensor \pp{keyOn} and cutting down the engine by presence of the
+sensor \pp{keyOff}.  The other sensors and signals have the obvious
+connotation.
+% 
+\codeinput{belt} 
+% 
+The behaviour is thus:
+\begin{itemize}
+    \item If the key is turned on the alarm routine (i.e. the parallel
+    statement) is started.
+
+    \item  The alarm is immediately cancelled when the belt is put 
+on, 
+    or the key is turned off.
+
+    \item  The alarm routine never terminates 
+\end{itemize}
+
+For a proper behaviour we assume that neither the sensors \pp{keyOn}
+and \pp{keyOff} nor the sensors \pp{beltOn} and \pp{beltOff} can occur
+at the same instant.  This assumption is not needed if we use valued
+signals as in
+% 
+\codeinput{belt-with-valued-signals}
+% 
+
+\section{A Stopwatch}~\label{stopwatch}
+
+
+The stopwatch is a standard example for reactive control in Halbwachs'
+book \cite{halbwachs}.  We follow his presentation.
+
+\paragraph{A simple stopwatch.} The simple stopwatch has a sensor
+\pp{start\_stop} that alternatively sets the stopwatch in a running
+and a stopped state.  Time resolution is $1/100$ of seconds.  The
+stopwatch computes an integer \pp{the\_time} the value of which is the
+total amount of time (in terms of 1/100 of seconds) spent in a running
+state.
+%
+\codeinput{simple-stopwatch}
+
+%
+The variable \pp{the\_time} is initialised to \pp{0sec}.  The signal
+\pp{elapsed\_time} is emitted with the value \pp{the\_time} whenever
+the time changes.  Note that time constant \pp{timing} is set to
+\pp{10msec}.  Thus an instant is required to take exactly a \pp{1/100}
+of a second.  The states ``running'' and ``stopped'' alternate.  At
+the beginning the watch is stopped.  If the \pp{start\_stop} signal is
+present for the first time the watch starts measuring time.  At each
+instant the value of the variable \pp{the\_time} is increased by the value of the built-in signal \pp{dt}. The value of \pp{dt} is the ``time delta'' in between two instants (cf. Section \ref{timestamp}).\footnote{Using \texttt{dt} the design becomes independent of a specific resolution in that the time constant may be set to any resolution.}
+ The measuring is stopped if the signal \pp{smart\_stop}
+is present again.  Note that the elapsed time is not increased at that
+instant since preemption is strong.  The behaviour is iterated by the
+loop.  The two next statements in the outer loop are necessary to
+distinguish between the start and the stop with regard to the presence
+of the signal \pp{start\_stop}.
+
+
+\paragraph{Stopwatch with reset.}
+In the next version we add a sensor \pp{reset} that, if present,
+causes the time to be reset to $0$.  To this behalf we slightly modify
+the simple stopwatch program in that we use a method for the reactive
+behaviour.  The method will be called withing a combination of a loop
+and a cancel statement.\footnote{ If you compare with the solution in
+\cite{halbwachs}, Section 2.4, you should note that reactive methods
+compare to modules in \esterel.}
+%
+\codeinput{simple-stopwatch-with-reset}
+
+%
+In anticipation of further developments, the reset mechanism is
+specified as method \pp{stopwatch\_with\_reset} that is called within
+the active context.
+
+\paragraph{Intermediate time handling.}
+A next version of the stopwatch can record the intermediate time while
+continuing to measure the global time (for instance, to record the
+time spent on running one lap).  At the presence of a signal \pp{lap}
+time is frozen on the display while the internal stopwatch time
+proceeds.  The next time \pp{lap} is present the stopwatch again
+displays the running time.
+ 
+This behaviour is achieved by putting a ``lap filter'' in parallel
+with the stopwatch behaviour.  We discuss the following fragment.
+%
+\codeinput{stopwatch-with-intermediate-time}
+
+%
+Again the behaviour of the simple stopwatch with a reset is rephrased
+as a reactive method.  The lap filter is specified in a second
+reactive method that is put in parallel with the stopwatch method. 
+There are two states: when ``running'' the display time coincides with
+the elapsed time.  The first instant the signal \pp{lap} is present
+the display time is frozen -- the emittance of the signal
+\pp{display\_time} is preempted -- while the time still elapses.  The
+next instant \pp{lap} is present the display time coincides with the
+elapsed time again.  This behaviour is iterated.
+
+\paragraph{The general stopwatch.}
+
+The actual stopwatch has only two buttons.
+\begin{itemize}
+\item The first button will correspond to the \pp{start-stop} signal.
+
+\item The interpretation of the second button \pp{freeze\_reset}depends on
+the state of the stopwatch.  Either it will correspond to the
+\pp{reset} signal or to the \pp{lap} signal.
+\end{itemize}
+The respective interpretation of the second button is realised by a
+method \pp{button\_interpreter} that emits the signals \pp{reset} or
+\pp{lap} according to the state of the stopwatch if the signal
+\pp{freeze\_reset} is present.
+
+The ``state'' of the stopwatch is defined in terms of two
+``flip-flops''.  The first distinguishes if the stopwatch is running
+or not, the second if the display is frozen or not.  The signal
+\pp{reset} is emitted only if \pp{freeze\_reset} is present, the stopwatch
+is stopped, and the display is not frozen.  Otherwise the signal
+\pp{lap} is emitted if \pp{freeze\_reset} is present.
+
+%
+\codeinput{stopwatch-general-causality}
+
+%
+
+Unfortunately, the compiler raises a causality error involving the
+signals \pp{lap} and \pp{frozen\_time}.  Analysis proves that, if
+\pp{freeze\_reset} is present, and if the second flip-flop is in state
+``frozen\_time'', the signal \pp{lap} is emitted, causing the process
+\pp{sustain \{ emit frozen\_time; \};} to be cancelled.  But the
+latter is a cause for the emittance of \pp{lap}.
+
+The remedy is subtle.  If the signal \pp{frozen\_time} is redeclared
+to be a delayed signal
+%
+\BEP
+DelayedSignal frozen\_time = new DelayedSignal();
+\EEP
+%
+the causality cycle is broken and the program behaves properly.  One
+should note that there are other ways to break the causality cycle,
+for instance, to delay emittance of the signal \pp{lap}.  Then,
+however, the behaviour subtly changed.
+
+
+\section{A Train Example}\label{train}
+
+The task is to design a control software for a single line that splits
+at both ends into two lines.\footnote{The example was proposed by Paul
+Caspi and Rym Salem in context of the ESPRIT-CRISYS project.} Trains
+can pass the single line from both sides.  The control program has to
+ensure that no accident happens.
+
+We consider the global system composed of: 
+\begin{itemize}
+    \item[] \emph{physical part}: the single line, the trains, tracks,
+    pointings, presence sensors, actuators controlling the switches 
+and
+    traffic lights.
+    
+    \item[] \emph{control part}: an \se\ program which reads the 
+sensors and
+    controls actuators (traffic lights and switches).
+\end{itemize}
+The assumption is that trains behave properly, for instance they obey
+to the traffic lights and not to move backward.
+
+\paragraph{Physical part.} The layout consists of
+\begin{itemize}
+    \item  the single track, 
+
+    \item four other tracks: one in - track and one out track at each
+    end of the single line,
+
+    \item a pointing at each limit of the single line
+
+    \item a sensor of train presence on the single line
+
+    \item sensors for switch presence
+
+    \item traffic lights on each side of the single line
+
+    \item left trains and right trains coming respectively from the
+    left and the right side of the single line.
+\end{itemize}
+A picture shows all the components
+\begin{center}
+    {\tt\footnotesize    \setlength{\unitlength}{0.8pt}
+    \begin{picture}(360,140)
+       \thinlines
+       \put(150,65){single line}
+       \put(110,60){\thicklines\line(1,0){140}}  
+       
+       \put(0,90){\line(1,0){80}}  
+       \dottedline{2}(80,90)(110,60)   
+       \put(0,30){\line(1,0){80}}  
+       \dashline{3}(80,30)(110,60)         
+
+       \put(280,90){\line(1,0){80}}  
+       \dottedline{2}(280,90)(250,60)   
+       \put(280,30){\line(1,0){80}}
+       \dashline{3}(280,30)(250,60)         
+       
+       \put(65,42){\framebox(6,14){}}
+       \put(68,46){\circle{4}}
+       \put(68,52){\circle{4}}
+       \put(68,30){\line(0,1){12}}
+       \put(10,36){\framebox(40,10){}}
+       \put(14,33){\circle{6}}
+       \put(20,33){\circle{6}}
+       \put(40,33){\circle{6}}
+       \put(46,33){\circle{6}}
+
+       \put(0,20){left track in}
+       \put(0,80){right track out}
+       \put(55,60){\tiny left signal}
+       \put(10,50){\tiny left train}
+
+
+       \put(290,102){\framebox(6,14){}}
+       \put(293,106){\circle{4}}
+       \put(293,112){\circle{4}}
+       \put(293,90){\line(0,1){12}}
+       \put(310,96){\framebox(40,10){}}
+       \put(314,93){\circle{6}}
+       \put(320,93){\circle{6}}
+       \put(340,93){\circle{6}}
+       \put(346,93){\circle{6}}
+       \put(280,80){right track in}
+       \put(280,20){left track out}
+       \put(270,125){\tiny right signal}
+       \put(310,110){\tiny right train}
+    \end{picture}}
+\end{center}
+
+\paragraph{The control system.}
+Given the presence sensors, the control decides the position of the
+pointings and the state of the traffic lights.
+
+One can imagine that the following properties should hold:
+\begin{itemize}
+    \item[] \emph{Safety}: there must be no collision and no 
+derailment. 
+    A collision occurs when two trains meet (if going in opposite
+    directions) or reach (if going in the same direction) one another
+    on the single line or on the same in - track. Derailment
+    takes place if the physical path corresponding to the selected
+    direction is not established while a train is moving.
+
+    \item[] \emph{Fairness}: there must be no starvation, i.e it 
+should not be
+    the case that two successive trains go in one direction while
+    another train is waiting in the opposite direction.
+\end{itemize}
+%These properties will be discussed in Chapter~\ref{verification}.
+
+\paragraph{A control program.} Here is a first simple design of the
+control program.
+% 
+\codeinput{train}
+% 
+The signals have an obvious connotation. There are essentially two 
+parallel branches; one for granting way for a left train, the other 
+for a right train. We discuss the first. If the line is free and a 
+left 
+train is waiting then signals are emitted to set the pointings 
+properly. Given that these are set, the left signal is set to green. 
+If the line is busy the signal is reset to red. The other branch is 
+symmetric except that a right train can only move if there is no left 
+train waiting.
+
+\paragraph{Concerning the environment interface.} Note that, for
+proper operation we have to assume that the sensors
+\pp{leftTrainWaiting} respectively \pp{rightTrainWaiting} are 
+continuously
+present if a train is waiting.  Similarly the sensor \pp{lineFree}
+must always be present if the line is free.  An alternative one may
+use Boolean valued signals instead
+% 
+\codeinput{train-valued}
+% 
+Here presence of, for instance, the signal \pp{lineFree} implies a 
+possible change of its value. Hence blocking the single line may be 
+indicated by the presence of the sensor with value \pp{false}, while 
+setting the line free is indicated by its presence with a value 
+\pp{false}. Note, however, that one should not assume that the values 
+alternate.
+
+The discussion may stress the importance of choosing a proper
+interface with regard to the environment.  Of course, sensors or
+signals are often given a priori when programming an embedded system. 
+However, an overall design should ideally reflect upon the choice of
+sensors and signals a priori depending on the control problem.
+
+
+\paragraph{Toward a fairer solution.} The control programs above have
+the obvious disadvantage that they show some preference to the trains
+on the left side.  For a fairer solution one needs some kind of
+priority control.  We add a boolean valued signal \pp{priority} that
+gives priority to the trains on the left side if its value is true,
+and priority to the trains on the right if it is false.
+% 
+\codeinput{train-with-priority1}
+%
+(Note that the delays avoid causality errors in the parallel branch 
+dealing with priorities.)
+
+% Here an example should be added using data methods. But wait for a 
+% better data flow analysis.
+
+Obviously, there is still some jitter of the priorities if two trains
+are waiting and the line is still busy. Priorities should change only 
+if the status of the waiting trains or of the single line changes. We 
+leave 
+it as an exercise to modify the program accordingly.
+
+\section{A Robot Example}\label{lego-example}
+Let a wheeled robot being able to move forward and backward, and to 
+turn left and right. Two bumper sensors on the left and right front 
+end are used to detect obstacles. The task is to control the robot 
+such that it travels around without being caught, for instance, in 
+some corner. 
+
+The concrete robot to control is the LEGO$^{\tiny TM}$-Mindstorm 
+robot "Rover". The two sensors are encoded by the sensors 
+\pp{sensorA} and \pp{sensorC}.  The rover has two servo motors 
+(actuators) that drive the wheels on each side. The motors can turn 
+forward or backward at a given speed. The valued signals \pp{ldir} 
+and \pp{lspeed} determine the direction and the speed of left motor, 
+the valued signals \pp{rdir} and \pp{rspeed} that of the right motor. 
+The values are of type \pp{uint8}.
+
+The basic behaviour of the robot is to move straight forward at 
+medium speed. For both the motor actuators \pp{ldir} and \pp{rdir} 
+are set to move forward, and \pp{lspeed} and \pp{rspeed} are set to 
+medium speed. The \pp{halt} statement is a shorthand for \pp{loop \{ 
+next; \};}, i.e. it keeps control forever. This behaviour is 
+cancelled if one of the bumpers hits an obstacle, i.e. one of the 
+sensors is present. If, for instance, \pp{sensorA} is present, then 
+the direction of both the motors is set to backward, the speed of the 
+left motor is set to fast, and that of the right motor to slow. The 
+rover moves backward with a left turn. Then a data method is called 
+which computes the time the rover should move backward, and rover 
+moves backward for exactly this time (due to the \pp{await 
+moveback\_time}, cf. Section~\ref{timestamp}). The behaviour is 
+iterated due to the outer control loop. Note that ``move back time'' 
+is increased up to 4 seconds. 
+%
+\codeinput{travel-around}
+%
+
+\section{Subsumption Architecture}
+
+\paragraph{Subsumption.}
+Subsumption has been introduced by Rodney Brooks and the Mobile Robot
+Group at MIT as an alternative to the traditional modelling/planning
+approach used in AI. Subsumption combines real-time control with
+sensor-triggered behaviour.  Behaviours are considered as layers of a
+control system that run in parallel driven by input provided by the
+sensors.  Conflicting sensor information then results in conflicting
+behaviours.  These are resolved by using priority rules to enable a
+dominant behaviour to take control.
+
+Here is a simple example of a subsumption
+\begin{center}
+    {\tt\small    
+      \setlength{\unitlength}{0.9pt}
+    \begin{picture}(280,100)
+       \thinlines
+       \put(0,80){\ovalbox{\makebox(80,15){Battery\ Level}}}
+       \put(87,88){\line(1,0){15}}
+       \put(0,40){\ovalbox{\makebox(80,15){IR\ Detector}}}
+       \put(87,47){\vector(1,0){33}}
+       \put(102,54){\line(0,1){34}}
+       \put(102,54){\vector(1,0){17}}
+       \put(102,40){\vector(1,0){17}}
+       \put(0,0){\ovalbox{\makebox(80,15){Sonar}}}
+       \put(87,8){\vector(1,0){33}}
+       \put(102,8){\line(0,1){32}}
+       
+       \put(120,37){\framebox(40,20){Dock}}
+       \put(160,47){\line(1,0){40}}
+       \put(200,47){\vector(0,-1){30}}
+       \put(120,-3){\framebox(40,20){Avoid}}
+       \put(160,8){\vector(1,0){32}}
+
+       \put(200,8){\circle{16}}
+       \put(197,5){\normalsize S}
+       \put(208,8){\vector(1,0){32}}
+       \put(240,0){\ovalbox{\makebox(60,15){Motors}}}
+    \end{picture}}
+\end{center}
+A robot is supposed to follow an IR beacon to find a docking station
+for loading energy.  This ``docking'' behaviour is in conflict with an
+``object avoidance'' behaviour if the robot gets close to the docking
+station.  In that case the docking behaviour should dominate the object
+avoidance behaviour.  This is achieved by adding a {\em suppressor
+node}, represented by the \pp{S} in the circle, to the actuator wire
+for the motor.  The idea is that messages may pass through the node
+from the object avoidance behaviour to the motor as long as this signal
+is not suppressed by the prioritised behaviour indicated by the arrow
+head, here the docking behaviour.
+
+A rather simple realisation of a suppressor node uses valued signals
+\pp{dock} and \pp{avoid} that are issued by the respective behaviours
+with an appropriate value for the motor control.  Subsumption is
+expressed by \BEP sustain \{ if (?avoid) \{ emit motor(\$avoid); \};
+if (?dock) \{ emit motor(\$dock); \}; \}; \EEP Note that by the order
+of evaluation the signal \pp{motor} is emitted with value \pp{\$dock}
+if both the signals \pp{avoid} and \pp{dock} are present.  The
+suppressor node is put in parallel with the behaviours.
+
+\paragraph{The rug warrior.}
+In \cite{rug-warrior} the design of a small robot, the {\em rug
+warrior} is presented, and some examples are given of how to program
+such a robot using a {\em subsumption}.  We shall demonstrate how \se\
+may be used to encode such a program using a cut-down version of the
+rug warrior (cf.  \cite{rug-warrior}, p.  259)
+
+The rug warrior consists of several ``behaviour modules'' which will
+be implemented as reactive methods. 
+
+\begin{itemize}
+\item The simplest behaviour is that of \emph{cruising}. 
+% 
+\codefragment{rug-warrior-cru}
+% 
+The output signal \pp{cruise} is emitted with value \pp{forward}. 
+
+\item The \emph{follow} behaviour implements light-source
+following is slightly more complicated.
+% 
+\codefragment{rug-warrior-follow}
+% 
+If a difference is detected between the left and the right photocell,
+and if the difference is above a threshold it will turn the robot in
+the direction of the brighter side.  In that case it will emit the
+local signal \pp{follow} with an appropriate value.  Otherwise it will
+do nothing.
+  
+
+\item The avoid behaviour gets input from an infrared proximity sensor.
+% 
+\codefragment{rug-warrior-avoid}
+%
+
+\item The escape behaviour is meant to allow the robot to escape when
+the bump sensors have found an obstacle.
+% 
+\codefragment{rug-warrior-escape}
+%
+\end{itemize}
+The only difference in terms of behaviour is that we have changed the
+timing constants for a simulation with fewer steps.
+%
+Outputs and flags as specified in the original source code are
+subsumed by a signal, e.g. $$\pp{follow\_output \&
+follow\_output\_flag -> follow\_sgn}$$
+
+Arbitration is modelled as outlined above.  The escape behaviour
+suppresses all other behaviours, the avoid behaviour suppresses all
+other behaviours except for the escape behaviour, and so on
+% 
+\codefragment{rug-warrior-arbitrate}
+%
+All these behaviours are executed in parallel
+% 
+\codefragment{rug-warrior-active}
+%
+
+
+
+
+
+
+ 

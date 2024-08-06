@@ -1,0 +1,82 @@
+class Rc {
+
+public Rc () {
+    active { c1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+Sensor I3 = new Sensor(new SimInput());
+
+Sensor OFF = new Sensor(new SimInput());
+
+Sensor<int> IB1 = new Sensor<int>(new SimInput());
+Sensor<int> II1 = new Sensor<int>(new SimInput());
+
+Signal O1 = new Signal(new SimOutput());
+Signal O2 = new Signal(new SimOutput());
+Signal O3 = new Signal(new SimOutput());
+
+Signal<bool> OB1 = new Signal<bool>(new SimOutput());
+Signal<int>  OI1 = new Signal<int>(new SimOutput());
+Signal<int>  OI2 = new Signal<int>(new SimOutput());
+
+#ifdef T1
+// trace
+//      ->
+// II1(0)  -> OI2(0)
+//      -> O3
+//      ->
+//
+// trace
+//      ->
+// II1(4) -> OI1(4)
+//      -> O3
+//      ->
+//
+private void c1 () {
+        await ?II1;
+        if ($II1 > 0) {
+           emit OI1($II1);
+        } else {
+           emit OI2(0);
+        };
+        next; emit O3;
+    };
+#endif
+
+#ifdef T2
+// trace
+//      ->
+//      ->
+// II1(4)  -> OI1(4)
+//      -> O1
+//      ->
+//      ->
+// II1(0) -> OI2(0)
+//      -> O1
+//      ->
+// II1(-2) -> OI2(0)
+//      -> O1
+// OFF  ->
+//      -> O2
+//      ->
+//      ->
+//
+private void c1 () {
+    cancel {
+     loop {
+        await ?II1;
+        if ($II1 > 0) {
+           emit OI1($II1);
+        } else {
+           emit OI2(0);
+        };
+        next; emit O1; next;
+        };
+     } when (?OFF) {};
+     next; emit O2;
+   };
+
+#endif
+} //end class Rc

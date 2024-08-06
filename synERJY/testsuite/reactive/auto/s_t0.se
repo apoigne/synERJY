@@ -1,0 +1,41 @@
+class Rc {
+
+Sensor insig1 = new Sensor(new SimInput());
+Sensor insig2 = new Sensor(new SimInput());
+
+Signal osig1 = new Signal(new SimOutput());
+Signal osig2 = new Signal(new SimOutput());
+
+public Rc () {
+  active {
+    automaton {
+      init {
+#if defined(O1) || defined(E1) || defined(E2)
+        next state s1;
+#endif
+#ifdef E0
+// [[FsmState]]
+        next state s3;
+#endif
+     };
+
+      state s1
+        when (?insig1) { emit osig1; next state s1; };
+
+#ifdef E1
+// [[FsmState]]
+      state s1
+        when (?insig1) { emit osig1; next state s1; };
+#endif
+
+#ifdef E2
+// [[FsmState]]
+      state s2
+        when (?insig1) { emit osig1; next state s3; };
+#endif
+
+     };
+  };
+};
+
+} //end class Rc

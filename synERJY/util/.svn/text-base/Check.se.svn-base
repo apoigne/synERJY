@@ -1,0 +1,61 @@
+
+public class Check {
+
+  public static short _nb_asserts    = 0;
+  public static short _nb_failures   = 0;
+  public static short _first_fail_id = 0;
+
+  public Check () {};
+
+  protected static boolean basic_check (short id, boolean b) {
+    _nb_asserts++;
+    if (!b) {
+      StdWriter.write_string("*** failure: ");
+      StdWriter.write_short(id);
+      StdWriter.write_space();
+      if (_nb_failures == 0) {
+        _first_fail_id = id;
+      };
+      _nb_failures++;
+    };
+    return b;
+  };
+
+  public static void cond (short id, boolean b) {
+    if (!basic_check(id,b)) {
+      StdWriter.write_newline();
+    };
+  };
+
+  public static void a_char (short id, char expected, char actual) {
+    if (!basic_check(id,expected==actual)) {
+      StdWriter.write_string("(expected) ");
+      StdWriter.write_hex_char(expected);
+      StdWriter.write_string(" != ");
+      StdWriter.write_hex_char(actual);
+      StdWriter.write_newline();
+    };
+  };
+
+  public static void pass (short id) {
+    StdWriter.write_string("* pass ");
+    StdWriter.write_short(id);
+    StdWriter.write_newline();
+  };
+
+  public static void summary () {
+    StdWriter.write_newline();
+    if (_nb_failures == 0) {
+      StdWriter.write_string("--- ");
+    } else {
+      StdWriter.write_string("*** first fail: ");
+      StdWriter.write_short(_first_fail_id);
+      StdWriter.write_string(" / ");
+    };
+    StdWriter.write_string(" failures: ");
+    StdWriter.write_short(_nb_failures);
+    StdWriter.write_string(" asserts:");
+    StdWriter.write_short(_nb_asserts);
+    StdWriter.write_newline();
+  };
+} /* end class Check */

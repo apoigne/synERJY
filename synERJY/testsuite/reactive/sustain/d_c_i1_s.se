@@ -1,0 +1,58 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+Sensor<bool> IB1 = new Sensor<bool>(new SimInput());
+Signal<int>  OI1 = new Signal<int>(new SimOutput());
+
+Signal{?IB1}<int> FI1 = new Signal<int>(new SimOutput());
+
+//
+// int output flow, clock: presence of bool input Signal
+//
+
+#ifdef T1
+// trace
+//              -> OI1(0)
+//              -> OI1(0)
+// IB1(false)   -> FI1(10) OI1(10)
+// IB1(false)   -> FI1(9) OI1(9)
+//              -> OI1(9)
+//              -> OI1(9)
+// IB1(true)    -> FI1(8) OI1(8)
+//              -> OI1(8)
+//
+private void c1 () {
+   [[ sustain {| FI1 := (10 when ?IB1) -> pre(FI1) - (1 when ?IB1); |};
+   || loop { emit OI1($FI1); next; };
+   ]];
+  };
+#endif
+
+#ifdef T2
+// trace
+//              -> OI1(0)
+// IB1(false)   -> FI1(9) OI1(9)
+//              -> OI1(9)
+// IB1(false)   -> FI1(0) OI1(0)
+//              -> OI1(0)
+// IB1(true)    -> FI1(1) OI1(1)
+//              -> OI1(1)
+//
+private void c1 () {
+   [[ sustain {| FI1 := (9 when ?IB1) ->
+                if (($IB1 == true) when ?IB1) {
+                   1 when ?IB1;
+                } else {
+                   0 when ?IB1;
+                };
+              |};
+   || loop { emit OI1($FI1); next; };
+   ]];
+  };
+#endif
+
+} //end class Rc

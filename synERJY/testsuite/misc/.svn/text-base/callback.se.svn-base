@@ -1,0 +1,113 @@
+class Store {
+  private Store() {};
+
+  static int counter = 1;
+  static int value   = 0;
+
+  public static void set( int v ) {
+    counter = v;
+    value   = v;
+    Stderr.s("set:"); Stderr.inl(value);
+  };
+
+  public static int  get()   { return value; };
+  public static bool ready() { return counter <= 0; };
+
+  public static void decr() {
+    counter--;
+    if (counter <= 0) {
+       Stderr.s("next present:"); Stderr.inl(value);
+    } else {
+       Stderr.snl("no");
+    };
+  };
+}
+
+class InputCB implements Input {
+  public InputCB() {};
+  public bool new_val() { return Store.ready(); };
+  public int  get_val() { return Store.get(); };
+}
+
+class OutputCB implements Output {
+  public OutputCB() {};
+  public void put_val( int v ) { nothing; Store.set(v); };
+}
+
+class Rc {
+  public Rc () {
+    ol2 = new Signal<int>(cbol1);                // 2.
+    il2 = new Sensor<int>(cbil1);
+    ol4 = new Signal<int>(new OutputCB());       // 4.
+    il4 = new Sensor<int>(new InputCB());
+    ol6 = new Signal<int>(                       // 6.
+                new Output() { public void put_val(int v) {Store.set(v);}; }
+              );
+    il6 = new Sensor<int>(
+                new Input() { public bool new_val() {return Store.ready();};
+                              public int  get_val() {return Store.get();};   }
+              );
+    active {run ();};
+  };
+  
+  static int cnt = 0;
+  public static void main (String[] args) {
+    while (instant() == 0 && cnt++ < 30) {
+      Store.decr();
+    };
+  };
+
+  // 1. version: callback is expandable field, callback given at decl
+  OutputCB cbol1 = new OutputCB();
+  Signal<int> ol1 = new Signal<int>(cbol1);
+
+  InputCB     cbil1 = new InputCB();
+  Sensor<int> il1   = new Sensor<int>(cbil1);
+
+  // 2. version: callback is expandable field, callback given at cstr
+  OutputCB    cbol2 = new OutputCB();
+  Signal<int> ol2;
+
+  InputCB     cbil2 = new InputCB();
+  Sensor<int> il2;
+
+  // 3. version: callback is new but not anon, callback given at decl
+  Signal<int> ol3  = new Signal<int>(new OutputCB());
+
+  Sensor<int> il3  = new Sensor<int>(new InputCB());
+
+  // 4. version: callback is new but not anon, callback given at cstr
+  Signal<int> ol4;
+  Sensor<int> il4;
+
+  // 5. version: callback is new anon, callback given at decl
+  Signal<int> ol5 =
+    new Signal<int>(new Output() {public void put_val(int v) {Store.set(v);};});
+
+  Sensor<int> il5 =
+    new Sensor<int>(
+          new Input() { public bool new_val() {return Store.ready();};
+                        public int  get_val() {return Store.get();};   }
+        );
+
+  // 6. version: callback is new anon, callback given at cstr
+  Signal<int> ol6;
+  Sensor<int> il6;
+
+  void run () {
+    emit ol1(1); next;
+    await ?il1;
+    emit ol2(2); next;
+    await ?il2;
+    emit ol3(3); next;
+    await ?il3;
+    emit ol4(4); next;
+    await ?il4;
+    emit ol5(5); next;
+    await ?il5;
+    emit ol6(6); next;
+    await ?il6;
+    Stderr.snl("done");
+  };
+
+}

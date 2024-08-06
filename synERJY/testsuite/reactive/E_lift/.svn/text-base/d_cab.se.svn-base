@@ -1,0 +1,61 @@
+class Rc {
+
+public Rc () {
+    active { [[ c1(); || c2(); ]];
+    };
+};
+
+Sensor start = new Sensor(new SimInput());
+
+Sensor move_up = new Sensor(new SimInput());
+Sensor move_dn = new Sensor(new SimInput());
+Sensor stop = new Sensor(new SimInput());
+
+Signal<int> pos = new Signal<int>(new SimOutput());
+Signal open_doors = new Signal(new SimOutput());
+Signal shut_doors = new Signal(new SimOutput());
+Signal req_served = new Signal(new SimOutput());
+
+#ifdef T1
+// trace
+//              -> pos(0)
+// start        -> pos(0)
+//              -> pos(0)
+// move_up      -> pos(0)
+// move_up      -> pos(1)
+// move_up      -> pos(2)
+// stop         -> pos(3)
+//              -> pos(3) open_doors
+//              -> pos(3)
+//              -> pos(3) shut_doors req_served
+// move_dn      -> pos(3)
+//              -> pos(2)
+//              -> pos(2)
+// start        -> pos(0)
+//
+private void c1 () {
+    sustain {| Signal<bool> present_move_up;
+               Signal<bool> present_move_dn;
+               present_move_up := ?move_up;
+               present_move_dn := ?move_dn;
+                pos := if (?start) { 0;
+                       } else if (pre(present_move_up)) { pre(pos) + 1;
+                       } else if (pre(present_move_dn)) { pre(pos) - 1;
+                       } else { pre(pos);
+                       };
+    |};
+};
+
+private void c2 () {
+  loop {
+    await ?stop;
+    next; emit open_doors;
+    next;
+    next; emit shut_doors; emit req_served;
+    next;
+  };
+};
+
+#endif
+
+} //end class Rc

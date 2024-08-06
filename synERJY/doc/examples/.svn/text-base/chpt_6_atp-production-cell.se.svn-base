@@ -1,0 +1,180 @@
+// test-flags O = None true, E = data true, confclass AssemblyLine
+
+class AssemblyLine {
+
+private static final time timing = 100msec;
+
+// tex_start atp-assembly-line
+public AssemblyLine () {
+    active { [[ switchOnOff();
+             || detectParts();
+             ]];
+           };
+};
+// tex_end
+
+Signal<int> beltSpeed = new Signal<int>();
+Signal<int> part      = new Signal<int>();
+
+Signal<int> problem   = new Signal<int>();
+Sensor      restart   = new Sensor(new SimInput());
+
+Control ctrl = new Control(part,beltSpeed,problem);
+
+// ----------------------------------------------------------------------------
+// tex_start atp-belt-control
+void switchOnOff () {
+   await 200msec;
+   loop {
+      emit problem(Status.RUNNING);
+      emit beltSpeed(100); // motor full speed
+      await $problem > 0;
+      next;
+      emit beltSpeed(0);   // turn motor off
+      next;
+      await ?restart;      // problem solved
+   };
+};
+// tex_end
+
+// tex_start atp-detect-parts
+private void detectParts () {
+  await ($beltSpeed > 0);
+  foerdern(500msec,Part.AA);
+  foerdern(   1sec,Part.BB);
+  foerdern(500msec,Part.CC);
+  foerdern(   1sec,Part.AA);
+};
+
+void foerdern( time t, int typ ) {
+  next;
+  await ($beltSpeed > 0);
+  await t;
+  await ($beltSpeed > 0);
+  emit part(typ);
+};
+// tex_end
+}
+
+// ============================================================================
+class Part {
+private Part() {};
+
+public static final int XX = 0;
+public static final int AA = 1;
+public static final int BB = 2;
+public static final int CC = 3;
+public static final int DD = 4;
+}
+
+class Status {
+private Status() {};
+
+public static final int RUNNING     = 0;
+public static final int NO_PART_C   = 1;
+public static final int NO_PART_D   = 2;
+public static final int NO_PARTS_AB = 3;
+}
+
+// ============================================================================
+class Control {
+
+Signal       cPartWithdrawn = new Signal();
+Signal<bool> cPartAvailable = new Signal<bool>();
+
+Stock cParts = new Stock(cPartWithdrawn,cPartAvailable,400msec);
+
+Signal       dPartWithdrawn = new Signal();
+Signal<bool> dPartAvailable = new Signal<bool>();
+
+Stock dParts = new Stock(dPartWithdrawn,dPartAvailable,500msec);
+
+Signal<int>    assembled      = new Signal<int>();
+
+// ----------------------------------------------------------------------------
+// tex_start atp-control
+public Control ( Sensor<int> part,
+                   Sensor<int> beltSpeed,
+                   Signal<int> problem
+                 ) {
+  active {
+   automaton {
+      init {
+        next state wait;
+      };
+
+      state wait when (?part && $part == Part.AA) {
+        next state assemble_C;
+      } else when (?part && $part == Part.BB) {
+        next state assemble_D;
+      } else when (?part) {
+        emit problem(Status.NO_PARTS_AB);
+        next state wait;
+      };
+
+      state assemble_C when ($cPartAvailable) {
+        emit cPartWithdrawn;
+        emit assembled($part);
+        next state wait;
+      } else when (! $cPartAvailable) {
+        if ($beltSpeed == 0) {
+           next state assemble_C;
+        } else {
+           emit problem(Status.NO_PART_C);
+           next state assemble_C;
+        };
+      };
+
+      state assemble_D when ($dPartAvailable) {
+        emit dPartWithdrawn;
+        next state assemble_C;
+      } else when (! $dPartAvailable) {
+        if ($beltSpeed == 0) {
+           next state assemble_D;
+        } else {
+           emit problem(Status.NO_PART_D);
+           next state assemble_D;
+        };
+      };
+    };
+  };
+};
+
+}
+// tex_end
+// ============================================================================
+// tex_start atp-stock
+class Stock {
+  Sensor       newPart     = new Sensor(new SimInput());
+  Signal<int>  stock       = new Signal<int>();
+  Signal<int>  addPart     = new Signal<int>();
+  Signal<bool> supplied    = new Signal<bool>();
+  Signal<int>  withdrawn   = new Signal<int>();
+  Signal<bool> timeExpired = new Signal<bool>();
+
+  time supplyTime;
+
+  public Stock ( Sensor       supply,
+                 Signal<bool> stockFull, 
+                 time         supTime ) {
+    supplyTime = supTime;
+    active {
+      [[ sustain {|
+           addPart    := (?newPart) ? (1) : (0);
+           supplied   := false -> pre(?supply && stock > 0);
+           withdrawn  := (supplied) ? (1) : (0);
+           stock      := 0 -> pre(stock) + addPart - withdrawn;
+           stockFull  := stock > 0 && timeExpired;
+         |};
+      || loop {
+           await ($stock > 0);
+           await supplyTime;
+           emit  timeExpired(true);
+           await ($supplied);
+           emit  timeExpired(false);
+         };
+      ]];
+    };
+  };
+}
+// tex_end

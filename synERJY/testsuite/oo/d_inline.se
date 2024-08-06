@@ -1,0 +1,48 @@
+#ifdef T1
+// trace
+// -> out(2)
+// -> out(15)
+// -> out(3)
+// -> out(15)
+// -> out(11)
+// -> out(5)
+// -> out(15)
+// -> out(6)
+// -> out(15)
+// -> out(11)
+#endif
+
+class Rc {
+
+   Signal<int> out = new Signal<int>(new SimOutput());
+
+   public Rc () {
+      active {
+                 emit out(sta0   ); next;
+                 emit out(test1()); next;
+        test2(); emit out(sta0   ); next;
+                 emit out(test3()); next;
+                 emit out(test4()); next;
+
+        test2(); emit out(Rc.sta0); next;
+                 emit out(test5()); next;
+        test6(); emit out(Rc.sta0); next;
+                 emit out(test7()); next;
+                 emit out(test8()); next;
+      };
+   };
+
+   static int  sta0 = 2;
+   static int  sta1() { return 15; };
+   static void sta2() { sta0++; };
+   static int  sta3() { return sta1(); };
+
+   int  test1() { return sta1(); };
+   void test2() { sta2(); };
+   int  test3() { return sta3(); };
+   int  test4() { sta2(); return 11; };
+   int  test5() { return Rc.sta1(); };
+   void test6() { Rc.sta2(); };
+   int  test7() { return Rc.sta3(); };
+   int  test8() { Rc.sta2(); return 11; };
+}

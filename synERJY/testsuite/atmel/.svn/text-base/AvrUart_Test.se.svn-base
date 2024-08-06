@@ -1,0 +1,44 @@
+public class AvrUart_TestCase{
+
+    public AvrUart_TestCase () {
+        while (true) {
+            Uart.initialize();
+            Uart.put_endline("Uart_TestCase");
+            test01();
+        };
+    };
+
+    public void test01 () {
+        Uart.put_endline("test01: end with 'q'. on 'q' expect");
+        Uart.put_endline("q-q-71-113-a55a-fffe");
+        uint16 ui = 0xa55a;
+        short  m2 = -2;
+        char c = ' ';
+        while (c != 'q') {
+            c = Uart.get_char();
+            Uart.put_char('-');
+            Uart.put_char(c);
+            Uart.put_char('-');
+            Uart.put_hex((byte)c);
+            Uart.put_char('-');
+            Uart.put_short((short)c);
+            Uart.put_char('-');
+            Uart.put_hex_uint16(ui);
+            Uart.put_char('-');
+            Uart.put_hex_uint16((uint16)m2);
+            Uart.put_newline();
+        };
+    };
+
+}
+
+/* ------------------------------------------------------------------------ */
+public class AvrUart_Test {
+public static void main (String[] args) {};
+    AvrUart_TestCase utc;
+    public AvrUart_Test () {
+        utc = new AvrUart_TestCase();
+        active {};
+    };
+}
+/* ------------------------------------------------------------------------ */

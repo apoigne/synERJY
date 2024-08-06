@@ -1,0 +1,65 @@
+#include "../../target/examples/Blink2/blink2.se"
+
+#ifdef T1
+// trace select
+//
+// select -> red_led(2)
+//        ->
+// select -> green_led(2)
+//
+// select -> red_led(2)
+//        ->
+// select -> green_led(2)
+//
+// select -> red_led(2)
+//        ->
+// select -> green_led(2)
+//
+// select -> red_led(2)
+//        ->
+// select -> green_led(2)
+//
+// trace toggle
+//
+// toggle -> red_led(1)
+// toggle -> red_led(2)
+//        ->
+// toggle -> red_led(1)
+// toggle -> red_led(2)
+//        ->
+// toggle -> red_led(1)
+// toggle -> red_led(2)
+//        ->
+// toggle -> red_led(1)
+// toggle -> red_led(2)
+//        ->
+// toggle -> red_led(1)
+// toggle -> red_led(2)
+//        ->
+// toggle -> red_led(1)
+// toggle -> red_led(2)
+//        ->
+//
+// trace select-and-toggle
+//
+// select toggle -> red_led(2)
+// select toggle -> green_led(2)
+//               ->
+// select toggle -> red_led(2)
+// select toggle -> green_led(2)
+//               ->
+// select toggle -> red_led(2)
+// select toggle -> green_led(2)
+//               ->
+//
+// trace select-and-toggle permanent
+//
+// select toggle -> red_led(2)
+// select toggle -> green_led(2)
+// select toggle -> red_led(2)
+// select toggle -> green_led(2)
+// select toggle -> red_led(2)
+// select toggle -> green_led(2)
+
+//
+#endif

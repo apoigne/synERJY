@@ -1,0 +1,136 @@
+class Rct {
+    static final time timing = 100msec;
+				
+#ifdef T1
+// trace
+//       -> s(2)
+//       -> s(3)
+Signal<int> s = new Signal<int>(new SimOutput());
+
+public Rct () {
+  active {
+    [[ l1::emit s(1);
+       next;
+       l3::emit s(3);
+    || l2::emit s(2);
+    ]];
+ };
+};
+
+precedence {
+ l1:: < l2:: ;
+ l2:: < l3:: ;
+};
+#endif
+
+#ifdef T2
+// trace
+//       -> s(false)
+//       -> s(true)
+Signal<bool> s = new Signal<bool>(new SimOutput());
+
+public Rct () {
+  active {
+    [[ l1::emit s(true);
+       next;
+       l3::emit s(true);
+    || l2::emit s(false);
+    ]];
+ };
+};
+
+precedence {
+ l1:: < l2:: ;
+ l2:: < l3:: ;
+};
+#endif
+
+#ifdef T3
+// trace
+//       ->
+//       -> s(false)
+//       -> s(true)
+Signal<bool> s = new Signal<bool>(new SimOutput());
+
+public Rct () {
+  active {
+    [[ next;
+       l1::emit s(true);
+       next;
+       l3::emit s(true);
+    || next;
+       l2::emit s(false);
+    ]];
+ };
+};
+
+precedence {
+ l1:: < l2:: ;
+ l2:: < l3:: ;
+};
+#endif
+
+#ifdef T4
+// trace
+//       ->
+//       -> s(false)
+//       -> s(true)
+Signal<bool> s = new Signal<bool>(new SimOutput());
+
+public Rct () {
+  active {
+    [[ next;
+       l1::emit s(true);
+       next;
+       l2::emit s(true);
+    || next;
+       l3::emit s(false);
+    ]];
+ };
+};
+
+precedence {
+ l1:: < l3:: ;
+ l2:: < l3:: ;
+};
+#endif
+
+#ifdef T5
+// trace
+//       ->
+//       -> s(false)
+//       -> s(true)
+Signal<bool> s = new Signal<bool>(new SimOutput());
+
+public Rct () {
+  active {
+    [[ next;
+       l1::emit s(true);
+       next;
+       l2::emit s(true);
+    || next;
+       l3::emit s(false);
+    ]];
+ };
+};
+
+precedence {
+ l1:: < l3:: ;
+ l3:: < l2:: ;
+};
+#endif
+
+#ifdef T6
+// trace
+//       -> s(false)
+Signal<bool> s = new Signal<bool>(new SimOutput());
+
+public Rct () {
+  active {
+    emit s(true);
+    emit s(false);
+ };
+};
+#endif
+
+}

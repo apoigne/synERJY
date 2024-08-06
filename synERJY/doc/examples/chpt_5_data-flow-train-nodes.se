@@ -1,0 +1,75 @@
+// test-flags O = None true, E = data true, confclass Rct
+class Rct { 
+    static final time timing = 100msec;
+				
+public Rct () { active { }; };
+
+SingleLine x = new SingleLine();
+}
+
+class SingleLine {
+
+Sensor<boolean> start_stop = new Sensor<boolean>(new SimInput());
+
+public SingleLine () {
+
+  active { 
+    sustain {|
+     priority       := if (change) {
+                          leftTrainWaiting && rightTrainWaiting;
+                       } else if (! pre(priority)) {
+                          leftTrainWaiting;
+                       } else { 
+                          pre(priority);
+                       };
+// tex_start data-flow-train-nodes
+change        :=    isLineFree && trainArriving 
+                 || lineFreed && trainWaiting;
+trainWaiting  := leftTrainWaiting || rightTrainWaiting;            
+edge_up(isLineFree,lineFreed);
+edge_up(trainWaiting,trainArriving);
+// tex_end data-flow-train-nodes
+      leftPointingToIn   := priority; 
+      rightPointingToOut := priority; 
+      rightPointingToIn  := ! priority; 
+      leftPointingToOut  := ! priority; 
+      leftSignal   := leftTrainWaiting && isLineFree && 
+                      leftPointingIsIn && rightPointingIsOut;
+      rightSignal  := rightTrainWaiting  && isLineFree &&
+                      rightPointingIsIn && leftPointingIsOut;
+      |};
+  };
+};
+
+
+// tex_start edge-up
+node edge_up (Sensor<boolean> _x,Signal<boolean> _y) {|
+   _y := false -> _x && ! pre(_y);
+|};
+// tex_end edge-up
+
+Sensor<boolean>         isLineFree = new Sensor<boolean>(new SimInput());
+
+Sensor<boolean>   leftTrainWaiting = new Sensor<boolean>(new SimInput());
+Sensor<boolean>  rightTrainWaiting = new Sensor<boolean>(new SimInput());
+
+Sensor<boolean>   leftPointingIsIn = new Sensor<boolean>(new SimInput());
+Sensor<boolean>  leftPointingIsOut = new Sensor<boolean>(new SimInput());
+Sensor<boolean>  rightPointingIsIn = new Sensor<boolean>(new SimInput());
+Sensor<boolean> rightPointingIsOut = new Sensor<boolean>(new SimInput());
+
+Signal<boolean>   leftPointingToIn = new Signal<boolean>(new SimOutput());
+Signal<boolean>  leftPointingToOut = new Signal<boolean>(new SimOutput());
+Signal<boolean>  rightPointingToIn = new Signal<boolean>(new SimOutput());
+Signal<boolean> rightPointingToOut = new Signal<boolean>(new SimOutput());
+
+Signal<boolean>         leftSignal = new Signal<boolean>(new SimOutput());
+Signal<boolean>        rightSignal = new Signal<boolean>(new SimOutput());
+
+Signal<boolean>             change = new Signal<boolean>();
+Signal<boolean>           priority = new Signal<boolean>();
+
+Signal<boolean> trainWaiting  = new Signal<boolean>();
+Signal<boolean> trainArriving = new Signal<boolean>();
+Signal<boolean> lineFreed     = new Signal<boolean>();
+}

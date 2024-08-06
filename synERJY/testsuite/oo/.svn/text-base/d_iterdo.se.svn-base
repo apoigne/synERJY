@@ -1,0 +1,108 @@
+class Rc {
+
+public Rc () {
+   active { react(); };
+};
+
+public static final int LMAX = 999;
+
+Signal<int> out = new Signal<int>(new SimOutput());
+
+/* ------------------------------------------------------------------------
+ * check LMAX;
+ * count execution of iteration body.
+ */
+#ifdef T1
+// trace
+//             -> out(999)
+//             -> out(1)
+//             -> out(1)
+//             -> out(1)
+//             -> out(3)
+
+private void react () {
+    emit out(LMAX); next;
+    emit out(f(0,0)); next;
+    emit out(f(0,-1)); next;
+    emit out(f(0,1)); next;
+    emit out(f(0,3)); next;
+    next;
+};
+
+private int f (int start, int off) {
+    int variant = LMAX;
+    int count = 0;
+    int i = start;
+    do {
+        variant--; if (variant <= 0) { return LMAX;}; // prevent endless loops
+        count++;
+        i++;
+    } while (i < off);
+    return count;
+};
+#endif
+/* ------------------------------------------------------------------------
+ * count a break-ed loop
+ */
+#ifdef T2
+// trace
+//             -> out(0)
+//             -> out(1)
+//             -> out(2)
+
+private void react () {
+   emit out(f(0,0,0)); next;
+   emit out(f(0,1,1)); next;
+   emit out(f(0,3,2)); next;
+
+   next;
+};
+
+private int f (int start, int off, int brk) {
+    int variant = LMAX;
+    int i=start;
+    do {
+        variant--; if (variant <= 0) { return LMAX;}; // prevent endless loops
+        if (i==brk) {
+            break;
+        };
+        i++;
+    } while (i < off);
+    return i;
+};
+#endif
+
+/* ------------------------------------------------------------------------
+ * count a continued-ed loop
+ */
+#ifdef T3
+// trace
+//             -> out(0)
+//             -> out(1)
+//             -> out(2)
+
+private void react () {
+   emit out(f(0,0,0)); next;
+   emit out(f(0,1,1)); next;
+   emit out(f(0,4,2)); next;
+
+   next;
+};
+
+private int f (int start, int off, int conti) {
+    int variant = LMAX;
+    int count = 0;
+    int i = start;
+    do  {
+        variant--; if (variant <= 0) { return LMAX;}; // prevent endless loops
+        i++;
+        if (i>conti) {
+            continue;
+        };
+        count++;
+    } while (i < off);
+    return count;
+};
+#endif
+/* ------------------------------------------------------------------------ */
+} // end class Rc

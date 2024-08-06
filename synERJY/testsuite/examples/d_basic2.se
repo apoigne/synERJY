@@ -1,0 +1,62 @@
+#include "../../target/examples/Basic2/basic2.se"
+
+#ifdef T1
+// trace button1
+//
+//              ->
+// button1      ->
+//              -> red_led
+//              -> red_led
+//              -> red_led
+//              -> red_led
+//              -> red_led
+//              ->
+//              ->
+// button1      ->
+//              -> red_led
+//              -> red_led
+//              -> red_led
+//              -> red_led
+//              -> red_led
+//              ->
+//              ->
+//
+// trace button2
+//
+// button2  ->
+//          ->
+//          ->
+// button2  ->
+//          ->
+//          ->
+//
+// trace both-one-time
+//
+//                 ->
+// button1 button2 -> both
+//       -> red_led
+//       -> red_led
+//       -> red_led
+//       -> red_led
+//       -> red_led
+//       ->
+//       ->
+//
+// trace both-permanent
+//
+//                     ->
+// button1 button2     -> both
+// button1 button2     -> red_led
+// button1 button2     -> red_led
+// button1 button2     -> red_led
+// button1 button2     -> red_led
+// button1 button2     -> red_led
+// button1 button2     -> both
+// button1 button2     -> red_led
+// button1 button2     -> red_led
+// button1 button2     -> red_led
+// button1 button2     -> red_led
+// button1 button2     -> red_led
+// button1 button2     -> both
+//
+#endif

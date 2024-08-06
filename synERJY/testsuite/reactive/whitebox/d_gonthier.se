@@ -1,0 +1,194 @@
+class Rc {
+
+Signal o1 = new Signal(new SimOutput());
+Signal o2 = new Signal(new SimOutput());
+Signal o3 = new Signal(new SimOutput());
+Signal o4 = new Signal(new SimOutput());
+
+Signal t1 = new Signal();
+Signal t2 = new Signal();
+
+#ifdef T1
+// trace
+//  -> o2
+//  -> o1 o2
+//  -> o1 o2
+public Rc () {
+   active {
+      loop {
+         cancel next {
+             Signal s1 = new Signal();
+             [[ sustain {
+                  if (?s1) { emit o1; } else { emit o2; };
+                };   
+             || next;
+                emit s1;
+                emit t1;
+             ]];
+          } when (?t1);
+      };
+   };
+};
+#endif
+
+#ifdef T2
+// trace
+//  -> o4
+//  -> o1 o2 o4
+//  -> o1 o2 o4
+
+public Rc () {
+   active {
+      loop {
+         cancel next {
+           Signal s1 = new Signal();
+           [[ loop {
+                cancel next { 
+                   Signal s2 = new Signal(); 
+                   [[ loop {
+                        if (?s1) { 
+                          if (?s2) { emit o1; } else { emit o2; };
+                        } else {
+                          if (?s2) { emit o3; } else { emit o4; };
+                        };
+                        next;
+                      };   
+                   || next;
+                      emit s2;
+                   ]];
+                } when (true);
+             };
+          || next;
+             emit s1;
+          ]];
+       } when (true);
+     };
+ };
+};
+#endif
+
+#ifdef T3
+// trace
+//  -> o2
+//  -> o1 o2
+//  -> o1 o2
+public Rc () {
+   active {
+      loop {
+         cancel next {
+             Signal<int> s1 = new Signal<int>();
+             [[ sustain {
+                  if ($s1 == 1) { emit o1; } else { emit o2; };
+                };   
+             || next;
+                emit s1(1);
+                emit t1;
+             ]];
+          } when (?t1);
+      };
+   };
+};
+#endif
+
+#ifdef T4
+// trace
+//  -> o4
+//  -> o1 o2 o4
+//  -> o1 o2 o4
+
+public Rc () {
+   active {
+      loop {
+         cancel next {
+           Signal<int> s1 = new Signal<int>();
+           [[ loop {
+                cancel next { 
+                   Signal<int> s2 = new Signal<int>(); 
+                   [[ sustain {
+                        if ($s1 == 1) { 
+                          if ($s2 == 1) { emit o1; } else { emit o2; };
+                        } else {
+                          if ($s2 == 1) { emit o3; } else { emit o4; };
+                        };
+                      };   
+                   || next;
+                      emit s2(1);
+                      emit t2;
+                   ]];
+                } when (?t2);
+             };
+          || next;
+             emit s1(1);
+             emit t1;
+          ]];
+       } when (?t1);
+     };
+ };
+};
+
+#endif
+
+#ifdef T5
+// trace
+//  -> o2
+//  -> o1 o2
+//  -> o1 o2
+public Rc () {
+   active {
+      loop {
+         cancel next {
+             Signal<bool> s1 = new Signal<bool>();
+             [[ sustain {
+                  if ($s1) { emit o1; } else { emit o2; };
+                };   
+             || next;
+                emit s1(true);
+                emit t1;
+             ]];
+          } when (?t1);
+      };
+   };
+};
+#endif
+
+#ifdef T6
+// trace
+//  -> o4
+//  -> o1 o2 o4
+//  -> o1 o2 o4
+
+public Rc () {
+   active {
+      loop {
+         cancel next {
+           Signal<bool> s1 = new Signal<bool>();
+           [[ loop {
+                cancel next { 
+                   Signal<bool> s2 = new Signal<bool>(); 
+                   [[ sustain {
+                        if ($s1) { 
+                          if ($s2) { emit o1; } else { emit o2; };
+                        } else {
+                          if ($s2) { emit o3; } else { emit o4; };
+                        };
+                      };   
+                   || next;
+                      emit s2(true);
+                      emit t2;
+                   ]];
+                } when (?t2);
+             };
+          || next;
+             emit s1(true);
+             emit t1;
+          ]];
+       } when (?t1);
+     };
+ };
+};
+
+#endif
+
+
+}
+

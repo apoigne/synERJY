@@ -1,0 +1,15 @@
+class Identity2 {
+static final time timing = 0sec;
+
+Sensor<double[2]> x  = new Sensor<double[2]>(new SimInput());
+Signal<double[2]> y  = new Signal<double[2]>(new SimOutput());
+
+public Identity2 () {
+    active {
+        sustain{|
+        y := x;
+        |};
+    };
+};
+
+}

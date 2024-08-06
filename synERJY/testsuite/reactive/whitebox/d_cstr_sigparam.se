@@ -1,0 +1,104 @@
+class Rc {
+
+  public Rc () {
+    active {
+    };
+  };
+
+  Sensor      a  = new Sensor(new SimInput());
+  Signal<int> b  = new Signal<int>(new SimOutput());
+
+#ifdef T1
+// trace
+// ->
+// a -> rc1.y2
+// ->
+// a -> rc1.y2
+
+   Rc1 rc1 = new Rc1(a);
+}
+
+class Rc1 {
+   Signal y2 = new Signal(new SimOutput());
+
+   public Rc1 (Sensor x1) {
+       active {
+         loop {
+           if (?x1) { emit y2; };
+           next;
+         };
+       };
+    };
+}
+#endif
+
+#ifdef T2
+// trace
+// ->
+// a -> rc1.y2
+// ->
+// a -> rc1.y2
+
+   Rc1 rc1 = new Rc1(a);
+}
+
+class Rc1 {
+  Sensor y1;
+  Signal y2 = new Signal(new SimOutput());
+
+  public Rc1 (Sensor x1) {
+    y1 = x1;
+    active {
+      loop {
+        if (?x1) { emit y2; };
+        next;
+      };
+    };
+  };
+}
+#endif
+
+#ifdef T3
+// trace
+// ->
+// -> b(3)
+// -> b(4)
+
+   Rc1 rc1 = new Rc1(b);
+}
+
+class Rc1 {
+  int i = 3;
+  void incr() { i++; };
+
+  public Rc1 (Signal<int> x1) {
+    active {
+      next; emit x1(i); incr(); next; emit x1(i);
+    };
+   };
+}
+#endif
+
+#ifdef T4
+// trace
+// ->
+// -> b(3)
+// -> b(4)
+
+   Rc1 rc1 = new Rc1(b);
+}
+
+class Rc1 {
+  int i = 3;
+  void incr() { i++; };
+
+  Signal<int> y1;
+
+  public Rc1 (Signal<int> x1) {
+    y1 = x1;
+    active {
+      next; emit y1(i); incr(); next; emit y1(i);
+    };
+   };
+}
+#endif

@@ -1,0 +1,5 @@
+// settings for the compiler and the main environment
+target Scicos;
+set project kind = C-code;
+load file = ./identity_2.se;
+set configuration class = Identity2;

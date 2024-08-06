@@ -1,0 +1,35 @@
+// test-flags O = None true, E = data true
+class SimpleStopwatch {
+
+static final time timing = 10msec;
+
+time the_time;
+
+Sensor start_stop = new Sensor(new SimInput());
+
+Signal<time> elapsed_time = new Signal<time>(new SimOutput());
+
+public SimpleStopwatch () {
+  active {
+// tex_start simple-stopwatch-automaton
+automaton {
+   init { the_time = 0msec;
+          next state stopped; 
+   };
+
+   state stopped 
+   when (?start_stop) { next state running; };
+
+   state running 
+      during {
+        the_time = the_time + timing;
+        emit elapsed_time(the_time);
+      }
+   when (?start_stop) { next state stopped; };
+};
+// tex_end 
+  };    
+};
+
+}
+

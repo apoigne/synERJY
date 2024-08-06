@@ -1,0 +1,73 @@
+// test-flags O = None true, E = data true
+class Watchdog {
+  static final time timing = 100msec;
+				
+  Sensor<bool>      set  = new Sensor<bool>(new SimInput());
+  Sensor<bool>     reset = new Sensor<bool>(new SimInput());
+  Sensor<bool> time_unit = new Sensor<bool>(new SimInput());
+  Sensor<int>      delay = new Sensor<int>(new SimInput());
+
+  Signal<bool>     alarm = new Signal<bool>(new SimOutput());
+
+
+
+// tex_start watchdog-node3
+  public Watchdog () {
+    active { 
+      sustain {|
+        Signal<bool> clock;
+        Signal{clock}<bool> c_set;
+        Signal{clock}<bool> c_reset;
+        Signal{clock}<int>  c_delay;
+        Signal{clock}<bool> c_alarm;
+        clock   := true -> set || reset || time_unit;
+        c_set   := set   when clock; 
+        c_reset := reset when clock; 
+        c_delay := delay when clock; 
+        watchdog2(c_set,c_reset,c_delay,c_alarm);
+        alarm := current(c_alarm);
+      |};
+    };
+  };
+// tex_end
+
+node edge_up (Sensor<bool> x, Signal<bool> y ) {|
+    y := false -> x && ! pre(y);
+|};
+
+// tex_start watchdog-node1
+node watchdog1 (Sensor<bool> _set,
+                Sensor<bool> _reset,
+                Sensor<bool> _deadline,
+                Signal<bool> _alarm ) {|
+     Signal<bool> watchdog_is_on;
+     _alarm         := _deadline && watchdog_is_on;
+     watchdog_is_on := _set ||
+                       (false -> ! _reset && pre(watchdog_is_on));
+|};
+// tex_end
+
+
+// tex_start watchdog-node2
+node watchdog2 ( Sensor<bool> _set,
+                 Sensor<bool> _reset,
+                 Sensor<int>  _delay,
+                 Signal<bool> _alarm ) {|
+     Signal<bool> deadline_condition;
+     Signal<bool> deadline;
+     Signal<int>  remaining_delay;
+     watchdog1(_set,_reset,deadline,_alarm);
+     deadline_condition := remaining_delay == 0;
+     edge_up(deadline_condition,deadline);
+     remaining_delay := if (_set) {
+                          _delay; 
+                        } else {
+                          0 -> pre(remaining_delay) - 1;
+                        };
+|};
+// tex_end
+
+
+
+}
+

@@ -1,0 +1,34 @@
+// test-flags O = None true, E = data true, confclass  Rc
+
+class Rc {
+
+  public Rc () {
+      active { };
+  };
+
+  Rc1 rc1 = new Rc1();
+
+}
+
+class Rc1 {
+
+  public Rc1 () {
+      active {};
+  };
+
+  Rc2 rc2 = new Rc2();
+
+}
+
+class Rc2 {
+
+  public Rc2 () {
+      active {};
+  };
+
+#ifdef E1
+// [[ExpandInheritErr]]
+  Rc1 rc1 = new Rc1();
+#endif
+
+}

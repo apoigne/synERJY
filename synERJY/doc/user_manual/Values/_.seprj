@@ -1,0 +1,5 @@
+// settings for the compiler and the main environment
+target Simulation;
+set project kind = C-code;
+load file = ./values.se;
+set configuration class = Object;

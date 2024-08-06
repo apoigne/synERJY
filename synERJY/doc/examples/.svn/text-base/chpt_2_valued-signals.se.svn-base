@@ -1,0 +1,14 @@
+// tex_start valued-signals
+class ValuedSignals {
+
+  Sensor<int> sensor   = new Sensor<int>(new SimInput());
+  Signal<int> actuator = new Signal<int>(new SimOutput());
+
+  public ValuedSignals() { 
+     active {
+       if (?sensor) { emit actuator($sensor + 1); };
+     };
+  };
+}
+// tex_end
+

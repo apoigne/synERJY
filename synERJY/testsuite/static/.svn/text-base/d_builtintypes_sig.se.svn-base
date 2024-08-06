@@ -1,0 +1,62 @@
+#ifdef T1
+// trace
+// i_bool(true)               -> o_bool(false)
+// i_bool(false) i_byte(11)   -> o_bool(true) o_byte(5)
+// i_char(' ') i_short(32)    -> o_char(8) o_short(33)
+// i_int(100) i_long(200)     -> o_int(102) o_long(203)
+// i_float(2.3) i_double(3.2) -> o_float(3.300000) o_double(5.200000)
+// i_time(3000000)            -> o_time(7000000)
+#endif
+
+class Values {
+
+public Values() {
+    active { doit(); };
+  };
+
+Sensor<bool> i_bool = new Sensor<bool>(new SimInput());
+Signal<bool> o_bool = new Signal<bool>(new SimOutput());
+
+Sensor<byte> i_byte = new Sensor<byte>(new SimInput());
+Signal<byte> o_byte = new Signal<byte>(new SimOutput());
+
+Sensor<char> i_char = new Sensor<char>(new SimInput());
+Signal<char> o_char = new Signal<char>(new SimOutput());
+
+Sensor<short> i_short = new Sensor<short>(new SimInput());
+Signal<short> o_short = new Signal<short>(new SimOutput());
+
+Sensor<int> i_int = new Sensor<int>(new SimInput());
+Signal<int> o_int = new Signal<int>(new SimOutput());
+
+Sensor<long> i_long = new Sensor<long>(new SimInput());
+Signal<long> o_long = new Signal<long>(new SimOutput());
+
+Sensor<float> i_float = new Sensor<float>(new SimInput());
+Signal<float> o_float = new Signal<float>(new SimOutput());
+
+Sensor<double> i_double = new Sensor<double>(new SimInput());
+Signal<double> o_double = new Signal<double>(new SimOutput());
+
+Sensor<time>   i_time = new Sensor<time>(new SimInput());
+Signal<time>   o_time = new Signal<time>(new SimOutput());
+
+//Sensor<String> i_String = new Sensor<String>(new SimInput());
+//Signal<String> o_String = new Signal<String>(new SimOutput());
+
+private void doit () {
+  [[
+       loop { await ?i_bool   ; emit o_bool   (! $i_bool  ); next; };
+    || loop { await ?i_byte   ; emit o_byte   ($i_byte >> 1 ); next; };
+    || loop { await ?i_char   ; emit o_char   ($i_char >> 2 ); next; };
+    || loop { await ?i_short  ; emit o_short  ($i_short + 1); next; };
+    || loop { await ?i_int    ; emit o_int    ($i_int   + 2); next; };
+    || loop { await ?i_long   ; emit o_long   ($i_long  + 3); next; };
+    || loop { await ?i_float  ; emit o_float  ($i_float  + 1.0f); next; };
+    || loop { await ?i_double ; emit o_double ($i_double + 2.0 ); next; };
+    || loop { await ?i_time   ; emit o_time   ($i_time - 10sec ); next; };
+//  || loop { await ?i_String ; emit o_String (i_String .a); next; };
+  ]];
+};
+
+}

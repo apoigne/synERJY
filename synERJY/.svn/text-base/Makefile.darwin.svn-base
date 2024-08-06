@@ -1,0 +1,23 @@
+# << installation dependant directories === MacOSX ============================
+TCLA    := $(SE_HOME)/lib/OSX/Tcl
+TKA     := $(SE_HOME)/lib/OSX/Tk
+#TCLA    := /usr/lib/libtcl.dylib
+#TKA     := /usr/lib/libtcl.dylib
+X11A    := /usr/X11/lib/libX11.dylib
+
+TCLH    := $(SE_HOME)/include
+TKH     := $(SE_HOME)/include
+X11H    := /usr/X11/include
+
+MLD     := /usr/local/lib/ocaml
+MLA     := $(MLD)/libcamlrun.a
+ILibs   := -I $(SE_HOME)/src -I $(SE_HOME)/builtin
+
+LL      := -lm -lunix -lthreads -lSystemStubs
+
+CMA     := unix.cma
+CMX     := unix.cmxa
+
+SERC    := .serc_darwin
+
+TARGET  := unix

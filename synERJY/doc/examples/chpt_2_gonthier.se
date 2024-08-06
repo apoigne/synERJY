@@ -1,0 +1,42 @@
+// test-flags O = None true, E = data true
+class Rc { 
+    static final time timing = 100msec;
+				
+
+Signal a = new Signal(new SimOutput());
+Signal b = new Signal(new SimOutput());
+Signal c = new Signal(new SimOutput());
+Signal d = new Signal(new SimOutput());
+
+public Rc () {
+   active {
+// tex_start gonthier
+loop {
+  cancel next {
+     Signal x = new Signal();
+     [[ loop {
+           cancel next { 
+              Signal y = new Signal(); 
+              [[ loop {
+                    if (?x) { 
+                        if (?y) { emit a; } else { emit b; };
+                    } else {
+                        if (?y) { emit c; } else { emit d; };
+                    };
+                    next;
+                 };   
+              || next;
+                 emit y;
+              ]];
+           } when (true);
+        };
+      || next;
+         emit x;
+     ]];
+  } when (true);
+};
+
+// tex_end gonthier
+   };
+};
+}

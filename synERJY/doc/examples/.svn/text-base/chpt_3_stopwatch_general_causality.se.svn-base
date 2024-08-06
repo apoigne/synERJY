@@ -1,0 +1,44 @@
+// test-flags O = None true, E = data true
+class FourBitAutomaton { 
+
+    static final time timing = 100msec;
+				
+public FourBitAutomaton () {
+    active {
+// tex_start four-bit-automaton
+automaton {
+  init { next state off; };
+  state off
+    when (?start) { next state on; };
+  state on
+    do {
+      [[ automaton {
+           init { next state down1; };
+           state down1
+             when (?incr) { next state up1; };
+           state up1
+             when (?incr) { emit carry; next state down1; };
+         };
+      || automaton {
+           init { next state down2; };
+           state down2
+             when (?carry) { next state up2; };
+           state up2
+             when (?carry) { emit reset; next state down2; };
+         };
+      ]];
+    }
+    when (?stop || ?reset) { emit elapsed; next state off; };
+};
+// tex_end four-bit-automaton
+      };
+  };
+
+  // signals
+  Sensor   start = new Sensor(new SimInput());
+  Sensor    incr = new Sensor(new SimInput());
+  Sensor    stop = new Sensor(new SimInput());
+  Signal   reset = new Signal();
+  Signal elapsed = new Signal(new SimOutput());
+  Signal   carry = new Signal();
+}

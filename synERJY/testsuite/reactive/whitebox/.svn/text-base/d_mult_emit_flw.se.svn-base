@@ -1,0 +1,33 @@
+class Rc {
+
+Signal<int> x = new Signal<int>(new SimOutput());
+Signal<bool> a = new Signal<bool>(new SimOutput());
+
+public Rc ()
+{
+  active { 
+#ifdef T1
+// trace
+// -> x(2)
+     cancel {
+        sustain {| x := 0; |};
+     } when (true);
+     emit x(2);
+#endif
+
+#ifdef T2
+// trace
+// -> a(true)
+     cancel {
+        sustain {| a := false; |};
+     } when (true);
+     emit a(true);
+#endif
+  };
+};
+
+
+
+}
+
+

@@ -1,0 +1,46 @@
+class Rc {
+
+static final time timing = 1500msec;
+
+public Rc () {
+  active { c1(); };
+};
+
+Sensor I1             = new Sensor(new SimInput());
+
+Signal O1             = new Signal(new SimOutput());
+Signal O3             = new Signal(new SimOutput());
+Signal{?I1} O2        = new Signal();
+Signal<time> to  = new Signal<time>(new SimOutput());
+Signal<time> to2 = new Signal<time>(new SimOutput());
+
+#ifdef T1
+// trace
+//      ->
+//      -> to(1500000)
+//      -> to(1500000)
+//      -> to(1500000)
+private void c1 () {
+    next;
+    emit to(timing); next;
+    emit to(timing); next;
+    emit to(timing); next;
+  };
+#endif
+
+#ifdef T2
+// trace
+//      ->
+//      -> to(1500000) to2(1500000)
+//      -> to(1500000) to2(1500000)
+
+private void c1 () {
+    next;
+    sustain {|
+      to  := timing;
+      to2 := timing;
+    |};
+  };
+#endif
+
+} //end class Rc

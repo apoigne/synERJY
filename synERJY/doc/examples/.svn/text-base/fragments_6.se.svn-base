@@ -1,0 +1,40 @@
+class TimeFragments {
+
+    static final time timing = 100msec;
+				
+  public TimeFragments () {
+
+      active { r(); };
+   };
+
+#ifdef O1
+void r() {
+// tex_start await-time
+await 300msec;
+// tex_end await-time
+};
+#endif
+
+#ifdef O2
+void r() {
+// tex_start suspend-for-some-time
+loop {
+    await @actuator > 5sec; 
+    emit frozen; 
+    next; 
+}; 
+// tex_end  suspend-for-some-time
+};
+#endif
+
+  // signals
+  Signal  frozen = new Signal(new SimOutput());
+  Sensor actuator = new Sensor(new SimInput());
+
+// tex_start freeze-2
+time _frozen = 0sec;
+void freeze (time s) { _frozen = s; };
+// tex_end freeze-2
+
+}
+

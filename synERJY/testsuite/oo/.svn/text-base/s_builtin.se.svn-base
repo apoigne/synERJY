@@ -1,0 +1,115 @@
+class Rc {
+
+char           c1;
+int8           c2;
+byte           b1;
+uint8          b2;
+short          s1;
+int16          s2;
+unsigned short us1;
+unsigned int16 us2;
+uint16         us3;
+int            i1;
+int32          i2;
+unsigned int   ui1;
+unsigned int32 ui2;
+uint32         ui3;
+long           l1;
+int64          l2;
+unsigned long  ul1;
+unsigned int64 ul2;
+uint64         ul3;
+float          f;
+double         d;
+
+public Rc ()
+{
+b1=1;
+b1=126;
+b1=-26;
+c1=200;b1=(byte)c1;
+#ifdef E1
+// [[Subtyping]]
+b1=200;
+#endif
+
+c1=1;
+c1=126;
+c1=200;
+b1=-26;c1=(char)b1;
+#ifdef E2
+// [[Subtyping]]
+c1=-26;
+#endif
+
+s1=1;
+s1=126;
+s1=1989;
+s1=-1991;
+us1=65500;s1=(short)us1;
+#ifdef E3
+// [[Subtyping]]
+s1=65500;
+#endif
+
+us1=1;
+us1=126;
+us1=1998;
+s1=-1999;us1=(uint16)s1;
+#ifdef E4
+// [[Subtyping]]
+us1=-1999;
+#endif
+
+i1=1;
+i1=126;
+i1=1989;
+i1=2147483647;
+i1=-2147483647;
+ui1=4294967295;i1=(int)us1;
+#ifdef E5
+// [[Subtyping]]
+i1=4294967295;
+#endif
+
+ui1=1;
+ui1=126;
+ui1=1998;
+ui1=2147483647;
+ui1=4294967295;
+i1=-2147483647;ui1=(uint32)i1;
+#ifdef E6
+// [[Subtyping]]
+ui1=-2147483647;
+#endif
+
+l1=1;
+l1=126;
+l1=1989;
+l1=2147483647;
+l1=4611686018427387905;
+l1=-4611686018427387905;
+l1=(long)4611686018427387905;
+
+ul1=1;
+ul1=126;
+ul1=1998;
+ul1=2147483647;
+ul1=4294967295;
+ul1=4611686018427387905;
+ul1=(uint64)4611686018427387905;
+#ifdef E7
+// [[Subtyping]]
+ul1=-1;
+#endif
+
+c1=c1+1;
+c1=1+c1;
+c1=(c1<5)?(6):(7);
+c1=(5<c1)?(6):(7);
+
+active {};
+
+};
+
+}

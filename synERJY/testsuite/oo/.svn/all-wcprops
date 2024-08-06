@@ -1,0 +1,371 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/repos/synerjy/!svn/ver/34/synERJY/testsuite/oo
+END
+d_builtin.se
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_builtin.se
+END
+d_io.se
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_io.se
+END
+s_class_instance.se
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_class_instance.se
+END
+s_new.se
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_new.se
+END
+d_rec.se
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_rec.se
+END
+s_anon.se
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_anon.se
+END
+s_template2.se
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_template2.se
+END
+d_objval.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_objval.se
+END
+d_anon2.se
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_anon2.se
+END
+d_array.se
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/repos/synerjy/!svn/ver/34/synERJY/testsuite/oo/d_array.se
+END
+d_expr.se
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_expr.se
+END
+d_inline.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_inline.se
+END
+s_template4.se
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_template4.se
+END
+s_array2.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_array2.se
+END
+s_switch.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_switch.se
+END
+d_cond.se
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_cond.se
+END
+d_uint32.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_uint32.se
+END
+s_iterfor.se
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_iterfor.se
+END
+s_overload.se
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_overload.se
+END
+d_iterwhile.se
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_iterwhile.se
+END
+s_objval.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_objval.se
+END
+d_intval.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_intval.se
+END
+s_label.se
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_label.se
+END
+s_declseq.se
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_declseq.se
+END
+s_rct_data.se
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_rct_data.se
+END
+d_staticfinal.se
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_staticfinal.se
+END
+s_signal_types2.se
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_signal_types2.se
+END
+d_dyn_objects.se
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_dyn_objects.se
+END
+s_assign.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_assign.se
+END
+s_vector2.se
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_vector2.se
+END
+s_cast_array.se
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/repos/synerjy/!svn/ver/34/synERJY/testsuite/oo/s_cast_array.se
+END
+d_rctext.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_rctext.se
+END
+d_iterfor.se
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_iterfor.se
+END
+s_template1.se
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_template1.se
+END
+d_anon1.se
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_anon1.se
+END
+d_recpt.se
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_recpt.se
+END
+s_template3.se
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_template3.se
+END
+d_expand.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_expand.se
+END
+s_interface.se
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_interface.se
+END
+s_template5.se
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_template5.se
+END
+s_access.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_access.se
+END
+d_declseq.se
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_declseq.se
+END
+s_assert.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_assert.se
+END
+s_builtin.se
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_builtin.se
+END
+s_cyclic_ro.se
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_cyclic_ro.se
+END
+d_native.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_native.se
+END
+d_iterdo.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_iterdo.se
+END
+d_timing.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_timing.se
+END
+d_dynbind.se
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_dynbind.se
+END
+d_class_instance.se
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_class_instance.se
+END
+d_template1.se
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_template1.se
+END
+s_array.se
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_array.se
+END
+s_expand.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_expand.se
+END
+d_multemit.se
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_multemit.se
+END
+d_array2.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_array2.se
+END
+s_signal_types1.se
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_signal_types1.se
+END
+d_vector.se
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/repos/synerjy/!svn/ver/34/synERJY/testsuite/oo/d_vector.se
+END
+d_inherit.se
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/d_inherit.se
+END
+s_shadowing.se
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/synerjy/!svn/ver/24/synERJY/testsuite/oo/s_shadowing.se
+END
+s_cstr_notrct_param.se
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_cstr_notrct_param.se
+END
+s_signal_types3.se
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/repos/synerjy/!svn/ver/17/synERJY/testsuite/oo/s_signal_types3.se
+END

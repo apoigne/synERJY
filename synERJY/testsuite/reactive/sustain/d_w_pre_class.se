@@ -1,0 +1,174 @@
+#ifdef T1
+// trace
+//             -> a(0) b(0)
+//             -> a(1) b(0)
+//             -> a(2) b(1)
+//             -> a(3) b(2)
+class Rc1 {
+
+Signal<int> a = new Signal<int>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+
+public Rc1 () {
+  active { 
+     sustain {|
+       a := 0 -> 1 + pre(a);
+     |};
+  };
+};
+
+Rc2 rc2 = new Rc2(a,b);
+
+}
+
+class Rc2 {
+
+public Rc2 (Sensor<int> c, Signal<int> b) {
+  active { 
+     sustain {|
+        b := pre(c);
+    |};
+  };
+};
+
+}
+#endif
+
+
+#ifdef T2
+// trace
+//             -> a(true)  b(false)
+//             -> a(false) b(true)
+//             -> a(true)  b(false)
+//             -> a(false) b(true)
+class Rc3 {
+
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+Signal<boolean> b = new Signal<boolean>(new SimOutput());
+
+public Rc3 () {
+  active { 
+     sustain {|
+       a := ! pre(a);
+     |};
+  };
+};
+
+Rc4 rc4 = new Rc4(a,b);
+
+}
+
+class Rc4 {
+
+public Rc4 (Sensor<boolean> a, Signal<boolean> b) {
+  active { 
+     sustain {|
+        b := pre(a);
+    |};
+  };
+};
+
+}
+#endif
+
+
+
+#ifdef T3
+// trace
+//             -> a(0) b(0)
+//             -> a(1) b(0)
+//             -> a(2) b(1)
+//             -> a(3) b(2)
+class Rc5 {
+
+Signal<int> a = new Signal<int>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+
+public Rc5 () {
+  active { 
+  };
+};
+
+Rc6 rc6 = new Rc6(a);
+Rc7 rc7 = new Rc7(a,b);
+
+}
+
+class Rc6 {
+
+public Rc6 (Signal<int> c) {
+  active { 
+     sustain {|
+       c := 0 -> 1 + pre(c);
+    |};
+  };
+};
+
+}
+
+class Rc7 {
+
+public Rc7 (Sensor<int> c, Signal<int> b) {
+  active { 
+     sustain {|
+        b := pre(c);
+    |};
+  };
+};
+
+}
+#endif
+
+
+#ifdef T4
+// trace
+//             -> a(true)  b(false) c(true)
+//             -> a(false) b(true)  c(false)
+//             -> a(true)  b(false) c(true)
+//             -> a(false) b(true)  c(false)
+class Rc8 {
+
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+Signal<boolean> b = new Signal<boolean>(new SimOutput());
+Signal<boolean> c = new Signal<boolean>(new SimOutput());
+
+public Rc8 () {
+  active { 
+     sustain {|
+       c := ! pre(a);
+     |};
+  };
+};
+
+Rc9 rc9   = new Rc9(a);
+Rc10 rc10 = new Rc10(a,b);
+
+}
+
+class Rc9 {
+
+public Rc9 (Signal<boolean> b) {
+  active { 
+     sustain {|
+       b := ! pre(b);
+    |};
+  };
+};
+
+}
+
+class Rc10 {
+
+public Rc10 (Sensor<boolean> a, Signal<boolean> b) {
+  active { 
+     sustain {|
+        b := pre(a);
+    |};
+  };
+};
+
+}
+#endif
+
+
+

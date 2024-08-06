@@ -1,0 +1,46 @@
+reactive class Xc
+input SIG_FROM_XC;
+output INT_SIG_FROM_XC(ani:int);
+int ai;
+fi( int pi ) : int () {};
+int samei;
+}
+
+reactive class Yc
+inherit
+  Xc;
+
+int bi;
+gi( int pi ) () {};
+
+input SIG_FROM_YC;
+output INT_SIG_FROM_YC(ani:int);
+#ifdef E1
+input SIG_FROM_XC;
+#endif
+
+tr is reactive
+  await SIG_FROM_YC;
+// await SIG_FROM_XC;
+#ifdef E2
+  await UNKNOWN_SIG;
+#endif
+  emit INT_SIG_FROM_YC(4);
+// emit INT_SIG_FROM_XC(4);
+#ifdef E3
+  emit UNKNOWN_SIG(8);
+#endif
+  gi( INT_SIG_FROM_YC.ani );
+// gi( INT_SIG_FROM_XC.ani );
+#ifdef E4
+  gi( UNKNOWN_SIG.ani );
+#endif
+#ifdef E5
+  gi( INT_SIG_FROM_YC.unknown );
+#endif
+#ifdef E6
+  gi( INT_SIG_FROM_XC.unknown );
+#endif
+}
+
+}

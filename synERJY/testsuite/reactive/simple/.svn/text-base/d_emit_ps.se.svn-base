@@ -1,0 +1,43 @@
+class Rc {
+
+public Rc () {
+  active { c1(); };
+};
+
+Signal O1 = new Signal(new SimOutput());
+Signal O2 = new Signal(new SimOutput());
+Signal O3 = new Signal(new SimOutput());
+
+DelayedSignal O4 = new DelayedSignal();
+DelayedSignal O5 = new DelayedSignal();
+
+
+#ifdef T1
+// trace
+//      -> O1
+//      -> O2 O3
+//
+private void c1 () {
+    emit O1;
+    next; emit O2; emit O3;
+  };
+#endif
+
+#ifdef T2
+// trace
+//      ->
+//      -> O1
+//      -> O2
+//      ->
+//      ->
+//
+private void c1 () {
+    [[ emit O4;
+       next; emit O5;
+    || await ?O4; emit O1;
+    || await ?O5; emit O2;
+    ]];
+  };
+#endif
+
+} //end class Rc

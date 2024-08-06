@@ -1,0 +1,81 @@
+#ifdef T1
+// trace
+//  -> o_object(y(0))
+
+final class Xx0 {
+    public Xx0() {
+        x=0;
+    };
+    public int x;
+}
+
+class Xx1 {
+  public Xx1(Xx0 c) {
+    x = 1;
+    y = c;
+  };
+  public int x;
+  public Xx0  y;
+}
+
+final class Yy0 {
+    public Yy0() {
+        y=0;
+    };
+    public int y;
+}
+
+final class Yy1 {
+    public Yy1() {
+        y=0;
+    };
+    public int y;
+}
+
+final class Yy2 {
+    public Yy2() {
+        y=0;
+    };
+    public int y;
+}
+
+final class Yy3 {
+    public Yy3() {
+        y=0;
+    };
+    public int y;
+}
+
+
+class Values {
+static final time timing = 250msec;
+
+
+
+Signal<Yy2> o_object = new Signal<Yy2>(new SimOutput());
+
+Xx1 x1 = new Xx1(new Xx0());
+
+int z = 1 + (new Yy0()).y;
+
+Yy3 y3 = new Yy3();
+
+int aaa () {
+   return (1 + (new Yy1()).y);
+};
+
+int bbb () {
+   return (1 + x1.y.x);
+};
+
+public Values () {
+    active {
+      emit o_object(new Yy2());
+      z = aaa();
+      z = bbb();
+    };
+};
+
+
+}
+#endif

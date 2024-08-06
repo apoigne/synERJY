@@ -1,0 +1,79 @@
+#include "../../target/examples/Blink3/blink3.se"
+
+#ifdef T1
+// trace select
+//
+// select -> red_cmd(2)
+//        ->
+// select -> green_cmd(2)
+// select -> red_cmd(2)
+// select -> green_cmd(2)
+// select -> red_cmd(2)
+//        ->
+// select -> green_cmd(2)
+//
+// trace toggle
+//
+// toggle -> red_light red_cmd(1)
+// toggle -> red_cmd(2)
+// toggle -> red_light red_cmd(1)
+// toggle -> red_cmd(2)
+// toggle -> red_light red_cmd(1)
+// toggle -> red_cmd(2)
+// toggle -> red_light red_cmd(1)
+// toggle -> red_cmd(2)
+// toggle -> red_light red_cmd(1)
+// toggle -> red_cmd(2)
+//        ->
+//        ->
+//        ->
+// toggle -> red_light red_cmd(1)
+//        -> red_light
+//
+// trace select-and-toggle alternate
+//
+// select        -> red_cmd(2)
+// toggle        -> green_light green_cmd(1)
+// select        -> green_cmd(2)
+// toggle        -> red_light red_cmd(1)
+// select toggle -> red_cmd(2)
+// select toggle -> green_cmd(2)
+// select        -> red_cmd(2)
+// toggle        -> green_light green_cmd(1)
+// select        -> green_cmd(2)
+// toggle        -> red_light red_cmd(1)
+// select        -> red_cmd(2)
+// toggle        -> green_light green_cmd(1)
+//
+// trace select-and-toggle permanent
+//
+// select toggle -> red_cmd(2)
+// select toggle -> green_cmd(2)
+// select toggle -> red_cmd(2)
+// select toggle -> green_cmd(2)
+// select toggle -> red_cmd(2)
+// select toggle -> green_cmd(2)
+// select toggle -> red_cmd(2)
+// select toggle -> green_cmd(2)
+// select toggle -> red_cmd(2)
+// select toggle -> green_cmd(2)
+// select toggle -> red_cmd(2)
+// select toggle -> green_cmd(2)
+//
+// trace select permanent
+//
+// select -> red_cmd(2)
+// select -> green_cmd(2)
+// select -> red_cmd(2)
+// select -> green_cmd(2)
+//
+// trace toggle permanent
+//
+// toggle -> red_light red_cmd(1)
+// toggle -> red_cmd(2)
+// toggle -> red_light red_cmd(1)
+// toggle -> red_cmd(2)
+// toggle -> red_light red_cmd(1)
+// toggle -> red_cmd(2)
+//
+#endif

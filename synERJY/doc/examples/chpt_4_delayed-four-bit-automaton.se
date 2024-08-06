@@ -1,0 +1,44 @@
+// test-flags O = None true, E = data true
+class DelayedFourBitAutomaton { 
+
+    static final time timing = 100msec;
+				
+// tex_start delayed-four-bit-automaton
+Sensor    start = new Sensor(new SimInput());
+Sensor     incr = new Sensor(new SimInput());
+Sensor     stop = new Sensor(new SimInput());
+Delayed   reset = new Delayed();
+Delayed elapsed = new Delayed(new SimOutput());
+Delayed   carry = new Delayed();
+
+public DelayedFourBitAutomaton () {
+  active {
+    automaton {
+      init { next state off; };
+      state off
+         when (?start) { next state on; };
+      state on
+         do {
+           [[ automaton {
+                 init { next state down1; };
+                 state down1
+                    when (?incr) { next state up1; };
+                 state up1
+                    when (?incr) { emit carry; next state down1; };
+              };
+           || automaton {
+                 init { next state down2; };
+                 state down2
+                    when (?carry) { next state up2; };
+                 state up2
+                    when (?carry) { emit reset; next state down2; };
+              };
+           ]];
+         }
+         when (?stop || ?reset) { emit elapsed; next state off; };
+    };
+  };
+};
+// tex_end delayed-four-bit-automaton
+
+}

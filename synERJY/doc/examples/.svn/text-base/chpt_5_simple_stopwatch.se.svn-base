@@ -1,0 +1,30 @@
+// test-flags O = None true, E = data true
+class SimpleStopwatch {
+
+static final time timing = 10msec;
+				
+
+// tex_start flow-simple-stopwatch
+Sensor<bool> start_stop = new Sensor<bool>(new SimInput());
+Sensor<bool>      reset = new Sensor<bool>(new SimInput());
+
+Signal<time> display_time = new Signal<time>(new SimOutput());
+Signal<bool>      running = new Signal<bool>(new SimOutput());
+
+public SimpleStopwatch () {
+  active { 
+    sustain {|
+      display_time := 
+         0msec -> running ? 
+                       pre(display_time) + 10msec
+                     : reset ? 
+                          0msec 
+                        : pre(display_time) ;
+         running := false -> 
+                    start_stop ? ! pre(running) : pre(running); 
+    |};
+  };
+};
+// tex_end
+}
+

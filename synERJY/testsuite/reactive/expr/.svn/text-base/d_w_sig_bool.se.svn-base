@@ -1,0 +1,182 @@
+class Rc {
+
+public Rc () {
+   active { c1(); };
+};
+
+Sensor a = new Sensor(new SimInput());
+Sensor b = new Sensor(new SimInput());
+
+#ifdef T1
+// trace
+//       -> c(false)
+//   a b -> c(true)
+//       -> c(false)
+//   a b -> c(true)
+//       -> c(false)
+//   a   -> c(false)
+//   b   -> c(false)
+Signal<bool> c = new Signal<bool>(new SimOutput());
+private void c1 () {
+    sustain {|
+        c := false -> if (?a && ?b) { true; } else { false; };
+    |};
+  };
+#endif
+
+#ifdef T2
+// trace
+//       -> c(0)
+//   a b -> c(3)
+//       -> c(4)
+//   a b -> c(3)
+//       -> c(4)
+//   a   -> c(4)
+//   b   -> c(4)
+Signal<int> c = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        c := 0 -> if (?a && ?b) { 3; } else { 4; };
+    |};
+  };
+#endif
+
+#ifdef T3
+// trace
+//       -> c(false)
+//   a b -> c(true)
+//       -> c(false)
+//   a b -> c(true)
+//       -> c(false)
+//   a   -> c(false)
+//   b   -> c(false)
+Signal<bool> c = new Signal<bool>(new SimOutput());
+private void c1 () {
+  loop {
+    emit c(if (?a && ?b) { true; } else { false; });
+    next;
+  };
+};
+#endif
+
+#ifdef T4
+// trace
+//       -> c(4)
+//   a b -> c(3)
+//       -> c(4)
+//   a b -> c(3)
+//       -> c(4)
+//   a   -> c(4)
+//   b   -> c(4)
+Signal<int> c = new Signal<int>(new SimOutput());
+private void c1 () {
+  loop {
+    emit c((int)0+if (?a && ?b) { 3; } else { 4; }+0);
+    next;
+  };
+};
+#endif
+
+#ifdef T5
+// trace
+//       -> c(false)
+//   a b -> c(true)
+//       -> c(false)
+//   a b -> c(true)
+//       -> c(false)
+//   a   -> c(false)
+//   b   -> c(false)
+Signal<bool> c = new Signal<bool>(new SimOutput());
+private void c1 () {
+  loop {
+    setv2(if (?a && ?b) { true; } else { false; });
+    emit c(getv2());
+    next;
+  };
+};
+#endif
+
+#ifdef T6
+// trace
+//       -> c(4)
+//   a b -> c(3)
+//       -> c(4)
+//   a b -> c(3)
+//       -> c(4)
+//   a   -> c(4)
+//   b   -> c(4)
+Signal<int> c = new Signal<int>(new SimOutput());
+private void c1 () {
+  loop {
+    setv1(if (?a && ?b) { 3; } else { 4; });
+    emit c(getv1());
+    next;
+  };
+};
+#endif
+
+private int v1;
+void setv1 (int x) {
+  v1 = x;
+};
+int getv1 () {
+  return v1;
+};
+
+private bool v2;
+void setv2 (bool x) {
+  v2 = x;
+};
+bool getv2 () {
+  return v2;
+};
+
+#ifdef T7
+// trace
+//                   -> c(false)
+//   a d(true)       -> c(true)
+//                   -> c(false)
+//   a d(false)      -> c(false)
+//                   -> c(false)
+//   d(true)         -> c(false)
+//   a               -> c(true)
+//                   -> c(false)
+//
+Signal<bool> c = new Signal<bool>(new SimOutput());
+Sensor<bool>   d = new Sensor<bool>(new SimInput());
+private void c1 () {
+    sustain {|
+        c := false -> if ((true && $d && ?a || false)) {
+                         true;
+                      } else {
+                         false;
+                      };
+    |};
+  };
+#endif
+
+#ifdef T8
+// trace
+//                   -> c(false)
+//   a d(true)       -> c(true)
+//                   -> c(false)
+//   a d(false)      -> c(false)
+//                   -> c(false)
+//   d(true)         -> c(false)
+//   a               -> c(true)
+//                   -> c(false)
+//
+Signal<bool> c = new Signal<bool>(new SimOutput());
+Sensor<bool>   d = new Sensor<bool>(new SimInput());
+private void c1 () {
+    sustain {|
+        c := false -> if (?a && true && $d || false ) {
+                           true;
+                        } else {
+                           false;
+                        };
+    |};
+  };
+#endif
+
+}

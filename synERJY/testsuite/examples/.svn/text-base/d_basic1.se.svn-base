@@ -1,0 +1,34 @@
+#include "../../target/examples/Basic1/basic1.se"
+
+#ifdef T1
+// trace on-off
+//             ->
+// button      -> red_led
+//             ->
+// button      -> red_led
+//             ->
+// button      -> red_led
+//             ->
+// button      -> red_led
+//             ->
+// button      -> red_led
+//             ->
+// button      -> red_led
+//
+// trace always on
+// button      -> red_led
+// button      -> red_led
+// button      -> red_led
+// button      -> red_led
+// button      -> red_led
+// button      -> red_led
+//
+// trace always off
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+//             ->
+#endif

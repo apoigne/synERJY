@@ -1,0 +1,112 @@
+#ifdef T1
+// trace
+// -> outs(2)      prc(1) o1.pe1(101) o1.o3.pe2(111) o1.o4.pe2(121)                                o2.pe1(201) o2.o3.pe2(211) o2.o4.pe2(221)
+#endif
+#ifdef T2
+// trace
+// -> outs(2)      prc(1) o1.pe1(101) o1.o3.pe2(111) o1.o4.pe2(121)                                o2.pe1(201) o2.o3.pe2(211) o2.o4.pe2(221)
+#endif
+#ifdef T3
+// trace
+// -> outs(222)    prc(1) o1.pe1(101) o1.o3.pe2(111) o1.o4.pe2(121)                                o2.pe1(201) o2.o3.pe2(211) o2.o4.pe2(221)
+#endif
+#ifdef T4
+// trace
+// -> outs(212)    prc(1) o1.pe1(101) o1.o3.pe2(111) o1.o4.pe2(121)                                o2.pe1(201) o2.o3.pe2(211) o2.o4.pe2(221)
+#endif
+#ifdef T5
+// trace
+// -> outs(122)    prc(1) o1.pe1(101) o1.o3.pe2(111) o1.o4.pe2(121)                                o2.pe1(201) o2.o3.pe2(211) o2.o4.pe2(221)
+#endif
+#ifdef T6
+// trace
+// -> outs(112)    prc(1) o1.pe1(101) o1.o3.pe2(111) o1.o4.pe2(121)                                o2.pe1(201) o2.o3.pe2(211) o2.o4.pe2(221)
+#endif
+
+class Rc {
+
+public Rc () {
+  active { emit outs(1); emit prc(1); emit outs(2); };
+};
+
+Signal<int> outs = new Signal<int>(new SimOutput());
+Signal<int> prc  = new Signal<int>(new SimOutput());
+
+Emit1 o1 = new Emit1(101,outs);
+Emit1 o2 = new Emit1(201,outs);
+
+precedence {
+#ifdef C1
+  for outs: o1 < o2 < this;
+#endif
+#ifdef C2
+  for outs: o1 < o2 < this;
+#endif
+#ifdef C3
+  for outs: this < o1 < o2;
+#endif
+#ifdef C4
+  for outs: this < o1 < o2;
+#endif
+#ifdef C5
+  for outs: this < o2 < o1;
+#endif
+#ifdef C6
+  for outs: this < o2 < o1;
+#endif
+};
+}
+
+class Emit1 {
+
+public Emit1(int _x, Signal<int> s) {
+  x = _x;
+  oute = s;
+  o3 = new Emit2(x+10,s);
+  o4 = new Emit2(x+20,oute);
+  active { emit oute(x); emit pe1(x); emit oute(x+1); };
+};
+
+Signal<int> oute;
+Signal<int> pe1  = new Signal<int>(new SimOutput());
+
+Emit2 o3;
+Emit2 o4;
+
+int x;
+
+precedence {
+#ifdef C1
+  for oute: this < o3 < o4;
+#endif
+#ifdef C2
+  for oute: this < o4 < o3;
+#endif
+#ifdef C3
+  for oute: this < o3 < o4;
+#endif
+#ifdef C4
+  for oute: this < o4 < o3;
+#endif
+#ifdef C5
+  for oute: this < o3 < o4;
+#endif
+#ifdef C6
+  for oute: this < o4 < o3;
+#endif
+};
+}
+
+class Emit2 {
+
+public Emit2(int _y, Signal<int> s) {
+  y = _y;
+  outf = s;
+  active { emit outf(y); emit pe2(y); emit outf(y+1); };
+};
+
+Signal<int> outf;
+Signal<int> pe2  = new Signal<int>(new SimOutput());
+int y;
+
+}

@@ -1,0 +1,79 @@
+class PulseWidthModulationExpanded {
+
+  static final int high = 5;
+  static final int  low = 15;
+
+  Sensor    start = new Sensor(new SimInput());
+  Sensor    clock = new Sensor(new SimInput());
+  
+  Signal<boolean> wave = new Signal<boolean>(new SimOutput());
+
+  Signal toHighPhase = new Signal();
+  Signal  toLowPhase = new Signal();
+
+  public PulseWidthModulationExpanded () {
+    active {
+// tex_start pulse-width-modulation2
+[[ await ?start;         // reactive code of the constructor ...
+   emit toHighPhase;     // ... of the configuration class ...
+   loop {                // ... PulseWidthModulation
+      await ?toHighPhase;
+      emit wave(true);
+      next;
+      await ?toLowPhase;
+      emit wave(false);
+      next;
+   };
+|| loop {                  // reactive code related the ...
+      await ?toHighPhase;  // ... Counter object highTimer
+
+      resetHigh();
+      next;
+      cancel {
+        loop {
+          await (?clock);
+          decrHigh();
+          next;
+        };
+      } when (isElapsedHigh()) {}; 
+      emit toLowPhase; 
+    };
+|| loop {                 // reactive code related the ...
+      await ?toLowPhase;  // ... Counter object lowTimer
+      resetLow();
+      next;
+      cancel {
+        loop {
+          await (?clock);
+          decrLow();
+    next;
+        };
+      } when (isElapsedLow()) {}; 
+      emit toHighPhase; 
+    };
+]];
+// tex_end pulse-width-modulation2
+    };
+  };
+
+  int latchHigh = high;
+  int counterHigh;
+
+  void        resetHigh() { counterHigh = latchHigh; };  
+  void         decrHigh() { if (counterHigh > 0) { counterHigh--; }; };  
+  boolean isElapsedHigh() { return (counterHigh == 0); };
+
+  int latchLow = low;
+  int counterLow;
+
+  void        resetLow() { counterLow = latchLow; };  
+  void         decrLow() { if (counterLow > 0) { counterLow--; }; };  
+  boolean isElapsedLow() { return (counterLow == 0); };
+
+  precedence {
+      resetHigh()     < resetLow();
+      decrHigh()      < decrLow();
+      isElapsedHigh() < decrLow();
+  };
+}
+

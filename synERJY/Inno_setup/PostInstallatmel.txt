@@ -1,0 +1,28 @@
+Check the setup using the program McuBase
+------------------------------------------
+
+1. load the project McuBase 
+         $SE_HOME/target/atmega162/examples
+        
+2. Press the 'Build' button    
+
+   If compilation fails, probably WinAVR may not properly installed.
+   Check the environment variables.
+
+3. Connect to the evaluation board by a parallel cable
+   Press the 'Upload' button	
+
+   If uploading fails the parallel port may not be properly set.
+   - make sure that the parallel port has read/write permission
+   - Open 'Edit->Preferences' of the synERJY console, and try
+     the choices under 'lpd-port'
+
+4. Testing  the setup
+   Connect the serial cable between com1 of your pc and the device. 
+   Open a Hyperterminal connection with speed 115200 bits per second
+  
+   within the Hyperterminal
+       - the sequence "TFTFTFT..." is generated
+       - For every character input its echo is returned.
+
+In case of failure, please email axel.poigne@ais.fraunhofer.de

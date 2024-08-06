@@ -1,0 +1,44 @@
+class Rc {
+
+public Rc () {
+    active { b(); };
+};
+
+Sensor INCLUDE_P = new Sensor(new SimInput());
+Sensor INCLUDE_S = new Sensor(new SimInput());
+Sensor EXCLUDE_P = new Sensor(new SimInput());
+Sensor EXCLUDE_S = new Sensor(new SimInput());
+
+Signal<bool> P_INCLUDED = new Signal<bool>(new SimOutput());
+Signal<bool> S_INCLUDED = new Signal<bool>(new SimOutput());
+
+
+#ifdef T1
+// trace
+//              -> P_INCLUDED(false) S_INCLUDED(false)
+//              -> P_INCLUDED(false) S_INCLUDED(false)
+// INCLUDE_P    -> P_INCLUDED(true) S_INCLUDED(false)
+//              -> P_INCLUDED(true) S_INCLUDED(false)
+// INCLUDE_S    -> P_INCLUDED(true) S_INCLUDED(true)
+//              -> P_INCLUDED(true) S_INCLUDED(true)
+// EXCLUDE_S    -> P_INCLUDED(true) S_INCLUDED(false)
+//              -> P_INCLUDED(true) S_INCLUDED(false)
+// INCLUDE_S    -> P_INCLUDED(true) S_INCLUDED(true)
+// EXCLUDE_P    -> P_INCLUDED(false) S_INCLUDED(true)
+//              -> P_INCLUDED(false) S_INCLUDED(true)
+// EXCLUDE_S    -> P_INCLUDED(false) S_INCLUDED(false)
+//              -> P_INCLUDED(false) S_INCLUDED(false)
+//
+
+private void b () {
+   sustain {|
+    P_INCLUDED := false ->
+                  ?INCLUDE_P || pre(P_INCLUDED) && ! ?EXCLUDE_P;
+    S_INCLUDED := false ->
+                   ?INCLUDE_S || pre(S_INCLUDED) && ! ?EXCLUDE_S;
+   |};
+};
+
+#endif
+
+} //end class Rc

@@ -1,0 +1,67 @@
+// test-flags O = None true, E = data true
+class SingleLine {
+
+static final time timing = 300msec;
+
+public SingleLine () {
+   active {
+// tex_start train-with-priority1
+      loop {
+          [[ if (?leftTrainWaiting && ! ?rightTrainWaiting ) {
+                if ($priority) {
+                    next; emit priority(false); 
+                } else {
+                    next; emit priority(true);
+                };
+             };
+          || if ( ($priority || !?rightTrainWaiting)   
+                   && ?isLineFree && ?leftTrainWaiting ) {
+                 emit leftPointingToIn;
+                 emit rightPointingToOut;
+                 await (?leftPointingIsIn && 
+                        ?rightPointingIsOut);
+                 emit leftSignalToGreen;
+                 await (! ?isLineFree);
+                 emit leftSignalToRed;
+             }; 
+          || if ( ! ( $priority || ?leftTrainWaiting)  
+                  && ?isLineFree && ?rightTrainWaiting ) {
+                 emit rightPointingToIn;
+                 emit leftPointingToOut;
+                 await (?rightPointingIsIn && 
+                        ?leftPointingIsOut);
+                 emit rightSignalToGreen;
+                 await (! ?isLineFree);
+                 emit rightSignalToRed;
+               };
+          ]];    
+          next;
+      };
+   }; 
+};
+// tex_end train-with-priority2
+
+Sensor isLineFree = new Sensor(new SimInput());
+
+Sensor  leftTrainWaiting = new Sensor(new SimInput());
+Sensor rightTrainWaiting = new Sensor(new SimInput());
+
+Sensor   leftPointingIsIn = new Sensor(new SimInput());
+Sensor  leftPointingIsOut = new Sensor(new SimInput());
+Sensor  rightPointingIsIn = new Sensor(new SimInput());
+Sensor rightPointingIsOut = new Sensor(new SimInput());
+
+Signal  leftPointingToOut = new Signal(new SimOutput());
+Signal   leftPointingToIn = new Signal(new SimOutput());
+Signal rightPointingToOut = new Signal(new SimOutput());
+Signal  rightPointingToIn = new Signal(new SimOutput());
+
+Signal  leftSignalToGreen = new Signal(new SimOutput());
+Signal    leftSignalToRed = new Signal(new SimOutput());
+Signal rightSignalToGreen = new Signal(new SimOutput());
+Signal   rightSignalToRed = new Signal(new SimOutput());
+
+Signal<boolean>   priority 
+    = new Signal<boolean>(new SimOutput());
+}
+

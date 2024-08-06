@@ -1,0 +1,91 @@
+// tex_start blink4-input-button
+class InputButton implements Input {
+  public InputButton(String s) { name = s; };
+  String name;
+
+  public boolean new_val() { return new_val(name); };
+
+  private native("getPresence") boolean new_val(String _name);
+}
+// tex_end
+
+// tex_start blink4-output-led
+class LedOutput implements Output {
+  public LedOutput(String s) { name = s; };
+  String name;
+
+  public void put_val() { put_val(name); return; };
+
+  native("printStdout") void put_val(String s);
+}
+// tex_end
+
+class Blink4 {
+  static final time timing = 0sec; // chain the instants, i.e. no delay ...
+
+  public Blink4 () {
+    active {toggleLeds ();};
+  };
+  
+// tex_start blink4-read-input
+  static native("readInput")   boolean read_input();
+// tex_end
+
+  // different methods to attach callback objects to visible signals:
+// tex_start blink4-select
+  InputButton selbut = new InputButton("select");
+  Sensor select = new Sensor(selbut);
+// tex_end
+
+// tex_start blink4-toggle
+  Sensor toggle = new Sensor(new InputButton("toggle"));
+// tex_end
+  LedOutput greenout = new LedOutput("green");
+  Signal green_on    = new Signal(greenout);
+// tex_start blink4-red-on
+  static native("printStdout") void    print_stdout(String s);
+  Signal red_on   =
+         new Signal(
+           new Output(){
+             public void put_val(){print_stdout("red");};
+           }
+         );
+// tex_end
+  // the reactive behavior as textual automaton
+// tex_start blink4-rct
+  void toggleLeds () {
+    automaton {
+      init { next state select_red; };
+
+      state select_red
+        do { automaton {
+               init { next state red_on; };
+
+               state red_on
+               during { emit red_on; }
+               when (?toggle) { next state red_off; };
+
+               state red_off
+               when (?toggle) { next state red_on; };
+             };
+           }
+        when (?select) { next state select_green; };
+
+      state select_green
+        do { automaton {
+               init { next state green_on; };
+
+               state green_on
+               during { emit green_on; }
+               when (?toggle) { next state green_off; };
+
+               state green_off
+               when (?toggle) { next state green_on; };
+             };
+           }
+        when (?select) { next state select_red; };
+    };
+  };
+// tex_ends
+}
+

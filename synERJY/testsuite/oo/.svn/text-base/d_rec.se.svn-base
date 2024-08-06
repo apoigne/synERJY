@@ -1,0 +1,63 @@
+#ifdef T1
+// trace
+// -> osig(91)
+// -> osig(92)
+// -> osig(93)
+// -> osig(94)
+// -> osig(95)
+// -> osig(96)
+// -> osig(97)
+// -> osig(98)
+// -> osig(99)
+// -> osig(100)
+// -> osig(101)
+// ->
+// ->
+// ->
+// ->
+// ->
+#endif
+
+class Node {
+  int  val;
+  Node nxt;
+
+  private Node(int v, Node t) { val = v; nxt = t; };
+
+  public void set(int v)  { val = v; };
+  public int  get()       { return val; };
+  public void incr()      { val++; };
+
+  public Node push(int v) { return new Node(v,this); };
+  public Node pop()       { return nxt; };
+
+  public static Node create(int v) { return new Node(v,null); };
+}
+
+class Rc {
+
+Signal<int> osig = new Signal<int>(new SimOutput());
+int i;
+Node n;
+
+bool done() { return n == null; };
+void construct(int v) { n = n.push(v); };
+int  destruct()       { int l = n.get(); n = n.pop(); return l; };
+
+public Rc ()
+{
+  n = null;
+  n = Node.create(101);
+  for (i = 100;i > 90;i--) {
+    construct(i);
+  };
+  active{
+    cancel {
+      loop {
+        emit osig(destruct()); next;
+      };
+    } when (done());
+  };
+};
+
+}

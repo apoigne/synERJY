@@ -1,0 +1,97 @@
+#ifdef T1
+// trace
+//  -> oi(0)
+//  -> oi(0)
+//  -> oi(0)
+//  -> oi(0)
+//  -> oi(0)
+//  -> oi(0)
+//  -> oi(8)
+//  -> oi(8)
+//  -> oi(9)
+//  -> oi(10)
+//  -> oi(9)
+//  -> oi(10)
+//  -> od(0.000000)
+//  -> od(0.000000)
+//  -> od(0.000000)
+//  -> od(0.000000)
+//  -> od(0.000000)
+//  -> od(0.000000)
+//  -> od(12345.678900)
+//  -> od(12345.678900)
+//  -> od(6789.123400)
+//  -> od(1267.348900)
+//  -> od(6789.123400)
+//  -> od(1267.348900)
+//  -> oi(12345)
+//  -> oi(12345)
+//  -> od(8.000000)
+//  -> od(8.000000)
+//  ->
+#endif
+
+class Store<T> {
+public Store() {};
+public  T x;
+public void putx(T p) { x = p; };
+public T getx() { return x; };
+}
+
+class SubStore<T> extends Store<T> {
+public SubStore() { super(); };
+public  T y;
+public void puty(T p) { y = p; };
+public T gety() { return y; };
+}
+
+class Rc {
+  Store<int> i;
+  Store<double> d;
+
+  SubStore<int> si;
+  SubStore<double> sd;
+
+  Signal<int> oi = new Signal<int>(new SimOutput());
+  Signal<double> od = new Signal<double>(new SimOutput());
+
+  void emit_i () {
+      emit oi(i.x); next;
+      emit oi(i.getx()); next;
+      emit oi(si.x); next;
+      emit oi(si.y); next;
+      emit oi(si.getx()); next;
+      emit oi(si.gety()); next;
+  };
+
+  void emit_d () {
+      emit od(d.x); next;
+      emit od(d.getx()); next;
+      emit od(sd.x); next;
+      emit od(sd.y); next;
+      emit od(sd.getx()); next;
+      emit od(sd.gety()); next;
+  };
+
+  public Rc() {
+    i = new Store<int>();
+    d = new Store<double>();
+    si = new SubStore<int>();
+    sd = new SubStore<double>();
+    active {
+      emit_i();
+      i.putx(8); si.putx(9); si.puty(10);
+      emit_i();
+      emit_d();
+      d.putx(12345.6789); sd.putx(6789.1234); sd.puty(1267.3489);
+      emit_d();
+      i.putx((int) d.x);
+      emit oi(i.x); next;
+      emit oi((int) d.x); next;
+      i.putx(8);
+      d.putx((double) i.x);
+      emit od(d.x); next;
+      emit od((double) i.x); next;
+    };
+  };
+}

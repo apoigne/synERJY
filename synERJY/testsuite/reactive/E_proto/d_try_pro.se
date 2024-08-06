@@ -1,0 +1,102 @@
+class Rc {
+
+public Rc () {
+    active { };
+};
+
+Sensor ON1 = new Sensor(new SimInput()) ;
+Sensor ON2 = new Sensor(new SimInput()) ;
+Sensor ON3 = new Sensor(new SimInput()) ;
+
+Signal BFRAME1 = new Signal(new SimOutput()) ;
+Signal BFRAME2 = new Signal(new SimOutput()) ;
+Signal BFRAME3 = new Signal(new SimOutput()) ;
+
+private Station st1 = new Station(ON1,BFRAME1);
+private Station st2 = new Station(ON2,BFRAME2);
+private Station st3 = new Station(ON3,BFRAME3);
+
+#ifdef T1
+// trace
+//	->
+// ON1	->
+// 	-> BFRAME1
+//	->
+//	->
+//	->
+//	->
+//	->
+//	->
+//	->
+//	->
+#endif
+
+} //end class Rc
+
+// -------------------------------------------------------------
+
+class Station {
+
+Sensor ON;
+
+Signal MY_BFRAME;
+
+Signal START = new Signal();
+
+public Station (Sensor st_on,Signal st_bframe) {
+    ON = st_on;
+    MY_BFRAME = st_bframe;
+    active {};
+};
+
+private Application     ap = new  Application(ON,START);
+private ProtocolEngine  pe = new ProtocolEngine(START,MY_BFRAME);
+
+
+} //end class Station
+
+// --------------------------------------------------------
+class Application {
+
+public Application (Sensor ap_on,Signal ap_start) {
+    ON    = ap_on;
+    START = ap_start;
+    active { a(); };
+};
+
+Sensor ON ;
+Signal START ;
+
+private void a () {
+
+  loop {
+    await ?ON;
+    emit START;
+    next;
+  };
+
+};
+
+} //end class Application
+
+// ----------------------------------------------------------
+class ProtocolEngine {
+
+Sensor START ;
+Signal MY_BFRAME  ;
+
+public ProtocolEngine (Sensor pe_start,Signal pe_myframe) {
+    START     = pe_start;
+    MY_BFRAME = pe_myframe;
+    active { protocol(); };
+};
+
+private void protocol () {
+  await ?START;
+  next;
+  emit MY_BFRAME;
+  next;
+
+};
+
+} // end class ProtocolEngine

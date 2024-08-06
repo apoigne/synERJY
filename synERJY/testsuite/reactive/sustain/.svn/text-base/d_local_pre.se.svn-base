@@ -1,0 +1,253 @@
+class Rct {
+    static final time timing = 100msec;
+				
+  Sensor start = new Sensor(new SimInput());
+  Sensor stop  = new Sensor(new SimInput());
+  Signal<int> result = new Signal<int>(new SimOutput());
+
+#ifdef T1
+// trace
+//       ->
+// start ->  result(1)
+//       ->  result(2)
+//       ->  result(3)
+//       ->  result(4)
+// stop  ->  result(5)
+//       ->
+//       ->
+// start ->  result(6)
+//       ->  result(7)
+//       ->  result(8)
+       Signal<int> count = new Signal<int>();
+
+public Rct () {
+     active {
+       loop {
+          await ?start;
+          cancel {
+            sustain {|
+               count := pre(count)+1;
+               result := count;
+            |};
+          } when (?stop);
+          next;
+       };
+     };
+  };
+#endif
+
+#ifdef T2
+// trace
+//       ->
+// start ->  result(1)
+//       ->  result(2)
+//       ->  result(3)
+//       ->  result(4)
+// stop  ->  result(5)
+//       ->
+//       ->
+// start ->  result(6)
+//       ->  result(7)
+//       ->  result(8)
+public Rct () {
+     active {
+       Signal<int> count = new Signal<int>();
+       loop {
+          await ?start;
+          cancel {
+            sustain {|
+               count := pre(count)+1;
+               result := count;
+            |};
+          } when (?stop);
+          next;
+       };
+     };
+  };
+#endif
+
+#ifdef T3
+// trace
+//       ->
+// start ->  result(1)
+//       ->  result(2)
+//       ->  result(3)
+//       ->  result(4)
+// stop  ->  result(5)
+//       ->
+//       ->
+// start ->  result(1)
+//       ->  result(2)
+//       ->  result(3)
+public Rct () {
+     active {
+       loop {
+       Signal<int> count = new Signal<int>();
+          await ?start;
+          cancel {
+            sustain {|
+               count := pre(count)+1;
+               result := count;
+            |};
+          } when (?stop);
+          next;
+       };
+     };
+  };
+#endif
+
+#ifdef T4
+// trace
+//       ->
+// start ->  result(1)
+//       ->  result(2)
+//       ->  result(3)
+//       ->  result(4)
+// stop  ->  result(5)
+//       ->
+//       ->
+// start ->  result(1)
+//       ->  result(2)
+//       ->  result(3)
+public Rct () {
+     active {
+       loop {
+          await ?start;
+          cancel {
+            sustain {|
+               Signal<int> count = new Signal<int>();
+               count := pre(count)+1;
+               result := count;
+            |};
+          } when (?stop);
+          next;
+       };
+     };
+  };
+#endif
+
+#ifdef T5
+// trace
+//       ->
+// start ->  result(0)
+//       ->  result(1)
+//       ->  result(2)
+//       ->  result(3)
+// stop  ->  result(4)
+//       ->
+//       ->
+// start ->  result(0)
+//       ->  result(1)
+//       ->  result(2)
+       Signal<int> count = new Signal<int>();
+
+public Rct () {
+     active {
+       loop {
+          await ?start;
+          cancel {
+            sustain {|
+               count := pre(count+1);
+               result := count;
+            |};
+          } when (?stop);
+          next;
+       };
+     };
+  };
+#endif
+
+#ifdef T6
+// trace
+//       ->
+// start ->  result(0)
+//       ->  result(1)
+//       ->  result(2)
+//       ->  result(3)
+// stop  ->  result(4)
+//       ->
+//       ->
+// start ->  result(0)
+//       ->  result(1)
+//       ->  result(2)
+public Rct () {
+     active {
+       Signal<int> count = new Signal<int>();
+       loop {
+          await ?start;
+          cancel {
+            sustain {|
+               count := pre(count+1);
+               result := count;
+            |};
+          } when (?stop);
+          next;
+       };
+     };
+  };
+#endif
+
+#ifdef T7
+// trace
+//       ->
+//       ->
+//       ->
+//       ->
+// start ->  result(0)
+//       ->  result(1)
+//       ->  result(2)
+//       ->  result(3)
+// stop  ->  result(4)
+//       ->
+//       ->
+// start ->  result(0)
+//       ->  result(1)
+//       ->  result(2)
+public Rct () {
+     active {
+       loop {
+       Signal<int> count = new Signal<int>();
+          await ?start;
+          cancel {
+            sustain {|
+               count := pre(count+1);
+               result := count;
+            |};
+          } when (?stop);
+          next;
+       };
+     };
+  };
+#endif
+
+#ifdef T8
+// trace
+//       ->
+// start ->  result(0)
+//       ->  result(1)
+//       ->  result(2)
+//       ->  result(3)
+// stop  ->  result(4)
+//       ->
+//       ->
+// start ->  result(0)
+//       ->  result(1)
+//       ->  result(2)
+public Rct () {
+     active {
+       loop {
+          await ?start;
+          cancel {
+            sustain {|
+               Signal<int> count = new Signal<int>();
+               count := pre(count+1);
+               result := count;
+            |};
+          } when (?stop);
+          next;
+       };
+     };
+  };
+#endif
+
+}

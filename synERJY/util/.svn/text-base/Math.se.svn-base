@@ -1,0 +1,24 @@
+public class Math {
+    private Math () { };
+
+    native public static double  acos(double arg);
+    native public static double  asin(double arg);
+    native public static double  atan(double arg);
+    native public static double  atan2(double arg1, double arg2);
+    native public static double  cos(double arg);
+    native public static double  cosh(double arg);
+    native public static double  exp(double arg);
+    native public static double  fabs(double arg);
+    native public static double  fmod(double arg, double arg2);
+    native public static double  log(double arg);
+    native public static double  log10(double arg);
+    native public static double  pow(double arg, double arg2);
+    native public static double  sin(double arg);
+    native public static double  sinh(double arg);
+    native public static double  tan(double arg);
+    native public static double  tanh(double arg);
+    native public static double  sqrt(double arg);
+    native public static double  ceil(double arg);
+    native public static double  floor(double arg);
+    native public static double  ldexp(double arg, int arg2);
+}

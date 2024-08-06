@@ -1,0 +1,45 @@
+#include "../../target/examples/Refine/refine.se"
+
+#ifdef T1
+// trace begin
+// toggle ->
+//        -> red_led
+//
+// trace begin
+//        ->
+//        -> red_led
+//
+// trace do not toggle
+//        ->
+//        -> red_led
+//        -> red_led
+//        -> red_led
+//        -> red_led
+//        -> red_led
+//        -> red_led
+//
+// trace some toggles
+// toggle ->
+//        -> red_led
+//        -> red_led
+//        -> red_led
+//        -> red_led
+//        -> red_led
+// toggle -> green_led
+//        -> green_led
+//        -> green_led
+// toggle -> red_led
+//        -> red_led
+//        -> red_led
+//        -> red_led
+//
+// trace toggle permanently
+// toggle ->
+// toggle -> green_led
+// toggle -> red_led
+// toggle -> green_led
+// toggle -> red_led
+// toggle -> green_led
+// toggle -> red_led
+//
+#endif

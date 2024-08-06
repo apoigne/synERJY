@@ -1,0 +1,130 @@
+class Fragments {
+
+    public Fragments() { 
+        active {  r(); };
+    };
+
+#ifdef O1
+void r() {
+// tex_start emit-x-y-value
+emit x(1);
+emit y(2);
+// tex_end
+};
+#endif
+
+#ifdef O2
+void r() {
+// tex_start emit-x-next-y-value
+emit x(1);
+next;
+emit y(2);
+// tex_end
+};
+#endif
+
+#ifdef O3
+void r() {
+// tex_start emit-a-b
+emit a;
+emit b;
+// tex_end
+};
+#endif
+
+#ifdef O4
+void r() {
+// tex_start emit-a-next-b
+emit a;
+next;
+emit b;
+// tex_end emit-a-next-b
+};
+#endif
+
+#ifdef O5
+void r() {
+// tex_start valued-emit-x-next-y
+emit x(1);
+next;
+emit y(5);
+next;
+emit x(3);
+// tex_end valued-emit-x-next-y
+};
+#endif
+
+#ifdef O6
+void r() {
+// tex_start conditional
+if (?a) {
+   emit b; 
+} else {
+   next;
+   emit c;
+};
+emit d;
+// tex_end conditional
+};
+#endif
+
+#ifdef O7
+void r() {
+cancel {
+// tex_start loop-emit
+loop {
+   if (?a) {
+      emit b;
+   } else {
+      emit c;
+   };
+   next;
+   emit a;
+};
+// tex_end loop-emit
+} when (true);
+};
+#endif
+
+#ifdef O8
+void r() {
+// tex_start wave-front
+[[ if (?a) { emit b; }; // (1)
+|| emit a;              // (2)
+|| if (?a) { emit c; }; // (3)
+]]; 
+// tex_end wave-front
+};
+#endif
+
+#ifdef O9
+void r() {
+// tex_start coherence
+[[ if (?a) { emit b; }; 
+|| if (?a) { emit c; }; 
+]];
+// tex_end coherence
+};
+#endif
+
+#ifdef O10
+void r() {
+// tex_start delayed-emit
+emit a;
+if (?a) { emit b; };
+next;
+if (?a) { emit c; };
+// tex_end delayed-emit
+};
+#endif
+
+    Signal a = new Signal(new SimOutput());
+    Signal b = new Signal(new SimOutput());
+    Signal c = new Signal(new SimOutput());
+    Signal d = new Signal(new SimOutput());
+
+    Signal<int> x = new Signal<int>(new SimOutput());
+    Signal<int> y = new Signal<int>(new SimOutput());
+   
+}
+

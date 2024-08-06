@@ -1,0 +1,123 @@
+class Xc1 {
+public int a1;
+protected int a2;
+private int a3;
+public[Xc3] int a4;
+}
+
+class Xc2 extends Xc {
+}
+
+class Xc3 extends Xc2 {
+}
+
+class Uc {
+public int b1;
+protected int b2;
+private int b3;
+public[Xc1] int b4;
+public[Xc2] int b5;
+public[Xc3] int b6;
+}
+
+class Tc1
+inherit Xc1;
+
+int ti;
+Uc u;
+
+public tc () {
+  ti := a1;
+  ti := a2;
+#ifdef E1
+  -- [[Access]] a3
+  ti := a3;
+#endif
+#ifdef E2
+  -- [[Access]] a4
+  ti := a4;
+#endif
+  ti := u.b1;
+#ifdef E3
+  -- [[Access]]
+  ti := u.b2;
+#endif
+#ifdef E4
+  -- [[Access]]
+  ti := u.b3;
+#endif
+  ti := u.b4;
+#ifdef E5
+  -- [[Access]]
+  ti := u.b5;
+#endif
+#ifdef E6
+  -- [[Access]]
+  ti := u.b6;
+#endif
+};
+
+}
+
+class Tc2 extends Xc2 {
+int ti;
+Uc u;
+
+public void tc () {
+  ti := a1;
+  ti := a2;
+#ifdef E7
+  -- [[Access]]
+  ti := a3;
+#endif
+#ifdef E8
+  -- [[Access]]
+  ti := a4;
+#endif
+  ti := u.b1;
+#ifdef E9
+  -- [[Access]]
+  ti := u.b2;
+#endif
+#ifdef E10
+  -- [[Access]]
+  ti := u.b3;
+#endif
+  ti := u.b4;
+  ti := u.b5;
+#ifdef E11
+  -- [[Access]]
+  ti := u.b6;
+#endif
+};
+
+}
+
+class Tc3 extends Xc {
+
+ti : int;
+u  : Uc;
+
+tc is do
+  ti := a1;
+  ti := a2;
+#ifdef E12
+  -- [[Access]]
+  ti := a3;
+#endif
+  ti := a4;
+  ti := u.b1;
+#ifdef E13
+  -- [[Access]]
+  ti := u.b2;
+#endif
+#ifdef E14
+  -- [[Access]]
+  ti := u.b3;
+#endif
+  ti := u.b4;
+  ti := u.b5;
+  ti := u.b6;
+end;
+
+end class Tc3

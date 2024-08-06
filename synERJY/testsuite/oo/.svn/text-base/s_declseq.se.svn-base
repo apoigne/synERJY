@@ -1,0 +1,36 @@
+class Rc {
+
+#ifdef E1
+// [[UnknownId]]
+int e1 = i1;
+#endif
+int i1;
+int i2 = 2;
+int i3 = i1 + i2;
+#ifdef E2
+// [[UnknownId]]
+int e2 = i1+i4;
+#endif
+int i4 = i1 + 2;
+
+#ifdef E3
+// [[UnknownId]]
+int f1 = s1;
+#endif
+static int s1;
+static int s2 = 2;
+static int s3 = s1 + s2;
+#ifdef E4
+// [[UnknownId]]
+int f2 = s1+s4;
+#endif
+static int s4 = s1 + 2;
+
+public Rc ()
+{
+  i1 = 5;
+  s1 = 6;
+  active {};
+};
+
+}

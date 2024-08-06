@@ -1,0 +1,200 @@
+class Rc {
+
+public Rc () {
+  active {};
+};
+
+Sensor BUTTON = new Sensor(new SimInput());
+
+Signal CAR_RED   = new Signal(new SimOutput()) ;
+Signal CAR_YEL   = new Signal(new SimOutput()) ;
+Signal CAR_GREEN = new Signal(new SimOutput()) ;
+Signal PED_RED   = new Signal(new SimOutput()) ;
+Signal PED_GREEN = new Signal(new SimOutput()) ;
+
+TrafficLightController tcl 
+   = new TrafficLightController(BUTTON,
+                                CAR_RED,
+                                CAR_YEL,
+                                CAR_GREEN,
+                                PED_RED,
+                                PED_GREEN);
+
+#ifdef T1
+// trace
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+// BUTTON       -> CAR_YEL PED_RED
+//              -> CAR_RED PED_RED
+//              -> CAR_RED PED_GREEN
+//              -> CAR_RED PED_GREEN
+//              -> CAR_RED PED_GREEN
+//              -> CAR_RED PED_RED
+//              -> CAR_RED PED_RED
+//              -> CAR_RED PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//
+// trace
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+// BUTTON       -> CAR_YEL PED_RED
+//              -> CAR_RED PED_RED
+//              -> CAR_RED PED_GREEN
+//              -> CAR_RED PED_GREEN
+//              -> CAR_RED PED_GREEN
+//              -> CAR_RED PED_RED
+// BUTTON       -> CAR_RED PED_RED
+//              -> CAR_RED PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_GREEN PED_RED
+//              -> CAR_YEL PED_RED
+//              -> CAR_RED PED_RED
+//              -> CAR_RED PED_GREEN
+//              -> CAR_RED PED_GREEN
+//              -> CAR_RED PED_GREEN
+//              -> CAR_RED PED_RED
+//
+#endif
+
+} //end class Rc
+
+// -----------------------------------------------------
+class TrafficLightController {
+
+Sensor BUTTON;
+
+Signal C_RED ;
+Signal C_YEL ;
+Signal C_GREEN ;
+Signal P_RED ;
+Signal P_GREEN ;
+
+public TrafficLightController(Sensor xBUTTON,
+                              Signal      xC_RED,
+                              Signal      xC_YEL,
+                              Signal      xC_GREEN,
+                              Signal      xP_RED,
+                              Signal      xP_GREEN ) {
+  BUTTON  = xBUTTON;
+  C_RED   = xC_RED;
+  C_YEL   = xC_YEL;
+  C_GREEN = xC_GREEN;
+  P_RED   = xP_RED;
+  P_GREEN = xP_GREEN;                          
+  active { control (); };
+};
+
+Signal PREP_STOP_CARS = new Signal();
+Signal STOP_CARS = new Signal();
+Signal START_CARS = new Signal();
+Signal START_PEDS = new Signal();
+Signal STOP_PEDS = new Signal();
+Signal REQ_PEND = new Signal();
+
+Signal<int> START = new Signal<int>();
+Signal TIMEOUT = new Signal();
+
+Timer t = new Timer(START,TIMEOUT);
+
+void control () {
+  [[
+     automaton {
+     init { next state s0; };
+     state s0
+       when (?REQ_PEND) { emit PREP_STOP_CARS; next state s1; };
+     state s1
+       when (true) { emit STOP_CARS; next state s2; };
+     state s2
+       when (true) { emit START_PEDS; emit START(3); next state s3; };
+     state s3
+       when (?TIMEOUT) { emit STOP_PEDS; next state s4; };
+     state s4
+       when (true) { emit START(2); next state s5; };
+     state s5
+       when (?TIMEOUT) { emit START_CARS; next state s6; };
+     state s6
+       when (true) { emit START(4); next state s7; };
+     state s7
+       when (?TIMEOUT && ?REQ_PEND) { emit PREP_STOP_CARS; next state s1;
+            } else when (?TIMEOUT) { next state s0; };
+     };
+  ||
+     automaton {
+     init { emit C_GREEN; next state cGreen; };
+     state cGreen
+       when (?PREP_STOP_CARS) { emit C_YEL; next state cYel;
+            } else { emit C_GREEN; next state cGreen; };
+     state cYel
+       when (?STOP_CARS) { emit C_RED; next state cRed;
+            } else { emit C_YEL; next state cYel; };
+     state cRed
+       when (?START_CARS) { emit C_GREEN; next state cGreen;
+            } else { emit C_RED; next state cRed; };
+     };
+  ||
+     automaton {
+
+     init { emit P_RED; next state pRed; };
+
+     state pRed
+       when (?BUTTON) { emit REQ_PEND; emit P_RED; next state wait;
+            } else { emit P_RED; next state pRed; };
+     state wait
+       when (?START_PEDS) { emit P_GREEN; next state pGreen;
+            } else {  emit REQ_PEND; emit P_RED; next state wait; };
+
+     state pGreen
+       when (?STOP_PEDS) { emit P_RED; next state pRed;
+            } else { emit P_GREEN; next state pGreen; };
+     };
+  ]];
+};
+
+} //end class  TrafficLightController
+
+// ------------------------------------------------------
+
+class Timer {
+
+Sensor<int> START ;
+Signal           TO ;
+
+public Timer (Sensor<int> xSTART,Signal xTO) {
+  START = xSTART;
+  TO    = xTO;
+  active { c1 (); };
+};
+
+Signal<int> TI = new Signal<int>();
+
+private void c1 () {
+  automaton {
+
+    init {
+      next state s1;
+    };
+
+    state s1
+      do { next; sustain {| TI := 0; |};}
+      when (?START) { next state s2;
+    };
+
+    state s2
+      do { next; sustain   {| TI := pre(TI) + 1; |}; }
+      when ($TI == $START) { emit TO; next state s1;
+    };
+
+  };
+};
+
+} //end class Timer

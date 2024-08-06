@@ -1,0 +1,172 @@
+class Rc {
+
+public Rc () {
+    active { a1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+
+Signal O1 = new Signal(new SimOutput());
+Signal O2 = new Signal(new SimOutput());
+
+Sensor<int> II1 = new Sensor<int>(new SimInput());
+
+Signal<int> OI1 = new Signal<int>(new SimOutput());
+Signal<int> OI2 = new Signal<int>(new SimOutput());
+
+private int v1,v2;
+
+void setv1 () {
+  v1 = 0;
+};
+
+void incrv1 () {
+  v1 = v1 + 1;
+};
+
+void setv2 () {
+  v2 = 0;
+};
+
+void incrv2 () {
+  v2 = v2 + 1;
+};
+
+#ifdef T1
+// trace
+//
+//      ->
+//      -> O1 OI1(1)
+//      -> O1 OI1(2)
+//      -> O1 OI1(3)
+// I1   -> O1 OI1(4) OI2(4)
+//      ->
+//
+private void a1 () {
+  cancel {
+    setv1();
+    loop { next; emit O1; incrv1(); emit OI1(v1); };
+  } when (?I1) { emit OI2(v1); };
+};
+#endif
+
+#ifdef T2
+// trace
+//
+//      ->
+//      -> O2 OI1(1)
+//      -> O2 OI1(2)
+//      -> O2 OI1(3)
+//      -> O2 OI1(4)
+// I1   -> O2 OI1(5) OI2(5)
+//      ->
+//
+private void a1 () {
+  cancel {
+    loop { next; emit O2; incrv2(); emit OI1(v2); };
+  } when (?I1) { emit OI2(v2);  };
+};
+#endif
+
+#ifdef T3
+// trace
+//
+//      -> OI2(0)
+//      -> OI2(0)
+//      -> OI2(0)
+// I1   -> O1 OI1(1) OI2(1)
+//      -> OI2(1)
+// I1   -> O1 OI1(2) OI2(2)
+// I1   -> O1 OI1(3) OI2(3)
+//      -> OI2(3)
+//
+private void a1 () {
+  setv1(); emit OI2(v1);
+  next;
+  [[
+    activate {
+      loop {
+         emit O1; incrv1(); l1:: emit OI1(v1); next;  };
+    } when (?I1);
+  ||
+     loop { l2:: emit OI2(v1); next; };
+  ]];
+};
+
+precedence {
+   incrv1() < v1;
+   l1:: < l2::;
+};
+#endif
+
+#ifdef T4
+// trace
+//
+//      -> OI2(0)
+//      -> OI2(0)
+// I1   -> OI2(0)
+// I1   -> O1 OI1(1) OI2(1)
+//      -> OI2(1)
+// I1   -> O1 OI1(2) OI2(2)
+// I1   -> O1 OI1(3) OI2(3)
+//      -> OI2(3)
+//      -> OI2(3)
+//
+// trace
+//
+//      -> OI2(0)
+//      -> OI2(0)
+// I1   -> OI2(0)
+// I1   -> O1 OI1(1) OI2(1)
+// I1   -> O1 OI1(2) OI2(2)
+// I1   -> O1 OI1(3) OI2(3)
+// I1   -> O1 OI1(4) OI2(4)
+//      -> OI2(4)
+//      -> OI2(4)
+//
+private void a1 () {
+  setv1(); emit OI2(v1);
+  [[
+    activate {
+      loop {
+         next; emit O1; incrv1(); l1:: emit OI1(v1);  };
+    } when (?I1);
+  ||
+     loop { next; l2:: emit OI2(v1); };
+  ]];
+};
+
+precedence {
+   incrv1 () < v1;
+   l1:: < l2::;
+};
+#endif
+
+#ifdef T5
+// trace
+//
+//      -> OI1(0)
+//      ->
+//      ->
+// II1(1) -> OI1(1) OI2(1)
+//      ->
+// II1(2) -> OI1(2) OI2(2)
+// II1(0) ->
+// II1(3) -> OI1(3) OI2(3)
+//      ->
+//
+private void a1 () {
+  setv1();
+  emit OI1(v1);
+  loop {
+    incrv1(); next;
+    await ?II1 && $II1 == v1;
+    emit OI1(v1);
+    emit OI2($II1);
+  };
+};
+
+#endif
+
+} //end class Rc

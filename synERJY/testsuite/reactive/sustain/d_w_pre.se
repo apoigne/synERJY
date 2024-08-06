@@ -1,0 +1,408 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+#ifdef T1
+// trace
+//             -> a(1)
+//             -> a(2)
+//             -> a(3)
+//             -> a(4)
+Signal<int> a = new Signal<int>(new SimOutput());
+private void c1 () {
+  sustain {| a := 1 + pre(a); |};
+};
+#endif
+
+#ifdef T2
+// trace
+//             -> a(1)
+//             -> a(2)
+//             -> a(3)
+//             -> a(4)
+Signal<int> a = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {| a := if (true) {pre(a) + 1;} else {0;}; |}; };
+#endif
+
+#ifdef T3
+// trace
+//             -> a(1) b(1)
+//             -> a(2) b(2)
+//             -> a(3) b(3)
+//             -> a(4) b(4)
+Signal<int> a = new Signal<int>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+     a := if (true) {pre(b) + 1;} else {0;};
+     b := a; |};
+};
+#endif
+
+#ifdef T4
+// trace
+//             -> a(1) b(1)
+//             -> a(2) b(2)
+//             -> a(3) b(3)
+//             -> a(4) b(4)
+Signal<int> a = new Signal<int>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+     a := pre(b) + 1;
+     b := a; |};
+};
+#endif
+
+#ifdef T5
+// trace
+//             -> a(1) b(1)
+//             -> a(2) b(2)
+//             -> a(3) b(3)
+//             -> a(4) b(4)
+Signal<int> a = new Signal<int>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+    a := pre(b) + 1;
+    b := if (true) {a;} else {0;}; |};
+};
+#endif
+
+#ifdef T6
+// trace
+//             -> a(1) b(1)
+//             -> a(2) b(2)
+//             -> a(3) b(3)
+//             -> a(4) b(4)
+Signal<int> a = new Signal<int>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+     a := if (true) {pre(b) + 1;} else {0;};
+     b := if (true) {a;}          else {0;}; |};
+};
+#endif
+
+#ifdef T7
+// trace
+//             -> a(0) b(1)
+//             -> a(1) b(2)
+//             -> a(2) b(3)
+//             -> a(3) b(4)
+Signal<int> a = new Signal<int>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+    a := 0 -> pre(b);
+    b := if (true) {a + 1;} else {0;}; |};
+};
+#endif
+
+#ifdef T8
+// trace
+//             -> a(1)
+//             -> a(2)
+//             -> a(3)
+//             -> a(4)
+Signal<int> a = new Signal<int>(new SimOutput());
+private void c1 () {
+  sustain {| a := 1 -> if (true) {pre(a) + 1;} else {0;}; |};
+};
+#endif
+
+#ifdef T9
+// trace
+//             -> a(0) b(0) c(0)
+//             -> a(1) b(0) c(0)
+//             -> a(2) b(1) c(0)
+//             -> a(3) b(2) c(1)
+//             -> a(4) b(3) c(2)
+Signal<int> a = new Signal<int>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+Signal<int> c = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+      a := 0 -> pre(a) + 1;
+      b := pre(a);
+      c := pre(b);
+  |};
+};
+#endif
+
+#ifdef T10
+// trace
+//             -> a(1) b(0)
+//             -> a(1) b(1)
+//             -> a(2) b(1)
+//             -> a(2) b(2)
+//             -> a(3) b(2)
+//             -> a(3) b(3)
+//             -> a(4) b(3)
+Signal<int> a = new Signal<int>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+private void c1 () {
+  sustain {|
+      a := 1 + pre(b);
+      b := pre(a);
+  |};
+};
+#endif
+
+#ifdef T12
+// trace
+//             -> a(0) b(0)
+//             -> a(1) b(0)
+//             -> a(2) b(1)
+//             -> a(3) b(2)
+Signal<int> a = new Signal<int>(new SimOutput());
+Signal<int> b = new Signal<int>(new SimOutput());
+private void c1 () {
+   [[ c2(); || c3(); ]];
+};
+
+private void c2 () {
+  sustain {|
+      a := 0 -> 1 + pre(a);
+  |};
+};
+
+private void c3 () {
+  sustain {|
+      b := pre(a);
+  |};
+};
+#endif
+
+#ifdef T21
+// trace
+//             -> a(true)
+//             -> a(false)
+//             -> a(true)
+//             -> a(false)
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+private void c1 () {
+  sustain {| a := ! pre(a); |};
+};
+#endif
+
+#ifdef T22
+// trace
+//             -> a(true)
+//             -> a(false)
+//             -> a(true)
+//             -> a(false)
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+
+private void c1 () {
+  sustain {| a := if (true) {! pre(a);} else {true;}; |}; };
+#endif
+
+#ifdef T23
+// trace
+//             -> a(true) b(true)
+//             -> a(false) b(false)
+//             -> a(true) b(true)
+//             -> a(false) b(false)
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+Signal<boolean> b = new Signal<boolean>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+     a := if (true) {! pre(b);} else {true;};
+     b := a; |};
+};
+#endif
+
+#ifdef T24
+// trace
+//             -> a(true) b(true)
+//             -> a(false) b(false)
+//             -> a(true) b(true)
+//             -> a(false) b(false)
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+Signal<boolean> b = new Signal<boolean>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+     a := ! pre(b);
+     b := a; |};
+};
+#endif
+
+#ifdef T25
+// trace
+//             -> a(true) b(true)
+//             -> a(false) b(false)
+//             -> a(true) b(true)
+//             -> a(false) b(false)
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+Signal<boolean> b = new Signal<boolean>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+    a := ! pre(b);
+    b := if (true) {a;} else {true;}; |};
+};
+#endif
+
+#ifdef T26
+// trace
+//             -> a(true) b(true)
+//             -> a(false) b(false)
+//             -> a(true) b(true)
+//             -> a(false) b(false)
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+Signal<boolean> b = new Signal<boolean>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+     a := if (true) {! pre(b);} else {true;};
+     b := if (true) {a;}  else {true;}; |};
+};
+#endif
+
+#ifdef T27
+// trace
+//             -> a(true) b(false)
+//             -> a(false) b(true)
+//             -> a(true) b(false)
+//             -> a(false) b(true)
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+Signal<boolean> b = new Signal<boolean>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+    a := true -> pre(b);
+    b := if (true) {! a;} else {true;}; |};
+};
+#endif
+
+#ifdef T28
+// trace
+//             -> a(false)
+//             -> a(true)
+//             -> a(false)
+//             -> a(true)
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+private void c1 () {
+  sustain {| a := false -> if (true) {! pre(a);} else {true;}; |};
+};
+#endif
+
+#ifdef T29
+// trace
+//             -> a(true) b(false) c(false)
+//             -> a(false) b(true) c(false)
+//             -> a(true) b(false) c(true)
+//             -> a(false) b(true) c(false)
+//             -> a(true) b(false) c(true)
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+Signal<boolean> b = new Signal<boolean>(new SimOutput());
+Signal<boolean> c = new Signal<boolean>(new SimOutput());
+
+private void c1 () {
+  sustain {|
+      a := true -> ! pre(a);
+      b := pre(a);
+      c := pre(b);
+  |};
+};
+#endif
+
+#ifdef T31
+// trace
+//             -> a(true)  b(false)
+//             -> a(false) b(true)
+//             -> a(true)  b(false)
+//             -> a(false) b(true)
+Signal<boolean> a = new Signal<boolean>(new SimOutput());
+Signal<boolean> b = new Signal<boolean>(new SimOutput());
+private void c1 () {
+   [[ c2(); || c3(); ]];
+};
+
+private void c2 () {
+  sustain {|
+      a := ! pre(a);
+  |};
+};
+
+private void c3 () {
+  sustain {|
+      b := pre(a);
+  |};
+};
+#endif
+
+#ifdef T32
+// trace
+// a(true)  b(true)   -> c(false) d(false)
+// a(false) b(true)   -> c(true)  d(true)
+// a(true)  b(false)  ->          d(true)
+// a(true)  b(true)   -> c(false)  d(false)
+// a(true)  b(true)   -> c(true)  d(true)
+Sensor<boolean>    a = new Sensor<boolean>(new SimInput());
+Sensor<boolean>    b = new Sensor<boolean>(new SimInput());
+Signal{b}<boolean> c = new Signal<boolean>(new SimOutput());
+Signal<boolean>    d = new Signal<boolean>(new SimOutput());
+private void c1 () {
+  sustain {|
+     c := (pre(a && (int)5 > 3)) when b;
+     d := current(c);
+  |};
+};
+#endif
+
+#ifdef T33
+// trace
+// a(1)  b(true)   -> c(0) d(0)
+// a(0)  b(true)   -> c(4) d(4)
+// a(1)  b(false)  ->      d(4)
+// a(2)  b(true)   -> c(3) d(3)
+// a(1)  b(true)   -> c(5) d(5)
+Sensor<int>     a = new Sensor<int>(new SimInput());
+Sensor<boolean> b = new Sensor<boolean>(new SimInput());
+Signal{b}<int>  c = new Signal<int>(new SimOutput());
+Signal<int>     d = new Signal<int>(new SimOutput());
+private void c1 () {
+  sustain {|
+     c := pre(a + 3) when b;
+     d := current(c);
+  |};
+};
+#endif
+
+#ifdef T34
+// trace
+// a(1)  b(true)   -> c(0) d(0)
+// a(0)  b(true)   -> c(4) d(4)
+// a(1)  b(true)  ->  c(3) d(3)
+// a(2)  b(true)   -> c(4) d(4)
+// a(1)  b(true)   -> c(5) d(5)
+Sensor<int>     a = new Sensor<int>(new SimInput());
+Sensor<boolean> b = new Sensor<boolean>(new SimInput());
+Signal{b}<int>  c = new Signal<int>(new SimOutput());
+Signal<int>     d = new Signal<int>(new SimOutput());
+private void c1 () {
+  sustain {|
+     c := pre(a + 3) when b;
+     d := current(c);
+  |};
+};
+#endif
+
+}
+
+

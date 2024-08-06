@@ -1,0 +1,72 @@
+class Rc {
+
+public Rc () {
+    active { a1(); };
+};
+
+Sensor TEMP_TOO_LOW = new Sensor(new SimInput());
+Sensor TEMP_TOO_HIGH = new Sensor(new SimInput());
+Sensor TEMP_OK = new Sensor(new SimInput());
+
+Signal<int> CONHEAT = new Signal<int>(new SimOutput());
+
+Signal NO_HEATING = new Signal(new SimOutput());
+Signal INCREASE = new Signal(new SimOutput());
+Signal HOLD = new Signal(new SimOutput());
+
+
+#ifdef T1
+// trace
+//
+//                      -> NO_HEATING
+//                      -> CONHEAT(0)
+// TEMP_TOO_LOW         -> CONHEAT(0) INCREASE
+// TEMP_TOO_LOW         -> CONHEAT(10)
+// TEMP_TOO_LOW         -> CONHEAT(20)
+// TEMP_TOO_LOW         -> CONHEAT(30)
+// TEMP_OK              -> CONHEAT(40) HOLD
+// TEMP_OK              -> CONHEAT(40)
+// TEMP_OK              -> CONHEAT(40)
+// TEMP_TOO_LOW         -> CONHEAT(40) INCREASE
+// TEMP_OK              -> CONHEAT(50) HOLD
+// TEMP_TOO_HIGH        -> CONHEAT(50) NO_HEATING
+//                      -> CONHEAT(0)
+//                      -> CONHEAT(0)
+// TEMP_OK              -> CONHEAT(0) HOLD
+// TEMP_OK              -> CONHEAT(0)
+// TEMP_TOO_LOW         -> CONHEAT(0) INCREASE
+// TEMP_OK              -> CONHEAT(10) HOLD
+//                      -> CONHEAT(10)
+//
+
+private void a1 () {
+  automaton {
+
+    init {
+      next state no_heating;
+    };
+
+    state no_heating
+      entry { emit NO_HEATING; }                 // sustain { CONHEAT = 0; };
+      do { next; sustain {| CONHEAT := 0; |}; }
+           when (?TEMP_TOO_LOW) { next state increase; } 
+      else when (?TEMP_OK) { next state hold; };
+
+    state increase
+      entry { emit INCREASE; }
+      do  { next; sustain {| CONHEAT := pre(CONHEAT) + 10;  |};}
+      when (?TEMP_OK) { next state hold; } 
+      else when (?TEMP_TOO_HIGH) { next state no_heating; };
+
+    state hold
+      entry { emit HOLD; }
+      do {next; sustain {| CONHEAT := pre(CONHEAT); |};}
+           when (?TEMP_TOO_LOW) { next state increase; } 
+      else when (?TEMP_TOO_HIGH) { next state no_heating; };
+
+  };
+};
+
+#endif
+
+} //end class Rc

@@ -1,0 +1,63 @@
+#ifdef T1
+// trace
+// -> iout1(206) iout2(206) iout3(2)
+// -> iout3(9)
+// -> iout3(32)
+// -> iout3(69)
+// -> iout3(201)
+// -> iout3(201)
+#endif
+
+class Cls1 {
+public Cls1 (int i) { i1 = i; };
+protected int i1;
+public int get () { return i1; };
+}
+
+class Cls2 extends Cls1 {
+public Cls2 (int i) {super(i+1); i2 = i; };
+protected int i2;
+public int get () { return i1+i2; };
+}
+
+class Rls2 extends Cls2 {
+public Rls2 (Signal<int> iout)
+{
+  super(100);
+  i3 = 5;
+  active{ emit iout(i1+i2+i3); };
+};
+int i3;
+//public int get () { return i1+i2+i3; };
+}
+
+class Rc {
+
+public Rc ()
+{
+   ac = new Cls1 (32);
+   bc = new Cls2 (34);
+   active {
+     emit iout3(a.get()) ; next;
+     emit iout3(b.get()) ; next;
+     emit iout3(ac.get()); next;
+     emit iout3(bc.get()); next;
+     emit iout3(ra.get()); next;
+     emit iout3(rb.get()); next;
+   };
+};
+
+Signal<int> iout1 = new Signal<int>(new SimOutput());
+Signal<int> iout2 = new Signal<int>(new SimOutput());
+Signal<int> iout3 = new Signal<int>(new SimOutput());
+
+Rls2 ra = new Rls2 (iout1);
+Rls2 rb = new Rls2 (iout2);
+
+Cls1 a = new Cls1 (2);
+Cls1 b = new Cls2 (4);
+
+Cls1 ac;
+Cls1 bc;
+
+}

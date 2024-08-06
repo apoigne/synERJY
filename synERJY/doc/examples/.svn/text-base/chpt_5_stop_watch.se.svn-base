@@ -1,0 +1,59 @@
+// test-flags O = None true, E = data true
+class Stopwatch {
+
+static final time timing = 10msec;
+				
+
+Sensor<boolean>   start_stop = new Sensor<boolean>(new SimInput());
+Sensor<boolean> freeze_reset = new Sensor<boolean>(new SimInput());
+
+Signal<long> display_time = new Signal<long>(new SimOutput());
+Signal<boolean>   running = new Signal<boolean>(new SimOutput());
+Signal<boolean>    frozen = new Signal<boolean>(new SimOutput());
+
+public Stopwatch () {
+  active { 
+    sustain {|
+      Signal<long> elapsed_time;
+      Signal<boolean> reset;
+      frozen := false -> if (freeze_reset && pre(running)) {
+                           true;
+                         } else {
+                            if (freeze_reset && pre(frozen)) {
+                               false;
+                            } else {
+                               pre(frozen);
+                            };
+                         };
+      display_time := current(elapsed_time when ! frozen);
+      reset        := freeze_reset && ! pre(! running && ! frozen);
+      simple_stopwatch(start_stop,reset,elapsed_time,running);
+    |};
+  };
+};
+
+
+// tex_start simple_stopwatch
+node simple_stopwatch ( Sensor<bool> _start_stop, 
+                        Sensor<bool> _reset,
+                        Signal<long> _the_time,
+                        Signal<bool> _running
+                      ) {|
+    _the_time := 0 -> if (_running){
+                       pre(_the_time +1);
+                    } else {
+                       if (_reset) {
+                          0;
+                       } else {
+                          pre(_the_time);
+                       };
+                    };
+    _running := false -> if (_start_stop) {
+                           ! pre(_running);
+                        } else {
+                           pre(_running);
+                        };
+|};
+// tex_end simple_stopwatch
+
+}

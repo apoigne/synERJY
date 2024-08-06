@@ -1,0 +1,62 @@
+class Rc {
+
+  public Rc () {
+    a = new Signal();
+    e = new Signal<int>(new SimOutput());
+    o = new Signal<int>(new SimOutput());
+    s = new Signal<int>();
+    active{};
+  };
+
+  Signal a;
+  Signal b = new Signal();
+  Signal d = new Signal(new SimOutput());
+  Signal<int> e;
+  Signal<int> f = new Signal<int>();
+  Signal<int> h = new Signal<int>(new SimOutput());
+  Sensor i = new Signal();
+  Sensor j = new Signal(new SimOutput());
+  Sensor k = new Sensor(new SimInput());
+  Sensor<int> l = new Signal<int>();
+  Sensor<int> m = new Signal<int>(new SimOutput());
+  Sensor<int> n = new Sensor<int>(new SimInput());
+
+  Signal<int> o;
+  Signal<int> p = new Signal<int>();
+  Signal<int> r = new Signal<int>(new SimOutput());
+  Sensor<int> s;
+  Sensor<int> t = new Signal<int>();
+  Sensor<int> v = new Signal<int>(new SimOutput());
+  Sensor<int> u = new Sensor<int>(new SimInput());
+
+#ifdef E1
+// [[ParseError]] invalid modifier for signal decl
+  public Signal x;
+#endif
+
+#ifdef E2
+// [[ParseError]] invalid modifier for signal decl
+  protected Signal x = new Signal();
+#endif
+
+#ifdef E4
+// [[Subtyping]]
+  Signal x = new Signal(new SimInput());
+#endif
+
+#ifdef E5
+// [[Subtyping]]
+  Signal<int> x = new Sensor<int>(new SimInput());
+#endif
+
+#ifdef E6
+// [[Subtyping]]
+  Sensor x = new Sensor(new SimOutput());
+#endif
+
+#ifdef E7
+// [[Subtyping]]
+  Signal<int> x = new Sensor<int>(new SimInput());
+#endif
+
+}

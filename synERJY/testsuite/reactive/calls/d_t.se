@@ -1,0 +1,61 @@
+class Rc {
+
+public Rc () {
+    active { c1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+
+Signal O1 = new Signal(new SimOutput());
+
+Sensor<int> II1 = new Sensor<int>(new SimInput());
+
+Signal<int> OI1 = new Signal<int>(new SimOutput());
+Signal<int> OI2 = new Signal<int>(new SimOutput());
+
+private int v;
+
+int set (int i) {
+  v = i;
+  return v;
+};
+
+int incr (int i) {
+  v = v + 1;
+  return v;
+};
+
+#ifdef T1
+// trace
+//      ->
+//      ->
+// II1(10) -> OI1(10)
+//         -> OI1(11)
+//      ->
+//      ->
+//
+private void c1 () {
+    await ?II1;
+    emit OI1(set($II1)); next;
+    emit OI1(incr(1)); next;
+  };
+#endif
+
+#ifdef T2
+// trace
+//      ->
+//      ->
+// II1(10) -> OI1(10) OI2(10)
+//         -> OI1(11) OI2(11)
+//      ->
+//      ->
+//
+private void c1 () {
+    await ?II1;
+    emit OI1(set($II1)); emit OI2(v); next;
+    emit OI1(incr(1)); emit OI2(v); next;
+  };
+#endif
+
+} //end class Rc

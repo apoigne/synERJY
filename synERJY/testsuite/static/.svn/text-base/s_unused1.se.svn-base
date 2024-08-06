@@ -1,0 +1,20 @@
+class Rc {
+
+public Rc () {
+  active { c1(); };
+};
+
+Signal osig1 = new Signal(new SimOutput());
+Signal osig2 = new Signal(new SimOutput());
+
+private void c1 () {
+    next;
+#ifdef E1
+// [[UnusedCode]]
+    emit osig1;
+    halt;
+    emit osig2;
+#endif
+};
+
+} //end class Rc

@@ -1,0 +1,179 @@
+class Constraint {
+public Constraint() {};
+public void f() {};
+}
+
+class ConstraintSub1 extends Constraint {
+public ConstraintSub1() { super(); };
+public void g() {};
+}
+
+class ConstraintSub2 extends Constraint {
+public ConstraintSub2() { super(); };
+public void h() {};
+}
+
+class ConstraintSub1Sub extends ConstraintSub1 {
+public ConstraintSub1Sub() { super(); };
+public void k() {};
+}
+
+class ConstraintSub2Sub extends ConstraintSub2 {
+public ConstraintSub2Sub() { super(); };
+public void l() {};
+}
+
+class Pair<T implements ConstraintSub1,U implements ConstraintSub2> {
+
+public Pair() {};
+
+public  T x;
+private U y;
+
+public void putx(T p) { x.f(); x.g(); p.f(); p.g(); x = p; };
+public void puty(U p) { y.f(); y.h(); p.f(); p.h(); y = p; };
+
+public T getx() { return x; };
+public U gety() { return y; };
+
+}
+
+class UsePair {
+
+public UsePair() {};
+
+Pair<ConstraintSub1Sub,ConstraintSub2Sub> s1ss2s;
+Pair<ConstraintSub1,ConstraintSub2>       s1s2;
+Pair<ConstraintSub1Sub,ConstraintSub2>    s1ss2;
+
+ConstraintSub1Sub s1s;
+ConstraintSub2Sub s2s;
+ConstraintSub1 s1;
+ConstraintSub2 s2;
+
+public void test() {
+  s1ss2s.putx(s1s);
+  s1ss2s.puty(s2s);
+#ifdef E1
+// [[Subtyping]]
+  s1ss2s.putx(s1);
+#endif
+#ifdef E2
+// [[Subtyping]]
+  s1ss2s.puty(s2);
+#endif
+#ifdef E3
+// [[Subtyping]]
+  s1ss2s.putx(s2s);
+#endif
+#ifdef E4
+// [[Subtyping]]
+  s1ss2s.puty(s1s);
+#endif
+  s1s = s1ss2s.getx();
+  s1  = s1ss2s.getx();
+  s2s = s1ss2s.gety();
+  s2  = s1ss2s.gety();
+#ifdef E5
+// [[Subtyping]]
+  s1s = s1ss2s.gety();
+#endif
+#ifdef E6
+// [[Subtyping]]
+  s1  = s1ss2s.gety();
+#endif
+  s1ss2s.putx(s1ss2s.getx());
+  s1ss2s.puty(s1ss2s.gety());
+#ifdef E7
+// [[Subtyping]]
+  s1ss2s.putx(s1ss2s.gety());
+#endif
+#ifdef E8
+// [[Subtyping]]
+  s1ss2s.puty(s1ss2s.getx());
+#endif
+
+  s1s2.putx(s1s);
+  s1s2.puty(s2s);
+  s1s2.putx(s1);
+  s1s2.puty(s2);
+#ifdef E9
+// [[Subtyping]]
+  s1s = s1s2.getx();
+#endif
+  s1  = s1s2.getx();
+#ifdef E10
+// [[Subtyping]]
+  s2s = s1s2.gety();
+#endif
+  s2  = s1s2.gety();
+#ifdef E11
+// [[Subtyping]]
+  s1s = s1s2.gety();
+#endif
+#ifdef E12
+// [[Subtyping]]
+  s1  = s1s2.gety();
+#endif
+  s1s2.putx(s1s2.getx());
+  s1s2.puty(s1s2.gety());
+#ifdef E13
+// [[Subtyping]]
+  s1s2.putx(s1s2.gety());
+#endif
+#ifdef E14
+// [[Subtyping]]
+  s1s2.puty(s1s2.getx());
+#endif
+
+  s1ss2.putx(s1s);
+  s1ss2.puty(s2s);
+#ifdef E15
+// [[Subtyping]]
+  s1ss2.putx(s1);
+#endif
+  s1ss2.puty(s2);
+#ifdef E16
+// [[Subtyping]]
+  s1ss2.putx(s2s);
+#endif
+#ifdef E17
+// [[Subtyping]]
+  s1ss2.puty(s1s);
+#endif
+  s1s = s1ss2.getx();
+  s1  = s1ss2.getx();
+#ifdef E18
+// [[Subtyping]]
+  s2s = s1ss2.gety();
+#endif
+  s2  = s1ss2.gety();
+#ifdef E19
+// [[Subtyping]]
+  s1s = s1ss2.gety();
+#endif
+#ifdef E20
+// [[Subtyping]]
+  s1  = s1ss2.gety();
+#endif
+  s1ss2.putx(s1ss2.getx());
+  s1ss2.puty(s1ss2.gety());
+#ifdef E21
+// [[Subtyping]]
+  s1ss2.putx(s1ss2.gety());
+#endif
+#ifdef E22
+// [[Subtyping]]
+  s1ss2.puty(s1ss2.getx());
+#endif
+
+};
+
+}
+
+class Rc {
+   public Rc() {
+      active {};
+   };
+}
+

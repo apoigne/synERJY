@@ -1,0 +1,54 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+Sensor<bool> IB1 = new Sensor<bool>(new SimInput());
+Signal<bool> OB1 = new Signal<bool>(new SimOutput());
+
+Signal{?IB1}<bool> FB1 = new Signal<bool>(new SimOutput());
+
+//
+// bool output flow, clock: presence of bool input Signal
+//
+
+#ifdef T1
+// trace
+//              -> OB1(false)
+//              -> OB1(false)
+// IB1(false)   -> FB1(true) OB1(true)
+// IB1(false)   -> FB1(true) OB1(true)
+//              -> OB1(true)
+// IB1(true)    -> FB1(true) OB1(true)
+//              -> OB1(true)
+//
+private void c1 () {
+   [[ sustain {| FB1 := (true when ?IB1) -> (?IB1 when ?IB1); |};
+   || loop { emit OB1($FB1); next; };
+   ]];
+  };
+
+// was ist zuerst: schreiben des flows oder lesen ???
+#endif
+
+#ifdef T2
+// trace
+//              -> OB1(false)
+// IB1(false)   -> FB1(true) OB1(true)
+//              -> OB1(true)
+// IB1(false)   -> FB1(false) OB1(false)
+//              -> OB1(false)
+// IB1(true)    -> FB1(true) OB1(true)
+//              -> OB1(true)
+//
+private void c1 () {
+   [[ sustain {| FB1 := (true when ?IB1) -> ($IB1 when ?IB1); |};
+   || loop { emit OB1($FB1); next; };
+   ]];
+  };
+#endif
+
+} //end class Rc
+

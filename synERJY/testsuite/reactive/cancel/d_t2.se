@@ -1,0 +1,157 @@
+class Rc {
+
+public Rc () {
+    active { c1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+Sensor I3 = new Sensor(new SimInput());
+Sensor I4 = new Sensor(new SimInput());
+
+Signal O1 = new Signal(new SimOutput());
+Signal O2 = new Signal(new SimOutput());
+Signal O3 = new Signal(new SimOutput());
+Signal O4 = new Signal(new SimOutput());
+Signal O5 = new Signal(new SimOutput());
+Signal O6 = new Signal(new SimOutput());
+
+//
+// cancel S1 (S2) when THENELSE };
+//
+// THENELSE == signal
+//
+// S1 == loop {, S2 == loop {       FEHLT
+// S1 == activate               FEHLT
+// S1 == cancel                 FEHLT
+// S1 == cancel                 FEHLT
+// S1 == par, S2 == loop {
+// S1 == par, S2 == cancel
+// S1 == par, S2 == activate loop {
+
+#ifdef T1
+// trace
+//      -> O6
+//      -> O1 O2
+//      -> O1 O2
+//      -> O1 O2
+// I1   -> O1 O2 O3
+//      -> O6
+//      ->
+//      ->
+//
+// trace
+//      -> O6
+//      -> O1 O2
+//      -> O1 O2
+//      -> O1 O2
+// I1 I2 I3 -> O1 O2 O3
+//      -> O6
+//      ->
+//      ->
+//
+// trace
+//      -> O6
+//      -> O1 O2
+//      -> O1 O2
+//      -> O1 O2
+// I2 I3 -> O1 O2 O4
+//      -> O6
+//      ->
+//      ->
+//
+// trace
+//      -> O6
+//      -> O1 O2
+//      -> O1 O2
+//      -> O1 O2
+// I3   -> O1 O2 O5
+//      -> O6
+//      ->
+//      ->
+//
+private void c1 () {
+   emit O6;
+   cancel {
+     [[
+       loop { next; emit O1; };
+     ||
+       loop { next; emit O2; };
+     ]];
+   } when (?I1) { emit O3;
+   } else when (?I2) { emit O4;
+   } else when (?I3) { emit O5;
+   };
+    next; emit O6;
+  };
+#endif
+
+#ifdef T2
+// trace
+//      -> O6 O2
+//      -> O1 O2
+//      -> O1 O2
+// I2   -> O1 O2 O3
+//      ->
+//      ->
+//
+// trace
+//      -> O6 O2
+//      -> O1 O2
+// I1   -> O1
+//      -> O1
+//      -> O1
+// I2   -> O1 O3
+//      ->
+//      ->
+//
+// trace
+// I1 I2 -> O6 O3
+//      ->
+// I1   ->
+//      ->
+//      ->
+//
+private void c1 () {
+   emit O6;
+   cancel {
+      [[
+        loop { next; emit O1; };
+      ||
+        cancel strongly {
+          loop { emit O2; next; };
+        } when (?I1) {};
+      ]];
+    } when (?I2) {};
+    emit O3;
+  };
+#endif
+
+#ifdef T3
+// trace
+//      -> O6
+//      -> O1
+//      -> O1
+//      -> O1
+// I1   -> O1 O2
+// I1   -> O1 O2
+//      -> O1
+// I1   -> O1 O2
+// I1 I2 -> O1 O2
+//      -> O3
+//      ->
+//
+private void c1 () {
+   emit O6;
+   cancel {
+      [[
+        loop { next; emit O1; };
+      ||
+        activate { loop { emit O2; next; };  } when (?I1);
+      ]];
+    } when (?I2) {};
+    next; emit O3;
+  };
+#endif
+
+} //end class Rc

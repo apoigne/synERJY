@@ -1,0 +1,79 @@
+class Ac
+int ai;
+}
+
+class Bc
+inherit
+  Ac;
+
+int bi;
+}
+
+class Cc
+inherit
+  Bc;
+
+int ci;
+}
+
+class Xc1 [ _T; _U < Ac; _V < Bc ]
+int ci;
+_T t1;
+_U u1;
+_V v1;
+Ac a1;
+Bc b1;
+}
+
+class Xc2
+int di;
+Ac a2;
+Bc b2;
+}
+
+class Xc3 [ _T; _U < Ac; _V < Bc ]
+inherit
+  Xc1; Xc2;
+}
+
+class Tc [ _T; _X < Ac; _Y < Bc ]
+_T aa;
+_X le_Ac;
+_Y le_Bc;
+Ac ac;
+Bc bc;
+int ai;
+
+xc11 : Xc1 [int,Bc,Cc];
+xc12 : Xc1 [int,Cc,Cc];
+xc13 : Xc1 [int,_X,Cc];
+xc14 : Xc1 [int,_Y,Cc];
+xc15 : Xc1 [int,_Y,_Y];
+
+yc11 : Xc3 [int,Bc,Cc];
+yc12 : Xc3 [int,Cc,Cc];
+yc13 : Xc3 [int,_X,Cc];
+yc14 : Xc3 [int,_Y,Cc];
+yc15 : Xc3 [int,_Y,_Y];
+
+tc1 is
+do
+    ai = xc11.u1.ai; ai = xc11.v1.ai;
+    ai = xc14.u1.ai; ai = xc14.v1.bi;
+    ai = xc15.u1.ai; ai = xc15.v1.ai;
+    ai = yc11.u1.ai; ai = yc11.v1.bi;
+    ai = yc12.u1.ai; ai = yc12.v1.ai;
+    ai = yc15.u1.ai; ai = yc15.v1.bi;
+};
+
+tc2 is
+do
+#ifdef E1
+    xc11 = xc12;
+#endif
+#ifdef E2
+    xc11 = xc12;
+#endif
+};
+
+}

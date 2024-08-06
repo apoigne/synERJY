@@ -1,0 +1,81 @@
+class Rc {
+
+  Sensor s1 = new Sensor(new SimInput());
+       Signal a1 = new Signal(new SimOutput());
+       Signal x1 = new Signal();
+
+  Sensor<int> s2 = new Sensor<int>(new SimInput());
+       Signal<int> a2 = new Signal<int>(new SimOutput());
+       Signal<int> x2 = new Signal<int> ();
+   
+  Sensor<int> s3 = new Sensor<int>(new SimInput());
+       Signal<int> a3 = new Signal<int>(new SimOutput());
+       Signal<int> x3 = new Signal<int> ();
+ 
+#ifdef O1
+  public Rc () {
+    active {
+      if (?s1) { emit a1; };
+      if (?s1) { emit x1; };
+      if (?a1) { emit a2(1); };
+      if (?a1) { emit x2(2); };
+      if (?x1) { emit a2(3); };
+      if (?x1) { emit x2(4); };     
+    };
+  };
+#endif
+
+#ifdef E1
+// [[Typing]]
+  public Rc () {
+    active {
+      emit s1;     
+    };
+  };
+#endif
+
+#ifdef O2
+  public Rc () {
+    active {
+      if (?s2) { emit a2($s2); };
+      if (?s2) { emit x2($s2); };
+      if (?s1) { emit a2($s2); };
+      if (?s1) { emit x2($s2); };
+      if (?x1) { emit a2($s2); };
+      if (?x1) { emit x2($s2); };     
+    };
+  };
+#endif
+
+#ifdef E2
+// [[Typing]]
+  public Rc () {
+    active {
+      emit s2(1);     
+    };
+  };
+#endif
+
+#ifdef O3
+  public Rc () {
+    active {
+      sustain {|
+         a3 := s3;
+         x3 := s3;
+      |};
+    };
+  };
+#endif
+
+#ifdef E3
+// [[Typing]]
+  public Rc () {
+    active {
+      sustain {|
+         s3 := 1;
+      |};   
+    };
+  };
+#endif
+
+} //end class Rc

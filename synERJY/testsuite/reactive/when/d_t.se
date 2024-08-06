@@ -1,0 +1,121 @@
+class Rc {
+
+public Rc () {
+ active { c1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor<bool> IB1 = new Sensor<bool>(new SimInput());
+Sensor<bool> IB2 = new Sensor<bool>(new SimInput());
+
+Sensor<int> II1 = new Sensor<int>(new SimInput());
+Sensor<int> II2 = new Sensor<int>(new SimInput());
+
+Signal O1 = new Signal(new SimOutput());
+Signal O2 = new Signal(new SimOutput());
+Signal O3 = new Signal(new SimOutput());
+
+Signal<bool> OB1 = new Signal<bool>(new SimOutput());
+Signal<bool> OB2 = new Signal<bool>(new SimOutput());
+Signal<int> OI1 = new Signal<int>(new SimOutput());
+Signal<int> OI2 = new Signal<int>(new SimOutput());
+
+#ifdef T1
+// trace
+//      ->
+//      ->
+// IB1(false)  ->
+//      ->
+// IB1(true) IB2(false) ->
+//      ->
+// IB1(true) IB2(true)  -> OB1(true)
+//      ->
+//
+private void c1 () {
+      loop {
+        activate { emit OB1($IB1);
+        } when (?IB1 && ?IB2 && $IB1 == $IB2);
+        next;
+      };
+
+  };
+#endif
+
+#ifdef T2
+// trace
+//      ->
+//      ->
+// II1(2)  ->
+//      ->
+// II1(5) II2(0)        ->
+//      ->
+// II1(-1) II2(-1)      -> OI1(-1)
+//      ->
+//
+private void c1 () {
+      loop {
+        activate { emit OI1($II1);
+        } when (?II1 && ?II2 && $II1 == $II2);
+        next;
+      };
+
+  };
+#endif
+
+#ifdef T3
+// trace
+//      ->
+//      -> OI1(0)
+//      -> OI1(0)
+// II1(5) -> OI1(0)
+//      -> OI1(0)
+// II1(1) -> OI2(1)
+//      ->
+//      ->
+//
+// trace
+//      ->
+//      -> OI1(0)
+//      -> OI1(0)
+// II1(2)  ->
+//      ->
+//      ->
+// trace
+//      ->
+//      -> OI1(0)
+//      -> OI1(0)
+// II1(3)  -> OI2(3)
+//      ->
+//      ->
+private void c1 () {
+    cancel strongly {
+      loop { next; emit OI1(0); };
+    } when (?II1 && $II1 == 1) { emit OI2(1);} else
+      when ($II1 == 2)         { }             else
+      when ($II1 == 3)         { emit OI2(3);};
+
+  };
+#endif
+
+#ifdef T5
+// trace
+//      ->
+//      ->
+// I1   ->
+//      ->
+// I1 II1(1) ->
+//      ->
+// I1 II1(1) II2(2) -> OI1(1)
+//      ->
+//      ->
+private void c1 () {
+  loop {
+    if (?I1 && $II2 == 2 * $II1 && $II1 != 0)
+       { emit OI1($II2 - $II1); }
+       else {};
+       next;
+    };
+ };
+#endif
+
+} //end class Rc

@@ -1,0 +1,97 @@
+class Rc {
+
+public Rc () {
+   active { a1();
+   };
+};
+
+Sensor ON = new Sensor(new SimInput());
+Sensor OFF = new Sensor(new SimInput());
+
+
+Signal<int>      s2Entry = new Signal<int>(new SimOutput());
+Signal<boolean> s2During = new Signal<boolean>(new SimOutput());
+Signal<int>         s2Do = new Signal<int>(new SimOutput());
+Signal<int>       s2Exit = new Signal<int>(new SimOutput());
+int i;
+
+#ifdef T1 
+// trace
+//      ->
+// ON   -> s2Do(1)  s2Entry(1)
+//      -> s2During(true)
+//      -> s2During(false)
+// OFF  -> s2During(true)  s2Exit(1)
+//      -> 
+//      ->
+// ON   -> s2Do(2) s2Entry(2)
+//      -> s2During(false)
+//      -> s2During(true)
+//
+
+private void a1 () {
+//      do [[ automaton || sustain ]]; 
+  automaton {
+
+    init {
+      next state s1; 
+    };
+
+    state s1
+      when (?ON) { next state s2; 
+      };
+
+    state s2
+       entry  { i = i+1; emit s2Entry(i); }
+       during {| s2During := ! pre(s2During); |}
+       exit   { emit s2Exit(i); }
+       do {
+           emit s2Do(i);
+        }
+       when (?OFF) { next state s1; 
+       };
+   };
+};
+#endif
+
+#ifdef T2 
+// trace
+//      ->
+// ON   -> s2Do(1) s2Entry(1)
+//      -> s2Do(2) s2During(true)
+//      -> s2During(false)
+// OFF  -> s2During(true)  s2Exit(1)
+//      ->
+//      ->
+// ON   -> s2Do(2)  s2Entry(2)
+//      -> s2Do(3) s2During(false)
+//      -> s2During(true)
+//
+private void a1 () {
+//      do [[ automaton || sustain ]]; 
+  automaton {
+
+    init {
+      next state s1; 
+    };
+
+    state s1
+      when (?ON) { next state s2; 
+      };
+
+    state s2
+       entry  { i = i+1; emit s2Entry(i); }
+       during {| s2During := ! pre(s2During); |}
+       exit   { emit s2Exit(i); }
+        do {
+           emit s2Do(i);
+           next;
+           emit s2Do(i+1);
+        }
+       when (?OFF) { next state s1; 
+       };
+   };
+};
+#endif
+
+}

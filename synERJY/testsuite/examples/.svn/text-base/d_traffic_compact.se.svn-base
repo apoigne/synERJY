@@ -1,0 +1,78 @@
+#include "../../target/examples/TrafficLightCompact/traffic_compact.se"
+
+#ifdef T1
+// trace
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+// button -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_yellow ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_green
+//  -> car_red ped_green
+// button -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_green
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_yellow car_red ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+//  -> car_green ped_red
+#endif

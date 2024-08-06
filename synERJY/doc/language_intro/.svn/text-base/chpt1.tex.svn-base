@@ -1,0 +1,562 @@
+\chapter{Introduction}
+
+\paragraph{A priori.} Synchronous Programming is a branch of
+concurrent programming\index{concurrency}. 
+Concurrent programs are inherently more
+difficult to write and to debug than sequential programs.  The
+sequential execution of each of the parallel branches is interlocked
+with communications between the parallel branches, resulting in a
+partial order according to which elementary statements are executed. 
+Whether such a partial order is explicitly specified by the programmer
+(for instance using threads and synchronisations) or automatically
+scheduled by a compiler as in case of synchronous languages, the
+programmer will sometimes be surprised by unexpected behaviour.  This
+one should keep in mind before getting despaired debugging a
+concurrent program.
+
+\section{Systems, Models, and Programming}
+
+\paragraph{Models of physical systems.} In the real world we encounter
+physical objects such as cars, electronic circuits, power stations,
+dogs, space ships, and computer programs.  We refer to these as
+\emph{physical systems}\index{system!physical}.
+
+If we start to think about one of these objects we formulate a
+\emph{model}\index{system!model} of the object focusing
+ upon some small number of
+properties we believe sufficient for capturing the behaviour we care
+about.  If we wish to analyse the model we need some formal
+(mathematical) representation of it.
+
+We may start by considering a system as a black box into which we feed
+inputs and out of which we receive outputs, inputs and outputs being
+properties we care about.  It is quite common to refer to these
+properties as \emph{signals}\index{signal} if we enter into the
+mathematical analysis of a system.  In general we cannot expect the
+outputs to be completely determined by the inputs, but rather to
+depend as well on a set of (internal) properties we refer to as a
+\emph{state}\index{system!state}.  A state is some compact
+representation of the past activity of the system complete enough to
+predict, on the basis of the inputs, exactly what the output will be,
+and also to update the state itself.
+\begin{center}
+       {\tt\scriptsize
+       \thinlines
+       \setlength{\unitlength}{0.9pt}
+       \begin{picture}(210,60)
+       \put(15,35){input $u(t)$}
+       \put(0,30){\vector(1,0){70}}
+       \put(15,20){at time $t$}
+       \put(15,10){$u(t) \in U$}
+       \put(70,0){\framebox(90,60){}}
+       \put(98,10){$x(t) \in X$}
+       \put(93,35){state $x(t)$}
+       \put(95,25){at time $t$}
+       \put(175,35){output $y(t)$}
+       \put(175,20){at time $t$}
+       \put(175,10){$y(t) \in Y$}
+       \put(160,30){\vector(1,0){70}}
+      \end{picture}
+   }
+\end{center}
+
+\paragraph{Time scales.} Given that we have decided what the sets of
+input, output and state variables are for our model, we must now
+determine on what \emph{time scale} we shall analyse the system.  For
+many physical systems we may think of input, output and state as
+changing continuously, then a model becomes a \emph{continuous-time
+system}\index{system!continuous time}.
+
+On the other hand, a continuous-time model of a computer system is
+inappropriate, and we treat them as a \emph{discrete-time
+system}\index{system!discrete time}, since we can make only finitely
+many measurement at any time interval.  Further, if we use a computer
+to control the behaviour in a desired way, we can generate distinct
+control signals only at discrete times.
+
+\paragraph{Analyzing systems.} Having modelled a physical system, the
+question arises whether we can \emph{control}\index{control} a system
+in a given state, providing inputs to bring it into its resting state,
+or, given that a system is in its resting state, can we apply inputs
+to which will force it to \emph{reach}\index{reachability} a desired
+state.  The complimentary question is whether we can
+\emph{observe}\index{observability} an unknown state of a system in
+such a way as to determine what the state was.  In other words, we
+want to analyse the dynamic behaviour of a system.  The differential
+and integral calculus provide the main tools for continuous-time
+systems, whereas algebra is the main tool for the analysis of
+discrete-time systems.  Textbooks provide a vast body of material to
+deal with these questions.
+
+All this contributes to the central task of \emph{control
+theory}\index{control!theory} of controlling a system to behave in a
+desired way.  We have to answer questions such as whether we are able
+to control a system at all, or further, if we are able to control a
+system in some optimal way, for instance spending a minimal amount of
+energy.
+
+\paragraph{System control.} Monitoring a system's performance,
+comparing it with some desired reference performance, and using any
+discrepancy to generate a correction input to control the system to
+approximate the reference, is fundamental pervading all aspects of
+modern life.  This is what \emph{feedback
+control}\index{control!feedback}\index{feedback} is about
+\begin{center}
+   {\tt\scriptsize
+       \thinlines
+       \setlength{\unitlength}{0.75pt}
+       \begin{picture}(210,105)
+         \put(5,85){$u(t)$}
+         \put(0,80){\vector(1,0){60}}
+         \put(60,60){\framebox(90,40){plant}}
+         \put(190,85){$y(t)$}
+         \put(150,80){\vector(1,0){60}}
+         \put(60,0){\framebox(90,40){controller}}
+         \put(30,20){\line(1,0){30}}
+         \put(35,10){$s(t)$}
+         \put(30,20){\vector(0,1){58}}
+         \put(30,80){\circle*{5}}
+         \put(180,20){\line(0,1){60}}
+         \put(180,80){\circle*{5}}
+         \put(180,20){\vector(-1,0){30}}
+      \end{picture}
+   }
+\end{center}
+The most familiar example is that of thermostatically controlled
+heater.  When the temperature is below a reference temperature the
+heater is turned on until the thermometer indicates that the
+temperature is higher than the reference point.  Then the heater is
+turned off.  In this system the heater is the \emph{(dynamic) plant}\index{plant}. The \emph{controller}\index{controller} converts performance data (the temperature) in a \emph{control signal} (on-off switch).  The
+feedback is here used to \emph{regulate}\index{regulation} the
+system's performance.  There are other applications of feedback or
+\emph{closed loop control}\index{control!closed loop}\index{closed
+loop}, for instance to improve the characteristics of a system making
+it less sensitive to changes to enhance stability.  Not every control
+system, of course, uses feedback.  Consider a light that is switched
+on at dusk and switched off in full daylight.
+
+The task of the engineer is to design and implement the control system
+-- i.e. to model the plant, to design an adequate controller, to
+analyze the overall system, and, finally, to ``implement'' the
+controller which today mostly means to run a computer program on a
+suitable piece of hardware, let it be a work station, a
+micro-controller, or some programmable hardware.  One usually refers
+to such a combination of software and hardware as an \emph{embedded
+system}.
+
+\paragraph{Close-up.} Embedded
+systems\index{system!embedded}\index{embedded} are usually comprised
+of three components: \emph{input}\index{converter!input} and
+\emph{output converters}\index{converter!output}, and a \emph{digital
+controller}\index{controller!digital} refining the diagram above
+\begin{center}
+   {\tt\scriptsize
+     \thinlines
+     \setlength{\unitlength}{0.75pt}
+       \begin{picture}(340,105)
+         \put(5,85){$u(t)$}
+         \put(0,80){\vector(1,0){125}}
+         \put(125,60){\framebox(90,40){plant}}
+         \put(295,85){$y(t)$}
+         \put(215,80){\vector(1,0){125}}
+         \put(50,0){\framebox(240,40){}}
+         \put(60,5){\framebox(40,30){output}} 
+         \put(135,20){\vector(-1,0){35}}
+         \put(105,10){$o(t_n)$}
+         \put(135,5){\framebox(70,30){controller}}
+         \put(240,20){\vector(-1,0){35}}
+         \put(210,10){$i(t_n)$}
+         \put(240,5){\framebox(40,30){input}}
+         \put(30,20){\line(1,0){30}}
+         \put(30,10){$s(t)$}
+         \put(30,20){\vector(0,1){58}}
+         \put(30,80){\circle*{5}}
+         \put(310,20){\line(0,1){60}}
+         \put(310,80){\circle*{5}}
+         \put(310,20){\vector(-1,0){30}}
+      \end{picture}
+   }
+\end{center}
+Obviously, the digital controller is a discrete-time system.  The
+nature of the converters depend on whether the plant is
+continuous-time or discrete-time.  In the latter case, no converters
+may be needed.  Otherwise inputs must be \emph{sampled}, using A/D-
+and D/A-converters for example.  The sampling may be periodic with a
+fixed length interval -- being determined by some ''clock cycle'' or
+may depend on the input itself -- in that a specific trigger signal is
+generated, for instance if the input changes substantially.
+
+\section{Synchronous Programming}\index{programming!synchronous}\label{synchronous-programming}
+
+Synchronous programming is just a way of specifying discrete-time
+(control) systems.  Many formalisms do the same.  However,
+synchrony\index{synchrony} as a paradigm avoids ad-hoc solutions and
+offers a mathematically precise and, as we do believe, also a simple
+programming model.  Synchronous programming distinguishes between
+languages based on control flow\index{control flow} and those based on
+data flow\index{data flow}.  Programmers seem to prefer the first,
+while engineers seem to prefer the latter.
+
+\paragraph{The synchrony hypothesis.} 
+Synchronous behaviour\index{behaviour!synchronous} is modeled as a
+machine that, on actuation, reads the input signals and is then
+\emph{decoupled from the environment} to compute the subsequent
+\textit{state}\index{state} and the value of the output signals,
+dispatches the output signals to the environment, and waits for the
+next actuation.  Such an execution step is called an
+\emph{instant}\index{instant}.
+
+Execution, of course, takes time.  The delay does not cause harm as
+long as it is sufficiently small in that an instant always terminates
+before the next actuation takes place.  Then we may use the hypothesis
+that input is sampled and output is generated ''at the same time''. 
+The reaction appears to be ``instantaneous'' with regard to the
+observable time scale in terms of activations.  Berry~\cite{berry}
+speaks of the \emph{synchrony hypothesis}\index{synchrony!hypothesis}. 
+Since time cannot be measured ``in between'' activations one sometimes
+speaks of a ``zero time model''.
+
+Whether or not the synchrony hypothesis holds needs checking in each
+particular case.  Usually deadlines are set by real-time constraints:
+even in the worst case the execution of an instant must terminate
+before the deadline expires.  Worst-case execution times depend on the
+particular implementation of a control system, while the real-time
+constraint depends on the system to be controlled.  Thus system
+design is a compromise between system requirements in terms of
+real-time constraint and computation power offered by the
+implementation.
+
+The benefits of synchronous systems are at hand.  They are much easier
+to design, reason about, test, and implement if a computation proceeds
+in discrete steps since, for instance, inductive arguments may be
+used.  Further, the system behaves the same at whatever speed it is
+executed (up to the limit set by the worst case execution time).  This
+property is particularly useful for purposes of testing: programs can
+be tested in an simulation environment on a slow time scale while
+running it operationally much faster having exactly the same
+behaviour.
+
+\paragraph{Broadcast and determinism.} 
+Signals are broadcast\index{broadcast} in synchronous programming,
+i.e. at every instant there is a system-wide consistent view of all
+signals.  In particular
+\begin{itemize}
+   \item the value of a signal is never updated at an instant after
+   the value has been read once (\emph{write-before-read} strategy).
+   \index{write-before-read}
+\end{itemize}
+This substantially constrains scheduling as we will see below.
+
+Synchronous programming additionally requires that
+\begin{itemize}
+    \item synchronous execution is
+    \emph{deterministic}\index{deterministic}.
+\end{itemize}
+The subsequent state and the output signals must be uniquely
+determined by the input signals and the present state.  Testing
+deterministic systems is substantially simpler than testing
+non-deterministic systems since system behaviour can be reproduced.
+
+Synchronous languages nevertheless support
+concurrency\index{concurrency} even though it is a common belief that
+concurrency may generate non-determinism.  But in the synchronous case
+non-determinism is resolved by the compiler.  The elementary actions
+are scheduled according to the control flow with consistency as an
+additional constraint (cf.  Section~\ref{formalisms}).  If no
+deterministic scheduling can be found, either due to a \emph{time
+race}\index{time race} (cf.  Section~\ref{causality}) or due to a
+\emph{causality cycle}\index{causality
+cycle}\index{causality!cycle}\index{causality} (cf. 
+Section~\ref{timeraces})\index{time race}, an error message is issued
+and the program is rejected.
+
+\paragraph{Synchronous programming based on control
+flow.}\label{formalisms} Imperative programming languages or finite
+state machines are typical formalisms for specifying the control flow. 
+\esterel\cite{esterel} is a prominent example for an imperative
+synchronous language as are
+\statecharts\cite{statecharts}\index{Statecharts} (or
+\synccharts\cite{synccharts})\index{SyncCharts} for state based
+formalisms.
+
+All these languages share the idea that communication is based on
+\emph{signals}.  A signal may be emitted at an instant.  Then it is
+\emph{present}\index{present}.  Otherwise it is
+\emph{absent}\index{absent}. This property is called
+\emph{coherence}\index{coherence} in \cite{berry}: there must be an
+explicit cause for a signal to be present, either it is emitted by the
+system at an instant, or it is present as an input. One may check for
+the presence of a signal.
+
+Consider, for example, the following two simple automata that are
+supposed to run in parallel
+\begin{center}
+ {\tt\scriptsize
+   \thinlines
+   \setlength{\unitlength}{1pt}
+   \begin{picture}(290,60)
+   \put(0,0){
+      \begin{picture}(130,60)
+         \put(55,28){\normalsize $A_1$}
+         \put(10,30){\circle{20}}
+         \put(5,28){$st_1$}         
+         \put(17,52){when (?a) \{ emit b;\}}
+         \put(17,37){\bezier{200}(0,0)(41,20)(82,0)}
+         \put(35,2){when (?a) \{ \}}
+         \put(17,23){\bezier{200}(0,0)(41,-20)(82,0)}
+         \put(95,39){\vector(2,-1){5}}
+         \put(21,21){\vector(-2,1){4}}
+         \put(107,30){\circle{20}}
+         \put(102,28){$st_2$}    
+      \end{picture}
+   }
+   \put(160,0){
+      \begin{picture}(130,60)
+         \put(55,28){\normalsize $A_2$}
+         \put(10,30){\circle{20}}
+         \put(5,28){$st_1'$}         
+         \put(17,52){when (?b) \{ emit c;\}}
+         \put(17,37){\bezier{200}(0,0)(41,20)(82,0)}
+         \put(17,2){when (?b) \{ emit d;\}}
+         \put(17,23){\bezier{200}(0,0)(41,-20)(82,0)}
+         \put(95,39){\vector(2,-1){5}}
+         \put(21,21){\vector(-2,1){4}}
+         \put(107,30){\circle{20}}
+         \put(102,28){$st_2'$}    
+      \end{picture}
+   }
+   \end{picture}
+ }
+\end{center}
+The expression \pp{?a} asks whether the signal \pp{a} is present. 
+Hence, if the automata are in state $st_1$ and state $st_1'$ and if
+the signal \pp{a} is present the automaton $A_1$ moves from state
+$st_1$ to state $st_2$ emitting \pp{b}.  In parallel the automaton
+$A_2$ checks for the presence of \pp{b} provided it is in state
+$st_1'$.  Since \pp{b} is present the $A_2$ moves from state $st_1'$
+to state $st_2'$ emitting \pp{c}.  In that the signal \pp{b} is part
+of the control flow.
+
+At a first glance, the same effect may be achieved if \pp{b} would be
+an ordinary Boolean variable which is set to true when changing state
+from $st_1$ to $st_2$, and which is checked by the second automaton
+(note that the variable \pp{b} must be reset to false to emulate
+signal behaviour).
+\begin{center}
+ {\tt\scriptsize
+   \thinlines
+   \setlength{\unitlength}{1pt}
+   \begin{picture}(290,60)
+   \put(0,0){
+      \begin{picture}(130,60)
+         \put(55,28){\normalsize $A_1$}
+         \put(10,30){\circle{20}}
+         \put(5,28){$st_1$}         
+         \put(17,52){when (?a) \{ b = true;\}}
+         \put(17,37){\bezier{200}(0,0)(41,20)(82,0)}
+         \put(35,2){when (?a) \{ \}}
+         \put(17,23){\bezier{200}(0,0)(41,-20)(82,0)}
+         \put(95,39){\vector(2,-1){5}}
+         \put(21,21){\vector(-2,1){4}}
+         \put(107,30){\circle{20}}
+         \put(102,28){$st_2$}    
+      \end{picture}
+   }
+   \put(160,0){
+      \begin{picture}(130,60)
+         \put(55,28){\normalsize $A_2$}
+         \put(10,30){\circle{20}}
+         \put(5,28){$st_1'$}         
+         \put(-5,52){when (b) \{ b = false; emit c;\}}
+         \put(17,37){\bezier{200}(0,0)(41,20)(82,0)}
+         \put(-5,2){when (b) \{ b = false; emit d;\}}
+         \put(17,23){\bezier{200}(0,0)(41,-20)(82,0)}
+         \put(95,39){\vector(2,-1){5}}
+         \put(21,21){\vector(-2,1){4}}
+         \put(107,30){\circle{20}}
+         \put(102,28){$st_2'$}    
+      \end{picture}
+   }
+   \end{picture}
+ }
+\end{center}
+ 
+But then the behaviour of the two automata may be non-determi\-nistic. 
+If the value of \pp{b} is checked before state is changed from $st_1$
+to $st_2$, automaton $A_2$ would remain in state $st_1'$.  Only the
+write-before-read strategy imposed on signals resolves the
+non-determinism: the emission must take place before reading the
+status of a signal.  Obviously, it would be too restrictive if the
+write-before-read strategy would be imposed on all variables.
+
+\paragraph{Synchronous programming based on data flow.}
+\lustre\cite{lustre}\index{Lustre} and
+\signal\cite{signal}\index{Signal} are synchronous programming
+languages based on data flow.  These languages are inspired by
+difference equations such as
+%
+{\small
+\begin{eqnarray*}
+z(n) & = & 0.5*z(n-1) + 0.3*y(n) + 0.2*x1(n)\\
+y(n) & = & 0.5*x1(n) + 0.5 * x2(n)
+\end{eqnarray*}
+}
+%
+Each of the equations is evaluated at time $n$ to compute a new value
+of the respective variable.  $x1$ and $x2$ are assumed to be inputs.
+
+For difference equations\index{difference equation}, the order of
+evaluation is determined by the variables only (it does not depend on
+how equations are ordered when written down): the second equation must
+always be computed before the first one since the value $y(n)$ is used
+to compute the value of $z(n)$.  The evaluation strategy is based on
+the ''flow of data'', and, by the way, exactly coincides with the
+write-before-read\index{write-before-read} strategy of synchronous
+control flow as described in an earlier section.
+
+It just takes a minor shift to rewrite the difference equations as
+\emph{data flow equations}\index{data flow!equation}.  Consider each
+of the variables as to refer to an indexed sequence of data, a
+\emph{data flow}\index{data flow}, and we assume that operations like
+addition and multiplication are defined point wise.  Then we may
+abstract from the index by writing
+%
+{\small
+\begin{eqnarray*}
+y & = & 0.5*x1 + 0.5 * x2
+\end{eqnarray*}
+}
+%
+instead of
+%
+{\small
+\begin{eqnarray*}
+y(n) & = & 0.5*x1(n) + 0.5 * x2(n)
+\end{eqnarray*}
+}
+%
+For the other equation, we need what is called a \emph{time shift
+operator}\index{time shift}
+%
+{\small
+\begin{eqnarray*}
+pre(x)(n) & = & x(n-1)
+\end{eqnarray*}
+}
+%
+ to obtain
+%
+{\small
+\begin{eqnarray*}
+z & = & 0.5*pre(z) + 0.3*y + 0.2*x1
+\end{eqnarray*}
+}
+%
+Standard notation in control theory is $z^{-1}$.  We here use the
+\lustre\ operator \pp{pre}\index{pre@\pp{pre}}.
+
+\paragraph{Hybrid systems.} Originally the notion of \emph{hybrid
+systems}\index{system!hybrid}\index{hybrid} refers to a combination of
+discrete-time and continuous-time behaviour. Typically this involves discrete 
+transitions between continuous ``modes of behaviour''. In reference to the 
+latter, we reinterpret hybrid systems as combining control flow with data 
+flow: data flow typically models \emph{periodic} behaviour while control flow 
+typically models \emph{sporadic} behaviour. A sporadic transition is used to switch from one periodic behaviour to another one.
+
+It is a matter of background and 
+preferences which models are used in which context.  It seems that computer 
+programmers prefer control-oriented languages as state machines are, while 
+engineers prefer data flow languages but sometimes appreciate state machines 
+as well.
+
+\se smoothly integrates the different formalisms of synchronous
+programming.  We believe that these should coexist in a language
+since, depending on the problem, one or the other formalisms tends to
+be more appropriate.  Our integration is fine-grained in that the
+formalisms are integrated on the level of statements offering a not
+yet preceded versatility.
+
+Though we aim for a smooth interface, the complexity of interaction
+may be considerable.  One should keep in mind that mastering one
+formalism (and its inherent paradigms of modeling) usually takes some
+effort.  Mastering three such paradigms, even though familiar ones,
+takes a greater effort, as does the adequate combination of the
+paradigms in solving a particular problem.  Nevertheless there should
+be some benefit at the end: the art of system design depends on using
+appropriate abstractions and paradigms.  This is what we hope to
+support.
+
+\section{Outline of the Book}
+
+This textbook intends to introduce to the concepts of synchronous
+programming in general, and of \se\ in particular, at a reasonable level of
+detail.  Note that several sections and paragraphs are \textit{set in
+italics}.  We recommend to skip these parts at a first reading since
+they treat somewhat more advanced concepts.
+
+Chapter~\ref{core} presents the core ideas of synchronous programming
+in an imperative programming style close to that of \esterel\ that
+seems to appeal to computer programmers.
+
+Chapter~\ref{examples} consists of a number of examples. 
+
+Chapter~\ref{automata} introduces hierarchical state machines that are
+particularly appreciated because of the visual presentation.  Our
+approach is a mixture of that of \statecharts\ and
+\synccharts~\cite{synccharts}.
+
+Engineering disciplines often base their models on differential or
+difference equations, ``data flow'' models in terms of computer
+science.  Chapter~\ref{data-flow} presents a data flow language
+closely related to \lustre.
+
+Chapter~\ref{reuse} changes the focus relating reactive behaviour with
+object-oriented structuring principles.  Objects are classified as
+\emph{reactive} if some synchronous code is embedded.  Reactive
+objects communicate via signals while being evaluated concurrently. 
+All methods of a reactive object are private by demand.  In that
+reactive objects behave like components that behave in the same way
+independently of the context.
+
+Chapter~\ref{InputOutput} explains how to build and deploy applications
+that interact with the environment.
+
+Many of the chapters are reasonably self-contained,
+hence can be read in any order. However, one should to start 
+with Chapter \ref{core} to get a grasp of the basics. If one is
+happy to use the simulator only for experiments, one may continue
+with any of the Chapters \ref{examples} to \ref{reuse}. If one wants to build
+applications for some target platform, reading Chapter \ref{InputOutput} is
+recommend.
+ 
+
+%The following Chapters are still under construction.
+%A chapter on \emph{Validation} touches upon issues of validation such as
+%formal verification and testing.
+
+%In a chapter on \emph{Distribution} we extend the synchronous paradigm
+%to deal with distributed synchronous processes.
+
+%An appendix on \emph{Semantics} defines the formal semantics of the
+%reactive sub-language of \se.
+
+%Chapter ~\ref{validation} touches upon issues of validation such as
+%formal verification and testing.
+
+%In Chapter~\ref{dsp} we extend the synchronous paradigm to deal with
+%distributed synchronous processes.
+
+%Chapter~\ref{case-studies} provides a series of case studies.
+
+%Appendix~\ref{semantics} defines the formal semantics of the reactive
+%sub-language of \se.
+
+A separate reference manual \cite{reference} and user guide for the
+programming environment \cite{userguide} complements this exposition.
+
+\noindent\emph{Remark.} The documentation is complemented by a
+directory in which all the examples of the book are provided.  These
+are referenced within the text: \emph{(cf.  chpt\_2\_delayed-emit.se)}
+refers to a file with the same name in the examples directory.
+
+

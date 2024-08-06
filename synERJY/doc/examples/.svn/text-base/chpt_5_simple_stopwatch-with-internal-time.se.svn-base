@@ -1,0 +1,49 @@
+// test-flags O = None true, E = data true
+class SimpleStopwatch {
+
+static final time timing = 10msec;
+				
+
+// tex_start flow-simple-stopwatch-with-intermediate-time
+Sensor<bool> start_stop = new Sensor<bool>(new SimInput());
+Sensor<bool>      reset = new Sensor<bool>(new SimInput());
+
+Signal<time> display_time = new Signal<time>(new SimOutput());
+Signal<bool>      running = new Signal<bool>(new SimOutput());
+Signal<bool>       frozen = new Signal<bool>(new SimOutput());
+
+Signal<time> elapsed_time = new Signal<time>();
+Signal<bool> actual_reset = new Signal<bool>();
+
+public SimpleStopwatch () {
+  active { 
+    sustain {|
+      elapsed_time := 
+         0msec -> running ? 
+                       pre(elapsed_time) + timing
+                     : actual_reset ? 
+                          0msec 
+                        : pre(elapsed_time) ;
+      running := false -> 
+                     start_stop ? ! pre(running) : pre(running);
+      frozen := false ->
+                      if (reset && pre(running)) {
+                         true;
+                      } else if (reset && pre(frozen)) {
+                         false;
+                      } else {
+                         pre(frozen);
+                      };
+      display_time := 
+         0msec -> if (frozen) {
+                       pre(display_time);
+                    } else {
+                       elapsed_time;
+                    };
+      actual_reset := reset && pre( !running && !frozen);
+    |};
+  };
+};
+// tex_end
+}
+

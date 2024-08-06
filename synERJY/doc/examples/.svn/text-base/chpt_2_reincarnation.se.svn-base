@@ -1,0 +1,28 @@
+// test-flags O = None true, E = data true
+class Rc { 
+    static final time timing = 100msec;
+				
+
+Signal a = new Signal(new SimOutput());
+Signal b = new Signal(new SimOutput());
+Signal c = new Signal(new SimOutput());
+
+
+public Rc () {
+   active {
+// tex_start reincarnation
+loop {
+   Signal x = new Signal();
+   if (?x) { 
+      emit a; 
+   } else {
+      emit b;
+   };
+   next;
+   emit x;
+   if (?x) { emit c; };
+};
+// tex_end reincarnation
+   };
+};
+}

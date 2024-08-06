@@ -1,0 +1,38 @@
+class Rc {
+
+Signal<int> x = new Signal<int>(new SimOutput());
+Signal<int> y = new Signal<int>(new SimOutput());
+
+Signal<bool> a = new Signal<bool>(new SimOutput());
+Signal<bool> b = new Signal<bool>(new SimOutput());
+
+
+public Rc ()
+{
+  active { 
+#ifdef E1
+// [[MultEmitInClass]]
+     [[ sustain {| x := 0;
+                   y := 1;|};
+     || sustain {| x := 1; |};
+     ]];
+#endif
+
+#ifdef E2
+// [[MultEmitInClass]]
+     [[ sustain {| a := false;
+                   b := true;|};
+     || sustain {| a := true; |};
+     ]];
+#endif
+
+
+};
+};
+
+
+
+
+}
+
+

@@ -1,0 +1,51 @@
+// Zur Kontrolle eines Fehlers bei der kausalen AbhŠngigkeit
+
+
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+
+#ifdef T1
+// trace
+//
+//  FIB1(true)    -> FOB1(true) FOB2(false)
+//  FIB1(false)   -> FOB1(false)  FOB2(true)
+//
+Sensor<bool> FIB1 = new Sensor<bool>(new SimInput());
+
+Signal<bool> FOB1 = new Signal<bool>(new SimOutput());
+Signal<bool> FOB2 = new Signal<bool>(new SimOutput());
+
+private void c1 () {
+    sustain {|
+      FOB2 := (FOB1) ? (false) : (true);
+      FOB1 := FIB1;
+    |};
+};
+#endif
+
+#ifdef T2
+// trace
+//
+//  FII1(0)   -> FOI1(0) FOI2(2)
+//  FII1(1)   -> FOI1(1)  FOI2(1)
+//
+Sensor<int> FII1 = new Sensor<int>(new SimInput());
+
+Signal<int> FOI1 = new Signal<int>(new SimOutput());
+Signal<int> FOI2 = new Signal<int>(new SimOutput());
+
+private void c1 () {
+    sustain {|
+      FOI1 := FII1;
+      FOI2 := (FOI1) > 0 ? (1) : (2);
+    |};
+};
+#endif
+
+} //end class Rc
+

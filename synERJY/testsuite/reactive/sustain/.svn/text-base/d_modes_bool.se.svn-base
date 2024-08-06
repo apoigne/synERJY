@@ -1,0 +1,217 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+Sensor       a = new Sensor(new SimInput());
+Sensor<bool> b = new Sensor<bool>(new SimInput());
+Signal<bool> x = new Signal<bool>(new SimOutput());
+Signal<bool> y = new Signal<bool>(new SimOutput());
+bool z = true;
+
+#ifdef T2
+// trace
+//         ->  x(true) y(false)
+//         ->  x(true) y(true)
+//         ->  x(true) y(true)
+private void c1 () {
+   sustain {|
+     x := z;
+     y := pre(z);
+   |};
+};
+#endif
+
+#ifdef T4
+// trace
+//         ->
+//         ->  x(true) y(false)
+//         ->  x(true) y(true)
+private void c1 () {
+  z = false;
+  next;
+  z = true;
+  sustain {|
+     x := z;
+     y := pre(z);
+  |};
+};
+#endif
+
+#ifdef T5
+// trace
+//           ->  y(false)
+//           ->  y(false)
+//  b(true)  ->  y(true)
+//  b(false) ->  y(true)
+//           ->  y(true)
+//  b(true)  ->  y(true)
+private void c1 () {
+   sustain {|
+      y := current(true when b);
+   |};
+};
+#endif
+
+#ifdef T6
+// trace
+//           ->  x(true) y(false)
+//           ->  x(true) y(false)
+//  b(true)  ->  x(true) y(true)
+//  b(false) ->  x(true) y(true)
+//           ->  x(true) y(true)
+//  b(true)  ->  x(true) y(true)
+private void c1 () {
+   sustain {|
+      x := z;
+      y := current(z when b);
+   |};
+};
+#endif
+
+#ifdef T7
+// trace
+//           ->
+//           ->  y(false)
+//           ->  y(false)
+//  b(true)  ->  y(true)
+//  b(false) ->  y(true)
+//           ->  y(true)
+//  b(true)  ->  y(true)
+private void c1 () {
+  next;
+  sustain {|
+      y := current(true when b);
+   |};
+};
+#endif
+
+#ifdef T8
+// trace
+//           ->
+//           ->  x(true) y(false)
+//           ->  x(true) y(false)
+//  b(true)  ->  x(true) y(true)
+//  b(false) ->  x(true) y(true)
+//           ->  x(true) y(true)
+//  b(true)  ->  x(true) y(true)
+private void c1 () {
+  z = false;
+  next;
+  z = true;
+  sustain {|
+      x := z;
+      y := current(z when b);
+   |};
+};
+#endif
+
+#ifdef T9
+// trace
+//           ->  y(false)
+//           ->  y(false)
+//  b(true)  ->  y(true)
+//  b(false) ->  y(true)
+//           ->  y(true)
+//  a        ->  y(true)
+//           ->  
+//           ->  y(false)
+//  b(true)  ->  y(true)
+//  b(false) ->  y(true)
+//           ->  y(true)
+private void c1 () {
+  cancel {
+     sustain {|
+        y := current(true when b);
+     |};
+  } when (?a);
+  next;
+  next;
+  sustain {|
+      y := current(true when b);
+   |};
+};
+#endif
+
+#ifdef T10
+// trace
+//           ->  x(true) y(false)
+//           ->  x(true) y(false)
+//  b(true)  ->  x(true) y(true)
+//  b(false) ->  x(true) y(true)
+//           ->  x(true) y(true)
+//  a        ->  x(true) y(true)
+//           ->  
+//           ->  x(true) y(false)
+//  b(true)  ->  x(true) y(true)
+//  b(false) ->  x(true) y(true)
+//           ->  x(true) y(true)
+private void c1 () {
+  cancel {
+     sustain {|
+        x := z;
+        y := current(z when b);
+     |};
+  } when (?a);
+  next;
+  z = true;
+  next;
+  sustain {|
+      x := z;
+      y := current(z when b);
+   |};
+};
+#endif
+
+#ifdef T11
+// trace
+//           ->  y(false)
+//           ->  y(true)
+//           ->  y(true)
+private void c1 () {
+  sustain {|
+      y := false -> true;
+   |};
+};
+#endif
+
+#ifdef T12
+// trace
+//           ->  y(false)
+//           ->  y(true)
+//           ->  y(true)
+private void c1 () {
+  sustain {|
+      y := false -> z;
+   |};
+};
+#endif
+
+#ifdef T13
+// trace
+//           ->  y(false)
+//           ->  y(true)
+//  a        ->  y(true)
+//           -> 
+//           ->  y(false)
+//           ->  y(true)
+//           ->  y(true)
+private void c1 () {
+  cancel {
+     sustain {|
+        y := false -> true;
+     |};
+  } when (?a);
+  next;
+  next;
+  sustain {|
+      y := false -> true;
+   |};
+};
+#endif
+
+}
+
+

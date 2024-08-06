@@ -1,0 +1,228 @@
+class Rc {
+
+public Rc ()
+{
+   cia8 = {{(int)1,2,3,4,5,6,7,8,9},{(int)1,2,3,4,5,6,7,8,9}};
+   active {};
+};
+
+int i;
+double d;
+
+int[,] ia1 = new int[20,20];
+double[,] da1 = new double[30,30];
+
+int[,] ia2 = {{(int)1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9}};
+double[,] da2 = {{1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0},
+                 {1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0}};
+
+int[,] ia3 = {{(int)1,2,3,4},{1,2,3,4}};
+double[,] da3 = {{1.0,2.0,3.0},{1.0,2.0,3.0}};
+
+int[,] ia4;
+double[,] da4;
+
+static int[,] cia6 = new int[10,10];
+static int[,] cia7 = {{(int)10,11,12,13,14},{10,11,12,13,14}};
+static int[,] cia8;
+
+static double[,] cda5;
+static double[,] cda6 = new double[10,10];
+static double[,] cda7 = {{10.0,11.0,12.0,13.0,14.0},
+                         {10.0,11.0,12.0,13.0,14.0}};
+
+static final int[,] cia10 = new int[10,10];
+static final int[,] cia11 = {{(int)15,16,17,18,19,20,21},
+                                  {15,16,17,18,19,20,21}};
+
+int[,] im1 = new int[20,20];
+double[,] dm1 = new double[30,20];
+
+int[,] im2 = {{(int)1,2,3},{(int)4,5,6},{(int)7,8,9}};
+double[,] dm2 = {{1.0,2.0,3.0,4.0},{5.0,6.0,7.0,8.0}};
+
+//int[,] im3 = {(int)1,2,3,4};
+//double[,] dm3 = {1.0,2.0,3.0};
+
+//int[,] im4;
+//double[,] dm4;
+
+//static int[,] cim6 = new int[10];
+//static int[,] cim7 = {(int)10,11,12,13,14};
+//static int[,] cim8;
+
+//static double[,] cdm5;
+//static double[,] cdm6 = new double[10];
+//static double[,] cdm7 = {10.0,11.0,12.0,13.0,14.0};
+
+//static final int[,] cim10 = new int[10];
+//static final int[,] cim11 = {(int)15,16,17,18,19,20,21};
+
+#ifdef E30
+// [[ParseError]] initializer
+static final int[] cia12;
+#endif
+
+private double[,] rtn_array (double[,] a)
+{
+   a[0,0] = a[0,1];
+   return a;
+};
+
+private void mk_array ()
+{
+   ia3 = {{(int)1,2,3,4},{1,2,3,4}};
+   da3 = rtn_array({{1.0,2.0,3.0},{1.0,2.0,3.0}});
+   da3 = {{1.0,2.0,3.0},{1.0,2.0,3.0}};
+   ia4 = new int[30,30];
+   da4 = new double[40,40];
+   i      = 6;
+
+#ifdef E1
+// [[Subtyping]]
+   i      = 6.0;
+#endif
+
+   i      = i;
+
+#ifdef E2
+// [[Subtyping]]
+   i      = d;
+#endif
+
+   i      = ia2[0,3];
+   i      = cia8[0,3];
+   i      = this.cia8[0,3];
+   i      = Rc.cia8[0,3];
+
+#ifdef E3
+// [[Subtyping]]
+   i      = da2[0,3];
+#endif
+
+#ifdef E4
+// [[Subtyping]]
+   d      = 6;
+#endif
+
+   d      = 6.0;
+   d      = d;
+
+#ifdef E5
+// [[Subtyping]]
+   d      = i;
+#endif
+
+#ifdef E6
+// [[Subtyping]]
+   d      = ia2[0,3];
+#endif
+
+   d      = da2[0,3];
+
+#ifdef E7
+// [[Subtyping]]
+   ia2[0,true] = 6;
+#endif
+
+#ifdef E8
+// [[Typing]]
+   i[true]   = 6;
+#endif
+
+   ia2[0,3] = 6;
+
+#ifdef E9
+// [[Subtyping]]
+   ia2[0,3] = 6.0;
+#endif
+
+   ia2[0,3] = ia2[0,3];
+
+#ifdef E10
+// [[Subtyping]]
+   ia2[0,3] = da2[0,3];
+#endif
+
+#ifdef E11
+// [[Subtyping]]
+   da2[0,3] = 6;
+#endif
+
+   da2[0,3] = 6.0;
+
+#ifdef E12
+// [[Subtyping]]
+   da2[0,3] = ia2[1,3];
+#endif
+
+   da2[0,3] = da2[1,3];
+
+#ifdef E13
+// [[Subtyping]]
+   da2 = rtn_array({{(int)1,2,3,4},{1,2,3,4}});
+#endif
+
+#ifdef E14
+// [[Subtyping]]
+   ia2 = rtn_array({{1.0,2.0,3.0},{1.0,2.0,3.0}});
+#endif
+
+   da2[0,3] = da2[0,3];
+
+#ifdef E15
+// [[Subtyping]]
+   ia2 = cda7[0,5];
+#endif
+
+#ifdef E16
+// [[Subtyping]]
+   ia2 = this.cda7[0,5];
+#endif
+
+#ifdef E17
+// [[Subtyping]]
+   ia2 = Rc.cda7[0,5];
+#endif
+
+   this.cda5[0,5] = Rc.cda5[0,4];
+   Rc.cda5[0,5] = cda5[0,4];
+   cda5[0,5] = this.cda5[0,4];
+
+   this.cia8[0,5] = Rc.cia8[0,4];
+   Rc.cia8[0,5] = cia8[0,4];
+   cia8[0,5] = this.cia8[0,4];
+
+#ifdef E18
+// [[Subtyping]]
+   this.cda5[1,5] = Rc.cia8[1,4];
+#endif
+
+#ifdef E19
+// [[Subtyping]]
+   Rc.cda5[1,5] = cia8[1,4];
+#endif
+
+#ifdef E20
+// [[Subtyping]]
+   cda5[1,5] = this.cia8[1,4];
+#endif
+
+#ifdef E21
+// [[Subtyping]]
+   this.cda5[1,5] = Rc.cia8[1,4];
+#endif
+
+#ifdef E22
+// [[Subtyping]]
+   Rc.cda5[1,5] = cia8[1,4];
+#endif
+
+#ifdef E23
+// [[Subtyping]]
+   cda5[1,5] = this.cia8[1,4];
+#endif
+
+};
+
+}

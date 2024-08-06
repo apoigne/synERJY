@@ -1,0 +1,50 @@
+class Rc {
+
+
+Signal<int> f1 = new Signal<int>(new SimOutput());
+Signal<int> f2 = new Signal<int>(new SimOutput());
+Signal<int> f3 = new Signal<int>(new SimOutput());
+
+Signal<int> i1 = new Signal<int>();
+Signal<int> o1 = new Signal<int>(new SimOutput());
+
+public Rc () {
+    active { f(); };
+};
+
+private void f() {
+#ifdef O1
+  emit o1( $i1 );
+  sustain {|
+    f1 := i1 -> pre( f1 );
+    f2 := i1 -> pre( f2 );
+    f3 := f1 -> pre( f1 );
+  |};
+#endif
+
+#ifdef O2
+  sustain {|
+    f1 := i1 -> pre( f1 );
+    f2 := i1 -> pre( f2 );
+    f3 := f1 -> pre( f1 );
+  |};
+#endif
+
+#ifdef O3
+// [[Typing]]
+  emit o1( $i1 );
+#endif
+
+#ifdef E1
+// [[Typing]]
+  emit o1( i1 );
+#endif
+
+#ifdef O4
+  sustain {|
+    f1 := $i1 + f2 + $f2;
+  |};
+#endif
+
+};
+}

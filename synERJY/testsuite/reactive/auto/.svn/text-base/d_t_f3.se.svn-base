@@ -1,0 +1,50 @@
+class Rc {
+
+public Rc () {
+    active { a1();
+    };
+};
+
+Sensor x = new Sensor(new SimInput());
+
+Signal<int> fi1 = new Signal<int>(new SimOutput());
+
+#ifdef T1
+// trace        Automat mit Verfeinerung durch sustain
+//      ->
+//      -> fi1(1)
+//      -> fi1(2)
+//      -> fi1(3)
+//      -> fi1(4)
+//      -> fi1(5)
+//      -> fi1(6)
+//      -> fi1(7)
+//      -> fi1(8)
+//      -> fi1(9)
+//      -> fi1(10)
+//
+#endif
+
+private void a1 () {
+  automaton {
+
+    init { next state s1; };
+
+    state s1
+       do {
+         next;
+         sustain {| fi1 := pre(fi1) + 1; |};
+       }
+       when (true) { next state s2;  };
+
+    state s2
+       do {
+          next;
+          sustain {| fi1 := pre(fi1) + 1; |};
+       }
+       when (true) { next state s1; };
+
+  };
+};
+
+}

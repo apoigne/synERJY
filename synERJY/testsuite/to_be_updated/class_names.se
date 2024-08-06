@@ -1,0 +1,89 @@
+class Tc
+}
+
+class tc
+}
+
+class _tc
+}
+
+class tc99
+}
+
+class tc_long_long_long_long_long_long_long_long_long_long_long_long
+}
+
+class TC
+}
+
+#ifdef E1
+// [[ParseError]]
+class int
+}
+#endif
+
+#ifdef E2
+// [[ParseError]]
+class char
+}
+#endif
+
+#ifdef E3
+// [[ParseError]]
+class bool
+}
+#endif
+
+#ifdef E4
+// [[ParseError]]
+class float
+}
+#endif
+
+#ifdef E5
+// [[ParseError]]
+class double
+}
+#endif
+
+#ifdef E6
+// [[ParseError]]
+class byte
+}
+#endif
+
+#ifdef E7
+// [[ParseError]]
+class any
+}
+#endif
+
+#ifdef E8
+// [[ParseError]]
+class none
+}
+#endif
+
+#ifdef E9
+// [[ParseError]]
+class string
+}
+#endif
+
+#ifdef E10
+// [[ParseError]]
+class array
+}
+#endif
+
+#ifdef E11
+// [[ParseError]]
+class simple
+}
+#endif
+
+#ifdef E12
+// [[ParseError]]
+class signal
+}
+#endif

@@ -1,0 +1,38 @@
+// test-flags O = None true, E = data true, confclass Rc
+class Rc {
+
+public Rc () { active {}; };
+
+UpAndDownCounter x = new UpAndDownCounter();
+
+}
+
+
+
+class UpAndDownCounter {
+
+  Signal<int>   count = new Signal<int>(new SimOutput());
+  Sensor      reverse = new Sensor(new SimInput());
+
+  public UpAndDownCounter () {
+      active {
+// tex_start up-and-down-counter
+          loop {
+              cancel {
+                  sustain {|
+                      count := 0 -> pre(count) + 1;
+                  |};
+              } when (?reverse);
+              next;
+              cancel {
+                  sustain {|
+                      count := pre(count) - 1;
+                  |};
+              } when (?reverse);
+              next;
+          };
+// tex_end up-and-down-counters
+      };
+  };
+}
+

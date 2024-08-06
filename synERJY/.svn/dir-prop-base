@@ -1,0 +1,10 @@
+K 10
+svn:ignore
+V 63
+.settings
+.DebuggerSourceLookup
+.paths
+.makefilepaths
+.project
+
+END

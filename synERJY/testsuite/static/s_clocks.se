@@ -1,0 +1,140 @@
+// test-flags O = None true, E = None true
+
+class Rc {
+
+  public Rc () {
+      active { c1();
+      };
+  };
+
+// elementary
+
+#ifdef O1
+Signal<int> out = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out := 1;
+    |};
+  };
+#endif
+
+#ifdef O2
+Signal<int> out = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out := 1;
+    |};
+  };
+#endif
+
+#ifdef O3
+Signal<int> out1 = new Signal<int>(new SimOutput());
+Signal<int> out2 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := out2;
+    |};
+  };
+#endif
+
+#ifdef O4
+Signal<int> out1 = new Signal<int>(new SimOutput());
+Signal<int> out2 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := out2;
+    |};
+  };
+#endif
+
+#ifdef O5
+Signal{(int)3 < 5}<int> out1 = new Signal<int>(new SimOutput());
+Signal         <int> out2 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := ((int)7 + 2) when ((int)3 < 5);
+    |};
+  };
+#endif
+
+#ifdef E1
+// [[ClocksInconsistent]]
+Signal{(int)3 < 5}<int> out1 = new Signal<int>(new SimOutput());
+Signal         <int> out2 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := (int)7 + 2;
+    |};
+  };
+#endif
+
+//  terms
+
+#ifdef O7
+Signal<int> out1 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := pre(out1);
+    |};
+  };
+#endif
+
+#ifdef O8
+Signal<int> out1 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := 3 -> 4;
+    |};
+  };
+#endif
+
+#ifdef O9
+Signal<int> out1 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := 3 -> pre(out1);
+    |};
+  };
+#endif
+
+#ifdef E2
+// [[CurrentOnBaseClock]] 
+Signal<int> out1 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := current(3);
+    |};
+  };
+#endif
+
+#ifdef O10
+Signal<int> out1 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := current(3 when ((int)4 < 6));
+    |};
+  };
+#endif
+
+//  terms
+
+#ifdef O11
+Signal{(int)3 < 5}<int>  out1 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := ((int)7 when ((int)3 < 5)) + (2 when ((int)3 < 5));
+    |};
+  };
+#endif
+
+#ifdef E3
+// [[ClocksInconsistent]]
+Signal<int> out1 = new Signal<int>(new SimOutput());
+private void c1 () {
+    sustain {|
+        out1 := ((int)7 when ((int)3 < 5)) + (2 when ((int)3 < 5));
+    |};
+  };
+#endif
+
+}

@@ -1,0 +1,43 @@
+class Rc {
+
+public Rc () {
+  active { 
+#ifdef T1
+// trace
+//   ->  b
+//   ->
+// a -> c
+//   ->
+     if (true) {
+        aut(a,b);
+     };
+     aut(a,c);
+#endif
+  };
+};
+
+
+Sensor a = new Sensor(new SimInput());
+Signal b = new Signal(new SimOutput());
+Signal c = new Signal(new SimOutput());
+
+private void aut (Sensor x, Signal y) {
+   automaton {
+       init { next state st; };
+
+       state st 
+       do { emit y; }
+       when (?x) { next state exit; };
+   };
+};
+
+
+
+
+
+
+
+
+}
+
+

@@ -1,0 +1,94 @@
+class Rc {
+
+public Rc () {
+    active { c1(); };
+};
+
+Sensor I1 = new Sensor(new SimInput());
+Sensor I2 = new Sensor(new SimInput());
+
+Signal O1 = new Signal(new SimOutput());
+
+Sensor<int> II1 = new Sensor<int>(new SimInput());
+
+Signal<int> OI1 = new Signal<int>(new SimOutput());
+Signal<int> OI2 = new Signal<int>(new SimOutput());
+
+private int v;
+
+void set (int i) {
+  v = i;
+};
+
+void incr (int i) {
+  v = v + 1;
+};
+
+void decr (int i) {
+  v = v - 1;
+};
+
+
+#ifdef T1
+// trace
+//      ->
+// 	->
+// II1(10) -> OI1(10)
+//      -> OI1(9)
+//	-> OI1(8)
+// II1(1) -> OI1(9)
+//      -> OI1(8)
+// II1(1)  -> OI1(9)
+//  	-> OI1(8)
+//      -> OI1(7)
+//
+private void c1 () {
+   await ?II1;
+   set($II1);
+   emit OI1($II1);
+   next;
+   loop {
+       if (?II1) { incr($II1); } else { decr(1); };
+       emit OI1(v);
+       next;
+   };
+
+};
+#endif
+
+#ifdef T2
+// trace
+//       -> OI1(10)
+//       -> OI1(10)
+// I1    -> OI1(11)
+//       -> OI1(11)
+// I1 I2 -> OI1(11)
+// I2    -> OI1(10)
+// I1 I2 -> OI1(10)
+// I1    -> OI1(11)
+//       -> OI1(11)
+// I2    -> OI1(10)
+//       -> OI1(10)
+//
+private void c1 () {
+    set(10);
+    emit OI1(v);
+    next;
+    [[
+        loop {
+          await ?I1 && ! ?I2; incr(1); next; };
+    ||
+        loop {
+          await ?I2 && ! ?I1; decr(1); next; };
+    ||
+        loop { emit OI1(v); next; };
+    ]];
+
+};
+
+precedence {
+  set(int) < incr(int) < decr(int) < v;
+};
+#endif
+
+} //end class Rc

@@ -1,0 +1,556 @@
+class Rct {
+				
+static final time timing = 1sec;
+
+  Signal x1  = new Signal(new SimOutput());
+  Signal x2  = new Signal(new SimOutput());
+  Signal x21 = new Signal(new SimOutput());
+  Signal x22 = new Signal(new SimOutput());
+  Signal x3  = new Signal(new SimOutput());
+  Signal x31 = new Signal(new SimOutput());
+  Signal x32 = new Signal(new SimOutput());
+
+  Signal y1  = new Signal(new SimOutput());
+  Signal y2  = new Signal(new SimOutput());
+  Signal y21 = new Signal(new SimOutput());
+  Signal y22 = new Signal(new SimOutput());
+  Signal y3  = new Signal(new SimOutput());
+  Signal y31 = new Signal(new SimOutput());
+  Signal y32 = new Signal(new SimOutput());
+  
+#ifdef T1
+// trace
+// ->  x1
+// ->  x1
+// ->  x1
+// ->  x1 y1
+// ->
+// ->  x1
+// ->  x1 
+// ->  x1 
+// ->  x1 y1
+public Rct () {
+  active {
+    loop {
+       cancel {
+          sustain { emit x1; };
+       } when (3sec);
+       emit y1;
+       await 2sec;
+    };
+  };
+};
+#endif
+
+#ifdef T2
+// trace
+// ->  x1
+// ->  x1
+// ->  x1
+// ->     y1
+// ->
+// ->  x1
+// ->  x1 
+// ->  x1 
+// ->     y1
+public Rct () {
+  active {
+    loop {
+       cancel strongly {
+          sustain { emit x1; };
+       } when (3sec);
+       emit y1;
+       await 2sec;
+    };
+  };
+};
+#endif
+
+#ifdef T3
+// trace
+// ->  x1 x2
+// ->  x1 x2
+// ->  x1 x2 y2
+// ->  x1 x3
+// ->  x1 x3
+// ->  x1 x3 y1 y3
+// ->
+// ->  x1 x2
+// ->  x1 x2
+// ->  x1 x2 y2
+// ->  x1 x3
+// ->  x1 x3
+// ->  x1 x3 y1 y3
+// ->
+public Rct () {
+  active {
+    loop {
+       cancel {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel {
+                   sustain { emit x2; };
+                } when (2sec);
+                emit y2;
+                next;
+                cancel {
+                   sustain { emit x3; };
+                } when (2sec);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (5sec);
+       emit y1;
+       await 2sec;
+    };
+  };
+};
+#endif
+
+#ifdef T4
+// trace
+// ->  x1 x2
+// ->  x1 x2
+// ->  x1 x2 y2
+// ->  x1 x3
+// ->  x1 x3
+// ->  x1 x3 y3
+// ->  x1 x2 y1
+// ->
+// ->  x1 x2
+// ->  x1 x2
+// ->  x1 x2 y2
+// ->  x1 x3
+// ->  x1 x3
+// ->  x1 x3 y3
+// ->  x1 x2 y1
+public Rct () {
+  active {
+    loop {
+       cancel {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel {
+                   sustain { emit x2; };
+                } when (2sec);
+                emit y2;
+                next;
+                cancel {
+                   sustain { emit x3; };
+                } when (2sec);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (6sec);
+       emit y1;
+       await 2sec;
+    };
+  };
+};
+#endif
+
+#ifdef T5
+// trace
+// ->  x1 x2
+// ->  x1 x2
+// ->  x1    y2
+// ->  x1 x3
+// ->  x1 x3
+// ->        y1
+// ->
+// ->  x1 x2
+// ->  x1 x2
+// ->  x1    y2
+// ->  x1 x3
+// ->  x1 x3
+// ->        y1
+// ->
+public Rct () {
+  active {
+    loop {
+       cancel strongly {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel strongly {
+                   sustain { emit x2; };
+                } when (2sec);
+                emit y2;
+                next;
+                cancel strongly {
+                   sustain { emit x3; };
+                } when (2sec);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (5sec);
+       emit y1;
+       await 2sec;
+    };
+  };
+};
+#endif
+
+#ifdef T6
+// trace
+// ->  x1 x2
+// ->  x1 x2
+// ->  x1    y2
+// ->  x1 x3
+// ->  x1 x3
+// ->  x1    y3
+// ->        y1
+// ->
+// ->  x1 x2
+// ->  x1 x2
+// ->  x1    y2
+// ->  x1 x3
+// ->  x1 x3
+// ->  x1    y3
+// ->        y1
+// ->
+public Rct () {
+  active {
+    loop {
+       cancel strongly {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel strongly {
+                   sustain { emit x2; };
+                } when (2sec);
+                emit y2;
+                next;
+                cancel strongly {
+                   sustain { emit x3; };
+                } when (2sec);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (6sec);
+       emit y1;
+       await 2sec;
+    };
+  };
+};
+#endif
+
+
+#ifdef T7
+// trace
+// ->  x1 x2 x21
+// ->  x1 x2 x21
+// ->  x1 x2 x21 y21
+// ->  x1 x2 x22
+// ->  x1 x2 x22
+// ->  x1 x2 x22 y2 y22
+// ->  x1
+// ->  x1 x3 x31
+// ->  x1 x3 x31
+// ->  x1 x3 x31 y31
+// ->  x1 x3 x32 y1
+// ->
+// ->
+// ->
+// ->  x1 x2 x21
+// ->  x1 x2 x21
+// ->  x1 x2 x21 y21
+// ->  x1 x2 x22
+// ->  x1 x2 x22
+// ->  x1 x2 x22 y2 y22
+// ->  x1
+// ->  x1 x3 x31
+// ->  x1 x3 x31
+// ->  x1 x3 x31 y31
+// ->  x1 x3 x32 y1
+public Rct () {
+  active {
+    loop {
+       cancel  {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel {
+                   [[ sustain { emit x2; };
+                   || loop {
+                        cancel {
+                           sustain { emit x21; };
+                        } when (2sec);
+                        emit y21;
+                        next;
+                        cancel {
+                           sustain { emit x22; };
+                        } when (2sec);
+                        emit y22;
+                        next;
+                     };
+                  ]];
+                } when (5sec);
+                emit y2;
+                await 2sec;
+                cancel {
+                  [[ sustain { emit x3; };
+                  || loop {
+                        cancel {
+                           sustain { emit x31; };
+                        } when (2sec);
+                        emit y31;
+                        next;
+                        cancel {
+                           sustain { emit x32; };
+                        } when (2sec);
+                        emit y32;
+                        next;
+                     };
+                  ]];
+                } when (6sec);
+                emit y3;
+                await 2sec;
+             };
+          ]];
+       } when (10sec);
+       emit y1;
+       await 4sec;
+    };
+  };
+};
+#endif
+
+#ifdef T8
+// trace
+// ->  x1 x2 x21
+// ->  x1 x2 x21
+// ->  x1 x2 x21 y21
+// ->  x1 x2 x22
+// ->  x1 x2 x22
+// ->  x1 x2 x22 y2 y22
+// ->  x1
+// ->  x1 x3 x31
+// ->  x1 x3 x31
+// ->  x1 x3 x31 y1 y31
+// ->
+// ->
+// ->
+// ->  x1 x2 x21
+// ->  x1 x2 x21
+// ->  x1 x2 x21 y21
+// ->  x1 x2 x22
+// ->  x1 x2 x22
+// ->  x1 x2 x22 y2 y22
+// ->  x1
+// ->  x1 x3 x31
+// ->  x1 x3 x31
+// ->  x1 x3 x31 y1 y31
+// ->
+public Rct () {
+  active {
+    loop {
+       cancel  {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel {
+                   [[ sustain { emit x2; };
+                   || loop {
+                        cancel {
+                           sustain { emit x21; };
+                        } when (2sec);
+                        emit y21;
+                        next;
+                        cancel {
+                           sustain { emit x22; };
+                        } when (2sec);
+                        emit y22;
+                        next;
+                     };
+                  ]];
+                } when (5sec);
+                emit y2;
+                await 2sec;
+                cancel {
+                  [[ sustain { emit x3; };
+                  || loop {
+                        cancel {
+                           sustain { emit x31; };
+                        } when (2sec);
+                        emit y31;
+                        next;
+                        cancel {
+                           sustain { emit x32; };
+                        } when (2sec);
+                        emit y32;
+                        next;
+                     };
+                  ]];
+                } when (6sec);
+                emit y3;
+                await 2sec;
+             };
+          ]];
+       } when (9sec);
+       emit y1;
+       await 4sec;
+    };
+  };
+};
+#endif
+
+#ifdef T9
+// trace
+// ->  x1 x2 x21
+// ->  x1 x2 x21
+// ->  x1 x2     y21
+// ->  x1 x2 x22
+// ->  x1 x2 x22
+// ->  x1        y2
+// ->  x1
+// ->  x1 x3 x31
+// ->  x1 x3 x31
+// ->  x1 x3     y31
+// ->            y1
+// ->
+// ->
+// ->
+// ->  x1 x2 x21
+// ->  x1 x2 x21
+// ->  x1 x2     y21
+// ->  x1 x2 x22
+// ->  x1 x2 x22
+// ->  x1        y2
+// ->  x1
+// ->  x1 x3 x31
+// ->  x1 x3 x31
+// ->  x1 x3     y31
+// ->            y1
+public Rct () {
+  active {
+    loop {
+       cancel strongly {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel strongly {
+                   [[ sustain { emit x2; };
+                   || loop {
+                        cancel strongly {
+                           sustain { emit x21; };
+                        } when (2sec);
+                        emit y21;
+                        next;
+                        cancel strongly {
+                           sustain { emit x22; };
+                        } when (2sec);
+                        emit y22;
+                        next;
+                     };
+                  ]];
+                } when (5sec);
+                emit y2;
+                await 2sec;
+                cancel strongly {
+                  [[ sustain { emit x3; };
+                  || loop {
+                        cancel strongly {
+                           sustain { emit x31; };
+                        } when (2sec);
+                        emit y31;
+                        next;
+                        cancel strongly {
+                           sustain { emit x32; };
+                        } when (2sec);
+                        emit y32;
+                        next;
+                     };
+                  ]];
+                } when (6sec);
+                emit y3;
+                await 2sec;
+             };
+          ]];
+       } when (10sec);
+       emit y1;
+       await 4sec;
+    };
+  };
+};
+#endif
+
+#ifdef T10
+// trace
+// ->  x1 x2 x21
+// ->  x1 x2 x21
+// ->  x1 x2     y21
+// ->  x1 x2 x22
+// ->  x1 x2 x22
+// ->  x1        y2
+// ->  x1
+// ->  x1 x3 x31
+// ->  x1 x3 x31
+// ->  x1 x3     y1 y31
+// ->
+// ->
+// ->
+// ->  x1 x2 x21
+// ->  x1 x2 x21
+// ->  x1 x2     y21
+// ->  x1 x2 x22
+// ->  x1 x2 x22
+// ->  x1        y2
+// ->  x1
+// ->  x1 x3 x31
+// ->  x1 x3 x31
+// ->  x1 x3     y1 y31
+// ->
+public Rct () {
+  active {
+    loop {
+       cancel  {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel strongly {
+                   [[ sustain { emit x2; };
+                   || loop {
+                        cancel strongly {
+                           sustain { emit x21; };
+                        } when (2sec);
+                        emit y21;
+                        next;
+                        cancel strongly {
+                           sustain { emit x22; };
+                        } when (2sec);
+                        emit y22;
+                        next;
+                     };
+                  ]];
+                } when (5sec);
+                emit y2;
+                await 2sec;
+                cancel strongly {
+                  [[ sustain { emit x3; };
+                  || loop {
+                        cancel strongly {
+                           sustain { emit x31; };
+                        } when (2sec);
+                        emit y31;
+                        next;
+                        cancel strongly {
+                           sustain { emit x32; };
+                        } when (2sec);
+                        emit y32;
+                        next;
+                     };
+                  ]];
+                } when (6sec);
+                emit y3;
+                await 2sec;
+             };
+          ]];
+       } when (9sec);
+       emit y1;
+       await 4sec;
+    };
+  };
+};
+#endif
+
+
+}

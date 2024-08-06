@@ -1,0 +1,173 @@
+class Xc {
+
+public Xc (int inc)
+{
+   xc_ar = inc+1;
+   xc_av = inc+2;
+   xc_au = inc+3;
+   xc_sr = 4;
+   xc_sv = 5;
+   xc_su = 6;
+};
+
+protected int xc_ar;
+private   int xc_av;
+public    int xc_au;
+
+static protected int xc_sr;
+static private   int xc_sv;
+static public    int xc_su;
+
+static final protected int xc_fr = 7;
+static final private   int xc_fv = 8;
+static final public    int xc_fu = 9;
+
+public int get_xc_ar () { return xc_ar; };
+public int get_xc_av () { return xc_av; };
+public int get_xc_au () { return xc_au; };
+
+}
+
+class Yc {
+
+public Yc (int inc)
+{
+   yc_ar = inc+11;
+   yc_av = inc+12;
+   yc_au = inc+13;
+   yc_sr = 14;
+   yc_sv = 15;
+   yc_su = 16;
+};
+
+protected int yc_ar;
+private   int yc_av;
+public    int yc_au;
+
+static protected int yc_sr;
+static private   int yc_sv;
+static public    int yc_su;
+
+static final protected int yc_fr = 17;
+static final private   int yc_fv = 18;
+static final public    int yc_fu = 19;
+}
+
+class Tc extends Xc {
+public Tc (int inc)
+{
+   super(inc);
+   tc_ar = inc+21;
+   tc_av = inc+22;
+   tc_au = inc+23;
+   tc_sr = 24;
+   tc_sv = 25;
+   tc_su = 26;
+};
+
+protected int tc_ar;
+private   int tc_av;
+public    int tc_au;
+
+static protected int tc_sr;
+static private   int tc_sv;
+static public    int tc_su;
+
+static final protected int tc_fr = 27;
+static final private   int tc_fv = 28;
+static final public    int tc_fu = 29;
+
+private Yc y;
+private Xc x = new Xc(100);
+
+private void tc0 ( Xc p )
+{
+   Xc l;
+   int i;
+   i = p.get_xc_ar();
+   i = l.get_xc_ar();
+};
+
+private void tc1 ( int tc_p )
+{
+   int tc_f = 9;
+   int tc_m;
+
+   tc_ar = tc_ar + tc_p;
+   tc_av = tc_av + tc_p;
+   tc_au = tc_au + tc_p;
+
+   tc_sr = tc_sr + tc_p;
+   tc_sv = tc_sv + tc_p;
+   tc_su = tc_su + tc_p;
+
+   this.tc_sr = this.tc_sr + tc_p;
+   this.tc_sv = this.tc_sv + tc_p;
+   this.tc_su = this.tc_su + tc_p;
+
+   Tc.tc_sr = Tc.tc_sr + tc_p;
+   Tc.tc_sv = Tc.tc_sv + tc_p;
+   Tc.tc_su = Tc.tc_su + tc_p;
+
+#ifdef E1
+// [[Lhs3Err]]
+   tc_fr = 1;
+#endif
+
+#ifdef E2
+// [[Lhs3Err]]
+   tc_fv = 1;
+#endif
+
+#ifdef E3
+// [[Lhs3Err]]
+   tc_fu = 1;
+#endif
+
+   tc_m = 1;
+
+#ifdef E5
+// [[Lhs1Err]] tc_p
+   tc_p = 1;
+#endif
+
+#ifdef E6
+// [[Lhs2Err]] xc_ar
+   xc_ar = 1;
+#endif
+
+#ifdef E7
+// [[Access]] xc_av
+   xc_av = 1;
+#endif
+
+#ifdef E8
+// [[Lhs2Err]] xc_au
+   xc_au = 1;
+#endif
+
+#ifdef E9
+// [[Lhs2Err]] xc_sr
+   xc_sr = 1;
+#endif
+
+#ifdef E10
+// [[Access]] xc_sv
+   xc_sv = 1;
+#endif
+
+#ifdef E11
+// [[Lhs2Err]] xc_su
+   xc_su = 1;
+#endif
+
+};
+
+}
+
+class Rc {
+   public Rc() {
+      active {};
+   };
+}
+

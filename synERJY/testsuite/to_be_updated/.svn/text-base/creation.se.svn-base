@@ -1,0 +1,39 @@
+class Ac
+  init_ac is public creation () {};
+int   f;
+}
+
+class Bc
+inherit Ac;
+  init_bc is public creation () {};
+int   g;
+}
+
+class Cc
+inherit Ac;
+  init_ac is public creation () {};
+int   g;
+int   h;
+}
+
+class Rc
+
+  run( exception_enum s ) is creation
+    do
+      a1.init_ac;
+      b1.init_bc;
+      c1.init_ac;
+      a2 = New [Ac].init_ac;
+      b2 = New [Bc].init_bc;
+      c2 = New [Cc].init_ac;
+      reactive loop;
+    };
+
+  a1 : expanded Ac;
+  b1 : expanded Bc;
+  c1 : expanded Cc;
+Ac   a2;
+Bc   b2;
+Cc   c2;
+
+}

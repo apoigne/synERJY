@@ -1,0 +1,34 @@
+// test-flags O = None true, E = data true, confclass Rct
+
+class Rct { 
+    static final time timing = 100msec;
+				
+public Rct () { active { }; };
+
+CountingUpAndDown x = new CountingUpAndDown();
+}
+
+// tex_start counting-up-and-down
+class CountingUpAndDown {
+
+  Sensor reverse = new Sensor(new SimInput());
+
+  Signal<int> count = new Signal<int>(new SimOutput());
+
+  public CountingUpAndDown () {
+    active {
+      emit count(0);
+      loop {
+        next;
+        cancel {
+          sustain {| count := pre(count) + 1; |};
+        } when (?reverse);
+        next;
+        cancel {
+          sustain {| count := pre(count) - 1; |};
+        } when (?reverse);
+      };
+    };
+  };
+}
+// tex_end

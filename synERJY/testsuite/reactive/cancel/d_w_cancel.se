@@ -1,0 +1,1179 @@
+class Rct {
+				
+  Sensor a1 = new Sensor(new SimInput());
+  Sensor a2  = new Sensor(new SimInput());
+  Sensor a21 = new Sensor(new SimInput());
+  Sensor a22 = new Sensor(new SimInput());
+  Sensor a3  = new Sensor(new SimInput());
+  Sensor a31 = new Sensor(new SimInput());
+  Sensor a32 = new Sensor(new SimInput());
+
+  Signal x1  = new Signal(new SimOutput());
+  Signal x2  = new Signal(new SimOutput());
+  Signal x21 = new Signal(new SimOutput());
+  Signal x22 = new Signal(new SimOutput());
+  Signal x3  = new Signal(new SimOutput());
+  Signal x31 = new Signal(new SimOutput());
+  Signal x32 = new Signal(new SimOutput());
+
+  Signal y1  = new Signal(new SimOutput());
+  Signal y2  = new Signal(new SimOutput());
+  Signal y21 = new Signal(new SimOutput());
+  Signal y22 = new Signal(new SimOutput());
+  Signal y3  = new Signal(new SimOutput());
+  Signal y31 = new Signal(new SimOutput());
+  Signal y32 = new Signal(new SimOutput());
+  
+#ifdef T1
+// trace
+//        ->  x1
+// a1     ->  x1 y1
+// a1     ->  x1 y1
+//        ->  x1
+//        ->  x1
+//        ->  x1
+// a1     ->  x1 y1
+// a1     ->  x1 y1
+
+public Rct () {
+  active {
+    loop {
+       cancel {
+          sustain { emit x1; };
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T2
+// trace
+//        ->  x1
+// a1     ->  y1
+// a1     ->  y1
+//        ->  x1
+//        ->  x1
+//        ->  x1
+// a1     ->  y1
+// a1     ->  y1
+
+public Rct () {
+  active {
+    loop {
+       cancel strongly {
+          sustain { emit x1; };
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T3
+// trace
+//        ->  x1
+// a1     ->  x1 y1
+// a1     ->  x1
+//        ->  x1
+//        ->  x1
+//        ->  x1
+// a1     ->  x1 y1
+// a1     ->  x1
+
+public Rct () {
+  active {
+    loop {
+       cancel next {
+          sustain { emit x1; };
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T4
+// trace
+//        ->  x1
+// a1     ->  y1
+// a1     ->  x1
+//        ->  x1
+//        ->  x1
+//        ->  x1
+// a1     ->  y1
+// a1     ->  x1
+
+public Rct () {
+  active {
+    loop {
+       cancel strongly next {
+          sustain { emit x1; };
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T5
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  x1 x2 y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  x1 x2 y1 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T6
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel strongly {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T7
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  x1 x2 y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  x1 x2 y1 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel next {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T8
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel strongly next {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T9
+// trace
+//        ->  x1 x2
+// a2     ->  x1 y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  x1 x2 y1
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  x1    y1 y2
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel strongly {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel strongly {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T10
+// trace
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  y1
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  y1
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel strongly {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel strongly {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel strongly {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T11
+// trace
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  x1 x2 y1
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  x1    y1 y2
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel next {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel strongly {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel strongly{
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T12
+// trace
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  y1
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  y1
+//        ->  x1 x2
+// a2     ->  x1    y2
+//        ->  x1 x3
+// a3     ->  x1    y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel strongly next {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel strongly {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel strongly {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+
+#ifdef T13
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  x1 x2 y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  x1 x2 y1 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel next {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel next {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T14
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel strongly {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel next {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel next {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T15
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  x1 x2 y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  x1 x2 y1 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel next {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel next {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel next {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T16
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x3
+// a3     ->  x1 x3 y3
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel strongly next {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel next {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+                cancel next {
+                   sustain { emit x3; };
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+
+#ifdef T17
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  x1 x2 y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  x1 x2 y1 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel next {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T18
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel strongly {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel next {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T19
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  x1 x2 y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  x1 x2 y1 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel next {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel next {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T20
+// trace
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+// a1     ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+// a1 a2  ->  y1
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+// a2     ->  x1 x2 y2
+//        ->  x1 x2
+//        ->  x1 x2
+
+public Rct () {
+  active {
+    loop {
+       cancel strongly next {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel next {
+                   sustain { emit x2; };
+                } when (?a2);
+                emit y2;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T21
+// trace
+//        ->  x1 x2 x21
+// a21    ->  x1 x2 x21 y21
+//        ->  x1 x2 x22
+// a22    ->  x1 x2 x22 y22
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a2     ->  x1 x2 x21 y2
+//        ->  x1 x3 x31
+// a31    ->  x1 x3 x31 y31
+//        ->  x1 x3 x32
+// a32    ->  x1 x3 x32 y32
+//        ->  x1 x3 x31
+// a3     ->  x1 x3 x31 y3
+//        ->  x1 x2 x21
+// a2 a21 ->  x1 x2 x21 y2 y21
+//        ->  x1 x3 x31
+// a31    ->  x1 x3 x31 y31
+//        ->  x1 x3 x32
+// a32    ->  x1 x3 x32 y32
+//        ->  x1 x3 x31
+//        ->  x1 x3 x31
+// a3     ->  x1 x3 x31 y3
+//        ->  x1 x2 x21
+// a21    ->  x1 x2 x21 y21
+//        ->  x1 x2 x22
+// a1 a2  ->  x1 x2 x22 y1 y2
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a21    ->  x1 x2 x21 y21
+//        ->  x1 x2 x22
+// a22    ->  x1 x2 x22 y22
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a2     ->  x1 x2 x21 y2
+//        ->  x1 x3 x31
+// a31    ->  x1 x3 x31 y31
+//        ->  x1 x3 x32
+// a1 a3  ->  x1 x3 x32 y1 y3
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a1 a2  a21 ->  x1 x2 x21 y1 y2 y21
+//            ->  x1 x2 x21
+public Rct () {
+  active {
+    loop {
+       cancel  {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel {
+                   [[ sustain { emit x2; };
+                   || loop {
+                        cancel {
+                           sustain { emit x21; };
+                        } when (?a21);
+                        emit y21;
+                        next;
+                        cancel {
+                           sustain { emit x22; };
+                        } when (?a22);
+                        emit y22;
+                        next;
+                     };
+                  ]];
+                } when (?a2);
+                emit y2;
+                next;
+                cancel {
+                  [[ sustain { emit x3; };
+                  || loop {
+                        cancel {
+                           sustain { emit x31; };
+                        } when (?a31);
+                        emit y31;
+                        next;
+                        cancel {
+                           sustain { emit x32; };
+                        } when (?a32);
+                        emit y32;
+                        next;
+                     };
+                  ]];
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T22
+// trace
+//        ->  x1 x2 x21
+// a21    ->  x1 x2 x21 y21
+//        ->  x1 x2 x22
+// a22    ->  x1 x2 x22 y22
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a2     ->  x1 x2 x21 y2
+//        ->  x1 x3 x31
+// a31    ->  x1 x3 x31 y31
+//        ->  x1 x3 x32
+// a32    ->  x1 x3 x32 y32
+//        ->  x1 x3 x31
+// a3     ->  x1 x3 x31 y3
+//        ->  x1 x2 x21
+// a2 a21 ->  x1 x2 x21 y2 y21
+//        ->  x1 x3 x31
+// a31    ->  x1 x3 x31 y31
+//        ->  x1 x3 x32
+// a32    ->  x1 x3 x32 y32
+//        ->  x1 x3 x31
+//        ->  x1 x3 x31
+// a3     ->  x1 x3 x31 y3
+//        ->  x1 x2 x21
+// a21    ->  x1 x2 x21 y21
+//        ->  x1 x2 x22
+// a1 a2  ->  x1 x2 x22 y1 y2
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a21    ->  x1 x2 x21 y21
+//        ->  x1 x2 x22
+// a22    ->  x1 x2 x22 y22
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a2     ->  x1 x2 x21 y2
+//        ->  x1 x3 x31
+// a31    ->  x1 x3 x31 y31
+//        ->  x1 x3 x32
+// a1 a3  ->  x1 x3 x32 y1 y3
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a1 a2  a21 ->  x1 x2 x21 y1 y2 y21
+//            ->  x1 x2 x21
+public Rct () {
+  active {
+    loop {
+       cancel  next {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel next {
+                   [[ sustain { emit x2; };
+                   || loop {
+                        cancel next {
+                           sustain { emit x21; };
+                        } when (?a21);
+                        emit y21;
+                        next;
+                        cancel next {
+                           sustain { emit x22; };
+                        } when (?a22);
+                        emit y22;
+                        next;
+                     };
+                  ]];
+                } when (?a2);
+                emit y2;
+                next;
+                cancel next {
+                  [[ sustain { emit x3; };
+                  || loop {
+                        cancel next {
+                           sustain { emit x31; };
+                        } when (?a31);
+                        emit y31;
+                        next;
+                        cancel next {
+                           sustain { emit x32; };
+                        } when (?a32);
+                        emit y32;
+                        next;
+                     };
+                  ]];
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+#ifdef T23
+// trace
+//        ->  x1 x2 x21
+// a21    ->  x1 x2     y21
+//        ->  x1 x2 x22
+// a22    ->  x1 x2     y22
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a2     ->  x1        y2
+//        ->  x1 x3 x31
+// a31    ->  x1 x3     y31
+//        ->  x1 x3 x32
+// a32    ->  x1 x3     y32
+//        ->  x1 x3 x31
+// a3     ->  x1        y3
+//        ->  x1 x2 x21
+// a2 a21 ->  x1        y2
+//        ->  x1 x3 x31
+// a31    ->  x1 x3     y31
+//        ->  x1 x3 x32
+// a32    ->  x1 x3     y32
+//        ->  x1 x3 x31
+//        ->  x1 x3 x31
+// a3     ->  x1        y3
+//        ->  x1 x2 x21
+// a21    ->  x1 x2     y21
+//        ->  x1 x2 x22
+// a1 a2  ->            y1
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a21    ->  x1 x2     y21
+//        ->  x1 x2 x22
+// a22    ->  x1 x2     y22
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a2     ->  x1        y2
+//        ->  x1 x3 x31
+// a31    ->  x1 x3     y31
+//        ->  x1 x3 x32
+// a1 a3  ->            y1
+//        ->  x1 x2 x21
+//        ->  x1 x2 x21
+// a1 a2  a21 ->             y1
+//            ->  x1 x2 x21
+public Rct () {
+  active {
+    loop {
+       cancel  strongly {
+          [[ sustain { emit x1; };
+          || loop {
+                cancel strongly {
+                   [[ sustain { emit x2; };
+                   || loop {
+                        cancel strongly {
+                           sustain { emit x21; };
+                        } when (?a21);
+                        emit y21;
+                        next;
+                        cancel strongly {
+                           sustain { emit x22; };
+                        } when (?a22);
+                        emit y22;
+                        next;
+                     };
+                  ]];
+                } when (?a2);
+                emit y2;
+                next;
+                cancel strongly {
+                  [[ sustain { emit x3; };
+                  || loop {
+                        cancel strongly {
+                           sustain { emit x31; };
+                        } when (?a31);
+                        emit y31;
+                        next;
+                        cancel strongly {
+                           sustain { emit x32; };
+                        } when (?a32);
+                        emit y32;
+                        next;
+                     };
+                  ]];
+                } when (?a3);
+                emit y3;
+                next;
+             };
+          ]];
+       } when (?a1);
+       emit y1;
+       next;
+    };
+  };
+};
+#endif
+
+
+
+}

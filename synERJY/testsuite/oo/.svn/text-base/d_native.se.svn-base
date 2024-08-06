@@ -1,0 +1,28 @@
+#ifdef T1
+// trace
+// -> out(2)
+// -> out(8)
+// -> out(999)
+// -> out(2500000)
+#endif
+
+class Rc {
+  static final native int sta_Rc_null_pointer_exception;
+  static final native int sta_Rc_class_cast_exception;
+  static final int instant_caused_time_overflow_exception = 999;
+  static final native int sta_Rc_instant_caused_time_overflow_exception;
+  static final native int sta_Rc_timing;
+  static final time timing = 2.50000012345sec;
+
+  public Rc() {
+    active {
+            emit out(sta_Rc_null_pointer_exception);
+      next; emit out(sta_Rc_class_cast_exception);
+      next; emit out(sta_Rc_instant_caused_time_overflow_exception);
+      next; emit out(sta_Rc_timing);
+    };
+  };
+
+  Signal<int> out = new Signal<int>(new SimOutput());
+
+}

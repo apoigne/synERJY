@@ -1,0 +1,52 @@
+class Tm {
+
+static final time timing = 1sec;
+
+#ifdef T1
+// trace
+//   -> on
+//   ->
+//   ->
+//   ->
+//   ->
+//   ->
+//   ->
+//   -> 
+//   -> on 
+public Tm () {
+  active {
+     loop {
+        emit on;
+        await @on > 5sec;
+        next;
+     }; 
+  };
+};
+#endif
+
+#ifdef T2
+// trace
+//   -> on
+//   ->
+//   ->
+//   ->
+//   ->
+//   ->
+//   -> on 
+public Tm () {
+  active {
+     loop {
+        emit on;
+        await 5sec;
+        next;
+     }; 
+  };
+};
+#endif
+
+
+// control
+Signal on      = new Signal(new SimOutput());
+
+
+}

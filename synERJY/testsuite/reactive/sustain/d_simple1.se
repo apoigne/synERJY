@@ -1,0 +1,131 @@
+class Rc {
+
+public Rc ()
+{
+  active { c1(); };
+};
+
+#ifdef T1
+// trace
+// sns(1) -> sgn(2)
+// sns(2) -> sgn(5)
+// sns(1) -> sgn(7)
+// sns(8) -> sgn(16)
+
+Sensor<int> sns = new Sensor<int>(new SimInput());
+Signal<int> sgn = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {| sgn := pre(sgn) + 1 + sns; |};
+};
+#endif
+
+#ifdef T2
+// trace
+// sns(1) -> sgn(2)
+// sns(2) -> sgn(5)
+// sns(1) -> sgn(7)
+// sns(8) -> sgn(16)
+
+Sensor<int> sns = new Sensor<int>(new SimInput());
+Signal{true}<int> sgn = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {| sgn := pre(sgn) + 1 when(true) + sns when(true); |};
+};
+#endif
+
+#ifdef T3
+// trace
+// sns(1) -> sgn(2)
+// sns(2) -> sgn(5)
+// sns(1) -> sgn(7)
+// sns(8) -> sgn(16)
+
+Sensor{true}<int> sns = new Sensor<int>(new SimInput());
+Signal{true}<int> sgn = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {| sgn := pre(sgn) + 1 when(true) + sns; |};
+};
+#endif
+
+#ifdef T4
+// trace
+// sns(1) -> sgn(2)
+// sns(2) -> sgn(5)
+// sns(1) -> sgn(7)
+// sns(8) -> sgn(16)
+
+Sensor<int> sns = new Sensor<int>(new SimInput());
+Signal<int> sgn = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {| sgn := pre(sgn) + 1 + sns; |};
+};
+#endif
+
+#ifdef T5
+// trace
+//               ->
+// clk(0) sns(1) -> sgn(2)
+// clk(0) sns(2) -> sgn(5)
+//               ->
+//               ->
+// clk(0) sns(1) -> sgn(7)
+//               ->
+// clk(0) sns(8) -> sgn(16)
+//               ->
+
+Sensor<int> clk = new Sensor<int>(new SimInput());
+Sensor<int> sns = new Sensor<int>(new SimInput());
+Signal{?clk}<int> sgn = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {| sgn := sns when(?clk) + pre(sgn) + 1 when(?clk); |};
+};
+#endif
+
+#ifdef T6
+// trace
+//               -> sgn(1)
+// clk(0) sns(1) -> sgn(3)
+// clk(0) sns(2) -> sgn(6)
+//               -> sgn(9)
+//               -> sgn(12)
+// clk(0) sns(1) -> sgn(14)
+//               -> sgn(16)
+// clk(0) sns(8) -> sgn(25)
+//               -> sgn(34)
+
+Sensor<int> clk = new Sensor<int>(new SimInput());
+Sensor<int> sns = new Sensor<int>(new SimInput());
+Signal      <int> sgn = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {| sgn := pre(sgn) + 1 + 0 + current(sns when (?clk)); |}; // $sns
+};
+#endif
+
+#ifdef T7
+// trace
+//               -> sgn(1)
+// clk(4) sns(1) -> sgn(7)
+// clk(2) sns(2) -> sgn(12)
+//               -> sgn(17)
+//               -> sgn(22)
+// clk(6) sns(1) -> sgn(30)
+//               -> sgn(38)
+// clk(4) sns(8) -> sgn(51)
+//               -> sgn(64)
+
+Sensor<int> clk = new Sensor<int>(new SimInput());
+Sensor<int> sns = new Sensor<int>(new SimInput());
+Signal      <int> sgn = new Signal<int>(new SimOutput());
+
+private void c1 () {
+  sustain {| sgn := pre(sgn) + 1 + current(sns when(?clk) + $clk when(?clk)); |};
+};
+#endif
+
+}

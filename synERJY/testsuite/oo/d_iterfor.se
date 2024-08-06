@@ -1,0 +1,187 @@
+class Rc {
+
+public Rc () {
+   active { react(); };
+};
+
+Signal<int> out = new Signal<int>(new SimOutput());
+
+/* ------------------------------------------------------------------------
+ * count upward iterations starting with count == 100
+ */
+#ifdef T11
+// trace
+//             -> out(100)
+//             -> out(101)
+//             -> out(103)
+//             -> out(100)
+//             -> out(101)
+//             -> out(103)
+//             -> out(100)
+//             -> out(100)
+//             -> out(100)
+//             -> out(100)
+
+private void react () {
+   emit out(f(0,0)); next;
+   emit out(f(0,1)); next;
+   emit out(f(0,3)); next;
+
+   emit out(f(-1,-1)); next;
+   emit out(f(-1,0)); next;
+   emit out(f(-1,2)); next;
+
+   emit out(f(1,0)); next;
+   emit out(f(1,1)); next;
+   emit out(f(-1,-1)); next;
+   emit out(f(-1,-3)); next;
+   next;
+};
+
+private int f (int start, int off) {
+    int count = 100;
+    for (int i = start; i<off; i++) {
+        count++;
+    };
+    return count;
+};
+#endif
+/* ------------------------------------------------------------------------
+ * count downward iterations starting with count == -100
+ */
+#ifdef T12
+// trace
+//             -> out(-100)
+//             -> out(-101)
+//             -> out(-103)
+//             -> out(-100)
+//             -> out(-101)
+//             -> out(-103)
+//             -> out(-100)
+//             -> out(-100)
+//             -> out(-100)
+//             -> out(-100)
+
+private void react () {
+   emit out(f(0,0)); next;
+   emit out(f(0,1)); next;
+   emit out(f(0,3)); next;
+
+   emit out(f(-1,-1)); next;
+   emit out(f(-1,0)); next;
+   emit out(f(-1,2)); next;
+
+   emit out(f(1,0)); next;
+   emit out(f(1,1)); next;
+   emit out(f(-1,-1)); next;
+   emit out(f(-1,-3)); next;
+   next;
+};
+
+private int f (int start, int off) {
+    int count = -100;
+    for (int i = off; i>start; i--) {
+        count--;
+    };
+    return count;
+};
+#endif
+
+/* ------------------------------------------------------------------------
+ * count empty iterations
+ */
+#ifdef T2
+// trace
+//             -> out(0)
+//             -> out(1)
+//             -> out(3)
+//             -> out(-1)
+//             -> out(0)
+//             -> out(2)
+//             -> out(1)
+//             -> out(1)
+//             -> out(-1)
+//             -> out(-1)
+
+private void react () {
+   emit out(f(0,0)); next;
+   emit out(f(0,1)); next;
+   emit out(f(0,3)); next;
+
+   emit out(f(-1,-1)); next;
+   emit out(f(-1,0)); next;
+   emit out(f(-1,2)); next;
+
+   emit out(f(1,0)); next;
+   emit out(f(1,1)); next;
+   emit out(f(-1,-1)); next;
+   emit out(f(-1,-3)); next;
+   next;
+};
+
+private int f (int start, int off) {
+    int i=99;
+    for (i = start; i<off; i++) {};
+    return i;
+};
+#endif
+
+/* ------------------------------------------------------------------------
+ * count a break-ed loop
+ */
+#ifdef T3
+// trace
+//             -> out(0)
+//             -> out(1)
+//             -> out(2)
+
+private void react () {
+   emit out(f(0,0,0)); next;
+   emit out(f(0,1,1)); next;
+   emit out(f(0,3,2)); next;
+
+   next;
+};
+
+private int f (int start, int off, int brk) {
+    int i=99;
+    for (i = start; i<off; i++) {
+        if (i==brk) {
+            break;
+        };
+    };
+    return i;
+};
+#endif
+
+/* ------------------------------------------------------------------------
+ * count a continued-ed loop
+ */
+#ifdef T4
+// trace
+//             -> out(0)
+//             -> out(1)
+//             -> out(2)
+
+private void react () {
+   emit out(f(0,0,0)); next;
+   emit out(f(0,1,1)); next;
+   emit out(f(0,3,1)); next;
+
+   next;
+};
+
+private int f (int start, int off, int cont) {
+    int count=0;
+    for (int i = start; i<off; i++) {
+        if (i>cont) {
+            continue;
+        };
+        count++;
+    };
+    return count;
+};
+#endif
+
+/* ------------------------------------------------------------------------ */
+} // end class Rc

@@ -1,0 +1,5 @@
+#include "../../target/examples/Rctsty/rctsty.se"
+
+#ifdef T1
+// trace
+#endif

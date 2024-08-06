@@ -1,0 +1,46 @@
+// test-flags O = None true, E = data true, confclass Rct
+class Rct { 
+    static final time timing = 1sec;
+				
+    public Rct () { 
+        active {           
+        };
+    };
+
+    Belt counter = new Belt();
+}
+
+// tex_start belt
+class Belt {
+
+Sensor  beltOn = new Sensor(new SimInput());
+Sensor beltOff = new Sensor(new SimInput());
+Sensor   keyOn = new Sensor(new SimInput());
+Sensor  keyOff = new Sensor(new SimInput());
+
+Signal  alarmLightOn = new Signal(new SimOutput());
+Signal alarmLightOff = new Signal(new SimOutput());
+Signal      beeperOn = new Signal(new SimOutput());
+Signal     beeperOff = new Signal(new SimOutput());
+
+public Belt () {
+    active {
+        loop {
+            await ?keyOn;
+            cancel {
+                emit alarmLightOn;
+                await 5sec;
+                emit beeperOn;
+                await 10sec;
+                emit beeperOff;
+                halt;
+            } when (?beltOn || ?keyOff) {
+                emit alarmLightOff;
+                emit beeperOff;
+            };
+            next;
+        };
+    };
+};
+}
+// tex_end belt

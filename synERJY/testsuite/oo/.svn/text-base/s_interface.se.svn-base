@@ -1,0 +1,186 @@
+// fields and methods in interfaces
+// methods have no body, otherwise error
+// overloading of methods no problem in Java
+
+interface Ifc {
+  int x = 1;
+  int y = 2;
+  int a = y + 3;
+
+  int m1 ();
+  int m2 (int i);
+  int m3 (short s1, short s2);
+
+#ifdef E01
+// [[ParseError]] interface fields are implicitly
+    protected double d = 4.0;
+#endif
+
+#ifdef E1
+// [[ParseError]] interface fields are implicitly
+    private double d = 2.0;
+#endif
+
+#ifdef E2
+// [[ParseError]] Only initialized fields are legal
+    int z;
+#endif
+
+#ifdef E4
+// [[ParseError]] interface methods are implicitly
+    static int m4 () { return 1; };
+#endif
+
+#ifdef E5
+// [[ParseError]] method body illegal
+    int m4 () { return 1; };
+#endif
+
+#ifdef E6
+// [[ParseError]] interface methods are implicitly
+    final int m4 ();
+#endif
+
+#ifdef E7
+// [[ParseError]] interface methods are implicitly
+    private int m4 ();
+#endif
+
+#ifdef E8
+// [[ParseError]] interface methods are implicitly
+    protected int m4 ();
+#endif
+}
+
+#ifdef E9 -- Tc1 must be declared abstract
+// [[InheritErr]]
+class Tc1 implements Ifc {
+  public Tc1 () {};
+  int d = 2;
+  int e = 4;
+}
+#endif
+
+abstract class Tc2 implements Ifc {
+  public Tc2 () {};
+  int d = 2;
+  int e = 4;
+}
+
+class Tc3 implements Ifc {
+  public Tc3 () {};
+  int d = 2;
+  int e = 4;
+
+  public int m1 ()                   { return 1; };
+  public int m2 (int j)              { return 2; };
+  public int m3 (short s1, short t2) { return 3; };
+}
+
+abstract class Tc4 implements Ifc {
+  public Tc4 () {};
+  public int m1 () { return 0; };
+  int d = 2;
+  int e = 4;
+}
+
+class Tc5 extends Tc3 {
+  public Tc5 () {super();};
+  int g = 6;
+
+  int m6 ()                   { return 4; };
+  int m7 (int x2)             { return 5; };
+  int m8 (short s1, short s2) { return 6; };
+}
+
+abstract class Tc6 extends Tc2 {
+  public Tc6 () {super();};
+  int g = 6;
+}
+
+#ifdef E10 -- Tc7 must be declared abstract
+// [[InheritErr]]
+class Tc7 extends Tc2 {
+  public Tc7 () {super();};
+  int g = 6;
+}
+#endif
+
+#ifdef E11
+// [[NoSuchExtension]]
+class Tc8 extends Ifc {
+  public Tc8 () { super(); };
+}
+#endif
+
+interface SubIfc extends Ifc {
+  int    z  = 4;
+  char   h = 'a';
+
+  int ma (int c, double x2);
+  int mb (int v);
+}
+
+#ifdef E12 -- Tc9 must be declared abstract
+// [[InheritErr]]
+class Tc9 implements SubIfc {
+  public Tc9 () {};
+  int d = 2;
+  int e = 4;
+
+  int m1 () { return 1; };
+}
+#endif
+
+#ifdef E13 -- access modifications are illegal
+// [[InheritErr]]
+abstract class Tc10 implements SubIfc {
+  public Tc10 () {};
+  int d = 2;
+  int e = 4;
+
+  private int m1 () { return 1; };
+}
+#endif
+
+abstract class Tc11 implements SubIfc {
+  public Tc11 () {};
+  int d = 2;
+  int e = 4;
+
+  public int m1 () { return 1; };
+}
+
+class Tc12 implements SubIfc {
+  public Tc12 () {};
+  int d = 2;
+  int e = 4;
+
+  public int m1 ()                   { return 1; };
+  public int m2 (int j)              { return 2; };
+  public int m3 (short s1, short t2) { return 3; };
+  public int ma (int c, double x2)   { return 4; };
+  public int mb (int v)              { return 5; };
+}
+
+class Rc {
+   public Rc() {
+      active {};
+   };
+}
+
+
+#ifdef E14 -- access modifications are illegal
+// [[InheritErr]]
+class Tc13 implements SubIfc {
+  public Tc13 () {};
+  int d = 2;
+  int e = 4;
+
+  public int m1 ()                      { return 1; };
+  public int m2 (int j)                 { return 2; };
+  protected int m3 (short s1, short t2) { return 3; };
+  public int ma (int c, double x2)      { return 4; };
+  public int mb (int v)                 { return 5; };
+}
+#endif

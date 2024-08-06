@@ -1,0 +1,57 @@
+public class AvrCore_TestCase{
+
+    public AvrCore_TestCase () {
+        while (true) {
+            Uart.initialize();
+            Uart.put_endline("Avr_io_TestCase");
+            test01();
+        };
+    };
+
+    public void test01 () {
+        Uart.put_endline("test01: write/read ram, end with 'q'");
+        char c = ' ';
+        short adr = (short)0x0200;
+        byte  wval = 0xaa;
+        byte  rval = 0x7f;
+        while (c != 'q') {
+            c = Uart.get_char();
+            Uart.put_char('&');
+            Uart.put_short(adr);
+            Uart.put_char(' ');
+            switch (c) {
+            case 'r':
+                rval = AvrCore.at(adr);
+                Uart.put_char('r');
+                Uart.put_hex(rval);
+                break;
+            case 'w':
+                Uart.put_char('w');
+                AvrCore.at_put(adr,wval);
+                Uart.put_hex(wval);
+                break;
+            case '-': adr--; break;
+            case '+': adr++; break;
+            case '0': wval = 0x00; break;
+            case 'a': wval = 0xaa; break;
+            case '5': wval = 0x55; break;
+                break;
+            default:
+                Uart.put_char('%');
+                break;
+            };
+            Uart.put_newline();
+        };
+    };
+}
+
+/* ------------------------------------------------------------------------ */
+public class AvrCore_Test {
+public static void main (String[] args) {};
+    AvrCore_TestCase tc;
+    public AvrCore_Test () {
+        tc = new AvrCore_TestCase();
+        active {};
+    };
+}
+/* ------------------------------------------------------------------------ */

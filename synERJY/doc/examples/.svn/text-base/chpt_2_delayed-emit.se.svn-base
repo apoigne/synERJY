@@ -1,0 +1,19 @@
+// test-flags O = None true, E = data true
+class DelayedEmit {
+    static final time timing = 100msec;
+				
+// tex_start delayed-emit
+DelayedSignal a = new DelayedSignal(new SimOutput());
+       Signal b = new Signal(new SimOutput());
+       Signal c = new Signal(new SimOutput());
+public DelayedEmit () {
+   active {
+      emit a;
+      if (?a) { emit b; };
+      next;
+      if (?a) { emit c; };
+    };
+};
+// tex_end delayed-emit
+
+}

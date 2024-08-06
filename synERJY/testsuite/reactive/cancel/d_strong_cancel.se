@@ -1,0 +1,29 @@
+#ifdef T1
+// trace
+//        ->  y(0)
+//        ->  y(0)
+//   x    ->  y(0)
+//        ->  y(0)
+
+class Rc {
+
+static final time timing = 10msec;
+				
+Sensor x = new Sensor(new SimInput());
+
+Signal<int> y = new Signal<int>(new SimOutput());
+
+public Rc () {
+  active {
+      loop {
+        cancel strongly next {
+           sustain { emit y(0); };
+         } when (?x);
+      };
+  };
+};
+
+
+}
+#endif
+

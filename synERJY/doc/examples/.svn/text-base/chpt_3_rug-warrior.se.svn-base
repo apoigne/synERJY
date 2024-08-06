@@ -1,0 +1,116 @@
+// test-flags O = None true, E = data true
+class RugWarrior {
+
+private static final time timing = 1sec;
+
+Sensor  bump_left  = new Sensor(new SimInput());
+Sensor  bump_right = new Sensor(new SimInput());
+Sensor  bump_back  = new Sensor(new SimInput());
+
+Sensor<int>  left_photo   = new Sensor<int>(new SimInput());
+Sensor<int>  right_photo  = new Sensor<int>(new SimInput());
+
+Sensor<byte> ir_detect  = new Sensor<byte>(new SimInput());
+
+Signal<int> motor_input = new Signal<int>(new SimOutput());
+
+Signal<int> cruise  = new Signal<int>();
+Signal<int> follow  = new Signal<int>();
+Signal<int> avoid   = new Signal<int>();
+Signal<int> escape  = new Signal<int>();
+
+// tex_start rug-warrior-active
+public RugWarrior () {
+    active {
+       [[ cruise();
+       || follow();
+       || avoid();
+       || escape();
+       || arbitrate();
+       ]];
+    };
+};
+// tex_end
+
+static final int photo_dead_zone = -1;
+
+static final int forward    = -1;
+static final int backward   = 0;
+static final int left_turn  = 2;
+static final int right_turn = 3;
+static final int left_arc   = 4;
+static final int right_arc  = 5;
+
+// tex_start rug-warrior-cru
+void cruise () {
+   sustain {  // rug warrior goes forward
+       emit cruise(forward);
+   };
+};
+// tex_end
+
+// tex_start rug-warrior-follow
+void follow () {
+   sustain {
+      if ($right_photo - $left_photo > photo_dead_zone) {
+          if ($right_photo - $left_photo > 0) {
+                             // light on left, turn left
+              emit follow(left_turn);
+          } else {
+                             // light on right, turn right
+              emit follow(right_turn);
+          };
+      };                     // else, no difference  
+   };
+};
+// tex_end
+
+// tex_start rug-warrior-avoid
+void avoid () {
+   sustain {
+      if ($ir_detect == 0b11) {         // both IR see something 
+          emit avoid(left_arc);
+      } else if ($ir_detect == 0b10) { // left IR sees something 
+          emit avoid(right_arc);
+      } else if ($ir_detect == 0b01) { // right IR sees something 
+          emit avoid(left_arc);
+      };                              // neither sees something 
+   };
+};
+// tex_end
+
+// tex_start rug-warrior-escape
+void escape () {
+  loop {
+     if (?bump_left && ?bump_right) {
+         emit escape(backward);
+         await 2sec;
+         emit escape(left_turn);
+         await 4sec;
+     } else if (?bump_left) {
+         emit escape(right_turn);
+         await 2sec;
+     } else if (?bump_right) {
+         emit escape(left_turn);
+         await 4sec;
+     } else if (?bump_back) {
+         emit escape(left_turn);
+         await 2sec;
+     };
+     next;
+  }; 
+};
+// tex_end
+
+// tex_start rug-warrior-arbitrate
+void arbitrate () {
+   sustain {
+      if (?cruise) { emit motor_input($cruise); };
+      if (?follow) { emit motor_input($follow); };
+      if (?avoid)  { emit motor_input($avoid); };
+      if (?escape) { emit motor_input($escape); };
+   };
+};
+// tex_end
+}
+

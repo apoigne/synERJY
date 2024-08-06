@@ -1,0 +1,62 @@
+reactive class Xc1
+
+make is public creation () {};
+
+int a1;
+int a2 is private () {};
+int a3 is protected () {};
+
+#ifdef E1
+// [[ParseError]]
+int a4 is public[none];
+#endif
+#ifdef E2
+// [[ParseError]]
+int a4 is public;
+#endif
+#ifdef E3
+// [[ParseError]]
+int a4 is public[none] () {};
+#endif
+#ifdef E4
+// [[ParseError]]
+int a4 is public[any] () {};
+#endif
+
+}
+
+reactive class Tc
+
+make is creation do
+  xc.make;
+#ifdef E5
+// [[Access]] i
+  i = xc.a1;
+#endif
+#ifdef E6
+// [[Access]] i
+  i = xc.a2;
+#endif
+#ifdef E7
+// [[Access]] i
+  i = xc.a3;
+#endif
+};
+
+Xc1 xc      is reactive;
+int i;
+f ( Xc1 p ) is protected () {};
+
+tcf () {
+#ifdef E10
+// [[CreaRtnIllegal]] tcf
+  xc.make;
+#endif
+#ifdef E11
+// [[Access]] i
+  i = xc.a1;
+#endif
+  f(xc);
+};
+
+}

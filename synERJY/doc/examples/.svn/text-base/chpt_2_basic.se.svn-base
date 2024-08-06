@@ -1,0 +1,20 @@
+// test-flags O = None true, E = data true
+// tex_start basic
+class Basic {
+static final time timing = 250msec;
+
+Sensor button  = new Sensor(new SimInput());
+Signal red_led = new Signal(new SimOutput());
+
+public Basic () {
+    active {
+      loop {
+          await ?button;
+          emit  red_led;
+          next;
+      };
+    };
+};
+
+}
+// tex_end basic

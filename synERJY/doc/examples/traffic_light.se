@@ -1,0 +1,213 @@
+class TrafficLight {
+
+  public TrafficLight () {
+
+    t1 = new Timer(3,ped_start_cross,ped_end_cross);
+    t2 = new Timer(4,ped_start_clear,ped_end_clear);
+    t3 = new Timer(3,car_start_green,car_end_green);
+
+    tlc = new TrafficLightController(button,
+                                     car_to_green,car_to_red,
+                                     car_start_green,car_end_green,
+                                     ped_to_green,ped_start_clear,ped_end_clear,
+                                     car_red,ped_red,ped_green);
+    ped = new PedController(ped_to_green,ped_start_cross,ped_end_cross,
+                            ped_red,ped_green);
+    car = new CarController(car_to_green,car_to_red,
+                            car_red,car_yellow,car_green);
+    active {};
+  };
+
+  static final time timing = 1sec;
+
+  Timer t1;
+  Timer t2;
+  Timer t3;
+
+  TrafficLightController tlc;
+  PedController          ped;
+  CarController          car;
+
+  Sensor button     = new Sensor(new SimInput());
+
+  Signal car_red    = new Signal(new SimOutput());
+  Signal car_yellow = new Signal(new SimOutput());
+  Signal car_green  = new Signal(new SimOutput());
+
+  Signal ped_red    = new Signal(new SimOutput());
+  Signal ped_green  = new Signal(new SimOutput());
+
+  Signal ped_to_green = new Signal(new SimOutput());
+  Signal car_to_green = new Signal(new SimOutput());
+  Signal car_to_red   = new Signal(new SimOutput());
+
+  Signal ped_start_cross = new Signal(new SimOutput());
+  Signal ped_end_cross   = new Signal(new SimOutput());
+
+  Signal ped_start_clear = new Signal(new SimOutput());
+  Signal ped_end_clear   = new Signal(new SimOutput());
+
+  Signal car_start_green = new Signal(new SimOutput());
+  Signal car_end_green   = new Signal(new SimOutput());
+
+  proposition {
+    never_both_red::     ctl  AG: !(?car_red & ?ped_red);    // this is wrong 
+    never_both_green::   ctl  AG: !(?car_green & ?ped_green);
+    ped_never_starves::  ctl  AG: (?button -> AF: ?ped_green);
+    carlight_exclusive:: ctl  AG: !(?car_red & ?car_green);
+  };
+
+}
+
+//---------- the timer --------------------------------------------------------
+class Timer {
+  public Timer (int i,Sensor pstart, Signal pelapsed) {
+    initval = i;
+    start   = pstart;
+    elapsed = pelapsed;
+
+    active {ttimer ();};
+  };
+
+  Sensor start;
+  Signal elapsed;
+
+  void ttimer () { automaton "traffic_timer.sec"; };
+
+  // state of a timer object
+  int initval;
+  int counter;
+
+  // atomic operations called from the reactive behaviourtiming 1sec;
+  void setc ()         { counter = initval; };
+  void decr ()         { counter--; };
+  boolean isElapsed () { return (counter <= 0); };
+
+  precedence {
+    setc() < isElapsed();
+  };
+
+}
+
+//---------- the controller for the car-related part of the traffic lights  ---
+class CarController {
+  public CarController( Sensor car_to_green, Sensor car_to_red,
+                        Signal car_red, Signal car_yellow, Signal car_green ) {
+
+    to_green = car_to_green;
+    to_red   = car_to_red;
+    red      = car_red;
+    yellow   = car_yellow;
+    green    = car_green;
+    active {
+      car_controller();
+    };
+  };
+
+  Sensor to_red;
+  Sensor to_green;
+
+  Signal red;
+  Signal yellow;
+  Signal green;
+
+  void car_controller() { automaton "traffic_car_ctrl.sec"; };
+
+}
+
+//---------- the controller for the ped-related part of the traffic lights ----
+class PedController {
+  public PedController( Sensor ped_to_green,
+                        Signal ped_start_cross, Sensor ped_end_cross,
+                        Signal ped_red, Signal ped_green ) {
+
+    to_green    = ped_to_green;
+    start_cross = ped_start_cross;
+    end_cross   = ped_end_cross;
+    red         = ped_red;
+    green       = ped_green;
+    
+    active {
+      ped_controller();
+    };
+  };
+
+  void ped_controller() { automaton "traffic_ped_ctrl.sec"; };
+
+  Sensor end_cross;
+  Signal start_cross;
+
+  Sensor to_green;
+
+  Signal red;
+  Signal green;
+
+}
+
+//---------- the controller for the safety-related part of the traffic lights -
+class TrafficLightController {
+  public TrafficLightController( Sensor pbutton,
+                                 Signal pcar_to_green,
+                                 Signal pcar_to_red,
+                                 Signal pcar_start_green,
+                                 Sensor pcar_end_green,
+                                 Signal pped_to_green,
+                                 Signal pped_start_clear,
+                                 Sensor pped_end_clear,
+                                 Sensor pcar_red,
+                                 Sensor pped_red,
+                                 Sensor pped_green ) {
+
+    button    = pbutton;
+    car_red   = pcar_red;
+    ped_red   = pped_red;
+    ped_green = pped_green;
+
+    car_to_green = pcar_to_green;
+    car_to_red   = pcar_to_red;
+    ped_to_green = pped_to_green;
+
+    ped_start_clear = pped_start_clear;
+    car_start_green = pcar_start_green;
+
+    ped_end_clear = pped_end_clear;
+    car_end_green = pcar_end_green;
+    
+    active {
+      car_ped ();
+    };
+  };
+
+  Sensor button;
+  Sensor car_red;
+  Sensor ped_red;
+  Sensor ped_green;
+
+  Signal car_to_green;
+  Signal car_to_red;
+  Signal ped_to_green;
+
+  Signal ped_start_clear;
+  Signal car_start_green;
+
+  Sensor ped_end_clear;
+  Sensor car_end_green;
+
+  void car_ped () {
+    loop {
+      [[ await ?button;
+      || emit ped_start_clear;  
+         await ?ped_end_clear;
+         emit car_to_green;
+         emit car_start_green; 
+         await ?car_end_green;
+      ]];
+      next;
+      emit car_to_red;   
+      await ?car_red;
+      emit ped_to_green;
+      await ?ped_green;
+      await ?ped_red;
+    };
+  };
+}
